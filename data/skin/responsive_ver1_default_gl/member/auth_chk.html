@@ -1,0 +1,98 @@
+<!-- 타이틀 -->
+<div class="title_container">
+	<h2><span designElement="text">실명인증</span></h2>
+</div>
+
+<div class="resp_login_wrap Mt0">
+	<!-- 탭 -->
+	<div id="authSelect" class="tab_basic fullsize">
+		<ul>
+			{? realnameinfo.useRealnamephone=='Y' //휴대폰본인인증}
+			<li><a href="javascript:void(0)"><span designElement="text">휴대폰</span></a></li>
+			{/}
+			{? realnameinfo.useIpin=='Y' }
+			<li><a href="javascript:void(0)"><span designElement="text">아이핀</span></a></li>
+			{/}
+			{? realnameinfo.useRealname=='Y' && realnameinfo.realnameId }
+			<li><a href="javascript:void(0)"><span designElement="text">안심체크</span></a></li>
+			{/}
+		</ul>
+	</div>
+
+	{? realnameinfo.useRealnamephone=='Y' //휴대폰본인인증}
+	<div class="sub_page_tab_contents hide">
+		<ul class="auth_confirm_contents">
+			<li><img src="../images/design/icon_phone.png" alt="휴대폰 본인인증" /></li>
+			<li class="gray_05"><span designElement="text">휴대폰번호와 이름을 사용하여 본인확인을 합니다.</span></li>
+			<li><button onclick="phonePopup()" class="btn_resp size_c color2 Wmax"><span designElement="text">휴대폰 본인 인증</span></button></li>
+		</ul>
+	</div>
+	{/}
+
+	{? realnameinfo.useIpin=='Y' }
+	<div class="sub_page_tab_contents hide">
+		<ul class="auth_confirm_contents">
+			<li><img src="../images/design/icon_iipn.png" width="161" alt="아이핀 인증" /></li>
+			<li class="gray_05"><span designElement="text">주민등록번호 대신 사용하는 사이버 신원확인번호입니다.</span></li>
+			<li><button onclick="ipinPopup()" class="btn_resp size_c color2 Wmax"><span designElement="text">아이핀 인증</span></button></li>
+		</ul>
+	</div>
+	{/}
+
+	{? realnameinfo.useRealname=='Y' && realnameinfo.realnameId}
+	<div class="sub_page_tab_contents hide">
+		<ul class="auth_confirm_contents">
+			<li><img src="../images/design/icon_safecheck.png" width="59" alt="안심체크" /></li>
+			<li class="gray_05"><span designElement="text">주민등록번호 대신 이름, 생년월일, 성별, 유선전화 또는 주소로 인증합니다.</span></li>
+			<li><button onclick="checkPopup()" class="btn_resp size_c color2 Wmax"><span designElement="text">안심체크 인증</span></button></li>
+		</ul>
+	</div>
+	{/}
+
+	<ul class="list_dot_01 gray_06 Mt25">
+		<li>
+			실명확인이 되지 않는 경우 아래의 실명인증기관에 실명등록을 요청할 수 있습니다.<br />
+			한국신용정보㈜ <a href="tel:1588-2486">1588-2486</a>
+		</li>
+		<li>
+			타인의 정보 및 주민등록번호를 부정하게 사용하는 경우 3년 이하의 징역 또는 1천만원 이하의 벌금에 처해질 수 있습니다<br />(주민등록법 제 37조)
+		</li>
+	</ul>
+</div>
+
+
+<script type="text/javascript">
+{? _SERVER.HTTPS == 'on'}
+	var url = 'https://{_SERVER.HTTP_HOST}/member_process/realnamecheck?'
+{:}
+	var url = 'http://{_SERVER.HTTP_HOST}/member_process/realnamecheck?'
+{/}
+{? adult == '1'} url = url + 'intro=1&type=join&'; {/}
+//본인인증:휴대폰
+function phonePopup(){
+	var link_url = url + "realnametype=phone";
+	window.open(link_url, 'popupChk', 'width=500, height=550, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+}
+
+//아이핀 실명인증
+function ipinPopup(){
+	var link_url = url + "realnametype=ipin";
+	window.open(link_url, 'popupIPIN2', 'width=450, height=550, top=100, left=100,fullscreen=no, menubar=no status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+}
+
+//안심체크 실명인증
+function checkPopup(){
+	var link_url = url + "realnametype=check";
+	window.open(link_url, 'niceID_popup', 'width=500, height=550, toolbar=no,directories=no,scrollbars=no,resizable=no,status=no,menubar=no,top=0,left=0,location=no');
+}
+
+$(function(){
+	$("#authSelect li").each(function(i){
+		$(this).click(function(){
+			$("#authSelect li").removeClass("on");
+			$(this).addClass("on");
+			$(".sub_page_tab_contents").hide().eq(i).show();
+		});
+	}).eq(0).click();
+});
+</script>

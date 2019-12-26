@@ -1,0 +1,265 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsRegist.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../css/layer_stock.css" />
+<style>
+	.goodsOptionTable {display:none; position:absolute; border-collapse:collapse; top:-10px; left:60px; border:1px solid #f5f5f5;}
+	.goodsOptionTable table {width:220px;}
+	.goodsOptionTable th {padding:5px; border:1px solid #ddd; background-color:#f5f5f5}
+	.goodsOptionTable td {height:25px !important; border:1px solid #ddd; background-color:#ffffff; text-align:center;}
+
+	div.sub-choose-lay div.choose-form-lay {top:27px;right:0;width:200px;}
+	div.sub-choose-lay div.choose-down-lay {top:27px;right:140px;width:150px;}
+	div.list-string-price-lay {position:relative;}
+	div.list-string-price-lay img {cursor:pointer;}
+	div.view-string-price-lay {position:absolute;top:20px;left:41px;width:300px;z-index:100;background-color:#fff;}
+	.t_tot_stock {text-align:center; border-collapse:collapse; width:570px;}
+	.t_tot_stock td {border:1px solid #666; padding:5px;}
+	.gr_col {color:#666;}
+</style>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>입찰내역</h2>
+		</div>
+
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<div class="tab-menu-area">
+	<ul class="tab-menu">
+		<li {? tab_menu == '01'}class="active"{/}><a href="/admin/sale/bid?tab_menu=01&no={no}">입찰</a></li>
+		<li {? tab_menu == '02'}class="active"{/}><a href="/admin/sale/bid?tab_menu=02&no={no}">유찰</a></li>
+		<li {? tab_menu == '03'}class="active"{/}><a href="/admin/sale/bid?tab_menu=03&no={no}">낙찰</a></li>
+	</ul>
+</div>
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(bid.apply_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+</div>
+
+<!-- {? tab_menu == '01'} -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<table class="list-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="110" /><!--등록번호-->
+			<col width="140" /><!--입찰시작일-->
+			<col width="80" /><!--입찰시작가-->
+			<col width="80" /><!--즉시판매가-->
+			<col width="80"/><!--현재입찰가-->
+			<col width="140"/><!--남은시간-->
+			<col width="45" /><!--번호-->
+			<col width="140"/><!--입찰시간-->
+			<col width="100"/><!--아이디-->
+			<col width="80"/><!--입찰가-->
+			<col width="50" /><!--비고-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th rowspan="2">등록번호</th>
+			<th rowspan="2">입찰시작일</th>
+			<th rowspan="2">입찰시작가</th>
+			<th rowspan="2">즉시판매가</th>
+			<th rowspan="2">현재입찰가</th>
+			<th rowspan="2">남은시간</th>
+			<th colspan="5">입찰자</th>
+		</tr>
+		<tr>
+			<th>번호</th>
+			<th>입찰시간</th>
+			<th>아이디</th>
+			<th>입찰가</th>
+			<th>비고</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+			<tr class="list-row" style="height:20px;">
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{bid.sales_no}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{bid.sales_date}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= price_format(bid.bid_start_price)}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= price_format(bid.bid_price)}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= price_format(bid.bid_current_price)}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= date('d일 H시간 i분 s초', bid.restTime)}</td>
+				<!-- {? count(bid.apply_list) == 0} -->
+				<td align="center" colspan="5">입찰자가 없습니다.</td>
+				<!-- {:} -->
+				<td align="center" class="page_no">1</td>
+				<td align="center">{bid.apply_list[0].reg_date}</td>
+				<td align="center">{bid.apply_list[0].userid}</td>
+				<td align="center">{= price_format(bid.apply_list[0].bid_price)}</td>
+				<td align="center">
+					<div><span class="btn small valign-middle"><a href="javascript:go_bid_cancel('{bid.apply_list[0].bid_seq}')">취소</a></span></div>
+				</td>
+				<!-- {/} -->
+			</tr>
+			<!-- {? count(bid.apply_list) > 1} -->
+				<!-- {@ range(1, count(bid.apply_list)-1)} -->
+				<tr class="list-row" style="height:20px;">
+					<td align="center" class="page_no">{.index_+2}</td>
+					<td align="center">{bid.apply_list[.value_].reg_date}</td>
+					<td align="center">{bid.apply_list[.value_].userid}</td>
+					<td align="center">{= price_format(bid.apply_list[.value_].bid_price)}</td>
+					<td align="center">
+						<div><span class="btn small valign-middle"><a href="javascript:go_bid_cancel('{bid.apply_list[.value_].bid_seq}')">취소</a></span></div>
+					</td>
+				</tr>
+				<!-- {/} -->
+			<!-- {/} -->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+</div>
+<!-- {: tab_menu == '02'} -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<table class="list-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="110" /><!--등록번호-->
+			<col width="200" /><!--입찰기간-->
+			<col width="80" /><!--입찰시작가-->
+			<col width="80" /><!--즉시판매가-->
+			<col width="80"/><!--최대입찰가-->
+			<col width="45" /><!--번호-->
+			<col width="140"/><!--입찰시간-->
+			<col width="100"/><!--아이디-->
+			<col width="80"/><!--입찰가-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th rowspan="2">등록번호</th>
+			<th rowspan="2">입찰기간</th>
+			<th rowspan="2">입찰시작가</th>
+			<th rowspan="2">즉시판매가</th>
+			<th rowspan="2">최대입찰가</th>
+			<th colspan="4">입찰자</th>
+		</tr>
+		<tr>
+			<th>번호</th>
+			<th>입찰시간</th>
+			<th>아이디</th>
+			<th>입찰가</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+			<tr class="list-row" style="height:20px;">
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{bid.sales_no}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{bid.sales_date} ~ {bid.bid_duration_date}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= price_format(bid.bid_start_price)}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= price_format(bid.bid_price)}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= price_format(bid.bid_current_price)}</td>
+				<!-- {? count(bid.apply_list) == 0} -->
+				<td align="center" colspan="4">입찰자가 없습니다.</td>
+				<!-- {:} -->
+				<td align="center" class="page_no">1</td>
+				<td align="center">{bid.apply_list[0].reg_date}</td>
+				<td align="center">{bid.apply_list[0].userid}</td>
+				<td align="center">{= price_format(bid.apply_list[0].bid_price)}</td>
+				<!-- {/} -->
+			</tr>
+			<!-- {? count(bid.apply_list) > 1} -->
+				<!-- {@ range(1, count(bid.apply_list)-1)} -->
+				<tr class="list-row" style="height:20px;">
+					<td align="center" class="page_no">{.index_+2}</td>
+					<td align="center">{bid.apply_list[.value_].reg_date}</td>
+					<td align="center">{bid.apply_list[.value_].userid}</td>
+					<td align="center">{= price_format(bid.apply_list[.value_].bid_price)}</td>
+				</tr>
+				<!-- {/} -->
+			<!-- {/} -->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+</div>
+<!-- {: tab_menu == '03'} -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<table class="list-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="110" /><!--등록번호-->
+			<col width="140" /><!--입찰시작일-->
+			<col width="80" /><!--입찰시작가-->
+			<col width="80" /><!--즉시판매가-->
+			<col width="80"/><!--최대입찰가-->
+			<col width="45" /><!--번호-->
+			<col width="140"/><!--입찰시간-->
+			<col width="100"/><!--아이디-->
+			<col width="80"/><!--입찰가-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th rowspan="2">등록번호</th>
+			<th rowspan="2">입찰시작일</th>
+			<th rowspan="2">입찰시작가</th>
+			<th rowspan="2">즉시판매가</th>
+			<th rowspan="2">낙찰가</th>
+			<th colspan="5">입찰자</th>
+		</tr>
+		<tr>
+			<th>번호</th>
+			<th>입찰시간</th>
+			<th>아이디</th>
+			<th>입찰가</th>
+			<th>계약서</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+			<tr class="list-row" style="height:50px;">
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{bid.sales_no}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{bid.sales_date}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= price_format(bid.bid_start_price)}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= price_format(bid.bid_price)}</td>
+				<td align="center" rowspan="{? count(bid.apply_list) == 0 }1{:}{= count(bid.apply_list)}{/}">{= price_format(bid.bid_current_price)}</td>
+				<!-- {? count(bid.apply_list) == 0} -->
+				<td align="center" colspan="5">입찰자가 없습니다.</td>
+				<!-- {:} -->
+				<td align="center" class="page_no">1</td>
+				<td align="center">{bid.apply_list[0].reg_date}</td>
+				<td align="center">{bid.apply_list[0].userid}</td>
+				<td align="center">{= price_format(bid.apply_list[0].bid_price)}</td>
+				<td align="center">
+					<div><span class="btn small valign-middle"><a href="#">작성</a></span></div>
+				</td>
+				<!-- {/} -->
+			</tr>
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+</div>
+<!-- {/} -->
+<form action="/admin/sale/bid_cancel_process" method="post" id="frm_bid_cancel" target="actionFrame">
+	<input type="hidden" name="bid_seq" />
+</form>
+<script>
+	function go_bid_cancel(bid_seq) {
+		if(confirm('해당 입찰자의 입찰을 취소하시겠습니까 ?')) {
+			$('#frm_bid_cancel input[name=bid_seq]').val(bid_seq);
+			$('#frm_bid_cancel').submit();
+		}
+	}
+</script>
+{ #layout_footer }

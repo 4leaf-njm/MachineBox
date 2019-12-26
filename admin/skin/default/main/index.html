@@ -1,0 +1,3798 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/js/admin-board.js?v=20140823"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js"></script>
+<!--[if IE]><script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/excanvas.min.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/jquery.jqplot.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.barRenderer.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.pointLabels.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.donutRenderer.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/js/admin-main.js?dummy=20170124"></script>
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/jqplot/jquery.jqplot.min.css" class="include" />
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" />
+<link rel="stylesheet" type="text/css" href="/admin/skin/default/css/main.css?dummy=20161211" media="screen" />
+<link rel="stylesheet" type="text/css" href="/admin/skin/default/css/searchform.css?dummy=20161211" media="screen" />
+<script type="text/javascript">
+	var last_reload	= '';
+	var gl_H_AD		= "{=serviceLimit('H_AD')}";
+	var gl_H_SC		= "{=serviceLimit('H_SC')}";
+	var gl_9ago		= "{=date('Y-m-d',strtotime('-9 days'))}";
+	var gl_today	= "{=date('Y-m-d')}";
+	var gl_shopSno	= "{config_system.shopSno}";
+
+
+	$(function(){
+		/* 주요지표 */
+		$(".seller_wrap .tab_menu li").click(function(){
+			$(".seller_wrap .tab_menu li").removeClass("active");
+			$(this).addClass("active");
+			var $boxVar = $(this).index() + 1;
+			$(".seller_wrap .tab_sub").hide();
+			$(".seller_wrap .tab_box"+$boxVar).show();
+		});
+		/* 매출 */
+		$(".stats_wrap .tab_menu li").click(function(){
+			$(".stats_wrap .tab_menu li").removeClass("active");
+			$(this).addClass("active");
+			var $boxVar = $(this).index() + 1;
+			$(".stats_wrap .tab_sub").hide();
+			$(".stats_wrap .tab_box"+$boxVar).show();
+		});
+
+		/* firstmall.kr 게시판 rss */
+		print_main_news_area('notice');
+		print_main_news_area('upgrade');
+		print_main_news_area('upgrade_news');
+		print_main_news_area('education');
+		print_main_stat();
+
+		/* sms ajax 호출 leewh 2014-07-31 */
+		get_sms_info();
+		/* kakaotalk ajax 호출 :: 2018-03-02 lwh */
+		get_kakao_info();
+		/* 주요 이슈사항 공지 호출 */
+		get_notify_info();
+		/* traffic ajax 호출 :: 2015-01-09 lwh */
+		reload_data('main','{this_admin_env.temp_domain}');
+		/* 요약통계 업데이트 */
+
+		$('#btn-main-reload').bind('click', function(){
+			var reload_status	= 'y';
+			if	(last_reload){
+				var now_datetime	= new Date().valueOf();
+				var diff_time		= now_datetime - last_reload;
+				if	(diff_time <= 60000){
+					reload_status	= 'n';
+				}
+			}
+			if	(reload_status == 'y'){
+				last_reload = new Date().valueOf();
+				//delete_main_stat(); 작동안함 18.09.07 kmj
+				$.ajax({
+					url			: 'main_stats_cach_delete',
+					dataType	: 'json',
+					success 	: function(data)
+					{
+						if( data.result =='OK' ) location.reload();
+					}
+				});
+			}else{
+				openDialogAlert("업데이트는 60초당 1회 가능합니다.<br/>운영쇼핑몰의 상세한 통계 데이터는 통계메뉴에 확인 해 주세요.",530,210,'');
+			}
+		});
+		<!--{ ? !cfg_reservation.update_date }-->
+			reservation_update();
+		<!--{ / }-->
+
+		<!--{ ? facebook_notice }-->
+			/*페이스북 관련 공지 18.02.28 kmj*/
+			var viewCheckYN = $.cookie('fb_notice_view_check');
+			if(viewCheckYN != "Y"){
+				openDialogNew(
+					'{facebook_notice.title}',
+					'facebookNotice',
+					{
+						'width' :'{facebook_notice.width}', 
+						'height':'{facebook_notice.height}'
+					},
+					function fb_close(){
+						var viewCheck = $('#fb_notice_view_check').is(':checked');
+						var date = new Date();
+						date.setTime(date.getTime() + ((3600 * 1000) * 24 * 7)); //1 week
+						if(viewCheck){
+							$.cookie('fb_notice_view_check', 'Y', { path: '/', expires: date }); 
+						}
+					}
+				);
+			}
+		<!--{ / }-->
+		
+		<!--{? config_basic.manual_view == 'N'}-->
+			openDialog("알림", "firstmallGlManualPopup", {"width":"850","height":"820","close":function(){manualEndClose();}});
+		<!--{ / }-->
+	});
+function manualEndClose(){
+	var manual_check = $("#manual_view_check").is(":checked");
+	if(manual_check){
+		$.ajax({
+			type: "post",
+			url: "../setting_process/manualViewClose",
+			data: "manual_check=Y",
+			dataType: 'json',
+			success: function(result){
+				if(result == "ok"){
+				}else if(result == "err"){
+				}
+			}
+		});
+	}
+}
+</script>
+
+<div id="main_wrap">
+	<h2 class="hide">메인영역</h2>
+	<div class="admin_wrap">
+		<dl>
+			<dt class="name">{this_admin_env.env_name}</dt>
+			<dd>
+				<!--{ ? this_admin_env.domain }-->
+				{this_admin_env.domain}
+				<!--{ : }-->
+				http://{this_admin_env.temp_domain} (기본)
+				<!--{ / }-->
+				<!--{?functionLimit}-->
+				<a href="javascript: servicedemoalert('use_f');" class="btn_gray {?usedSpacePercent>89}}expire{/}">추가</a>
+				<!--{:}-->
+				<a href="javascript: openDialog('쇼핑몰 추가','mallAdd',{'width':380, 'height':230});" title="쇼핑몰 추가" class="btn_gray {?usedSpacePercent>89}}expire{/}">추가</a>
+				<!--{/}-->
+			</dd>
+		</dl>
+		<dl>
+			<dt>타입</dt>
+			<dd>{service_name}</dd>
+		</dl>
+		<dl>
+			<dt>기간</dt>
+			<dd>
+				<!--{ ? solutionServiceCheck(1) }-->
+				<span>평생</span>
+				<span style="color:#a3a3a3; font-size:11px;">(단, 관리자 미접속 30일 차단, 60일 삭제)</span>
+				<!--{ : expireDay && (solutionServiceCheck(6790) || solutionServiceCheck(32) ||  (solutionServiceCheck(1304) &&  config_system.service.hosting_code != 'F_SH_X') ) }-->
+				{expireDay}
+				<span class="period">
+					<span class="icon">!</span>
+					{=number_format(remainExpireDay)}일 남음
+				</span>
+				<div id="hostingExpire" class="hide {service_code}">
+					<ul>
+						<li>
+							<span class="icon_extend"></span>
+							<strong>[기간 연장]</strong><br />
+							호스팅 만료일이 <span class="red">{=number_format(remainExpireDay)}일</span> 남았습니다.
+						</li>
+						<li><span class="btn large black"><a href="http://www.firstmall.kr/myshop" target="_blank">연장하기</a></span></li>
+					</ul>
+				</div>
+					<!--{?functionLimit}-->
+					<a href="javascript: servicedemoalert('use_f');" class="btn_gray">
+					<!--{:}-->
+						<!--{ ? remainExpireDay < 8 }-->
+						<a href="javascript: openDialog('알려드립니다!','hostingExpire',{'width':530, 'height':200});" target="_blank" title="새창열림"  class="btn_gray expire">
+						<!--{ : }-->
+						<a href="http://www.firstmall.kr/myshop "  target="_blank" title="새창열림"  class="btn_gray">
+						<!--{ / }-->
+					<!--{/}-->
+				연장
+				</a>
+				<!--{ : }-->
+				없음
+				<!--{ / }-->
+			</dd>
+		</dl>
+		<dl>
+			<dt>용량</dt>
+			<dd>
+				<!--{?functionLimit}-->
+				{usedDiskSpace} / {maxDiskSpace} ({usedSpacePercent}%) <a href="javascript: servicedemoalert('use_f');" class="btn_gray {?usedSpacePercent>89}}expire{/}">추가</a>
+				<!--{ : }-->
+					<!--{ ? solutionServiceCheck(1) ||  solutionServiceCheck(6790) || solutionServiceCheck(32) || (solutionServiceCheck(1304) && !preg_match("/^F_SH_/",config_system.service.hosting_code))}-->
+					{usedDiskSpace} / {maxDiskSpace} ({usedSpacePercent}%) <a href="http://www.firstmall.kr/myshop" target="_blank" title="새창열림" class="btn_gray {?usedSpacePercent>89}}expire{/}">추가</a>
+					<!--{ : }-->
+					없음
+					<!--{ / }-->
+				<!--{ / }-->
+			</dd>
+		</dl>
+		<dl>
+			<dt>트래픽</dt>
+			<dd>
+				<span id="traffic_area" >
+					<!--{ ? !serviceLimit('H_EXAD') }-->
+					무제한
+					<!--{ : config_system.service.hosting_code != 'F_SH_X' && config_system.service.traffic > 0 }-->
+						<b>{traffic.usages}</b> / {traffic.limits}(<b>{traffic.state}% 사용중</b>)
+					<!--{ : }-->
+					없음
+					<!--{ / }-->
+				</span>
+				<!--{?functionLimit}-->
+				<a href="javascript:servicedemoalert('use_f');" class="btn_gray {?traffic.state>89}}expire{/}">리셋</a>
+				<!--{ : }-->
+				<a href="http://www.firstmall.kr/myshop/index_service.php?domain={this_admin_env.temp_domain} " target="_blank" title="새창열림" class="btn_gray {?traffic.state>89}}expire{/}">리셋</a>
+				<!--{ / }-->
+			</dd>
+		</dl>
+		<dl>
+			<dt>대표자</dt>
+			<dd>
+				<!--{ ? config_system.service.hosting_code != 'F_SH_X' }-->
+				<!--{ ? config_system.mall_auth_yn!='y' }-->
+				실명인증 필요
+				<!--{ : }-->
+				실명인증 완료
+				<!--{ / }-->
+				 <a href="javascript:;"  onclick="mall_auth_alert();" class="btn_gray">안내</a>
+				<!--{ : }-->
+				없음
+				<!--{ / }-->
+			</dd>
+		</dl>
+	</div>
+	
+	<!-- //요약 정보 -->
+	<div class="main_wrap">
+		<ul class="sub_left">
+			<li>
+				<div class="seller_wrap box_wrap">
+					<h3>주요지표  <span class="rank_priod"> (2016.10.11~2016.10.20)</span></h3>
+					<ul class="tab_menu">
+						<li class="active"><h3>판매상품</h3></li>
+						<li><h3>장바구니</h3></li>
+						<li class="wish"><h3>위시리스트</h3></li>
+						<li class="seller"><h3>{ ?serviceLimit('H_AD') }입점사{ : }검색어{ / }</h3></li>
+					</ul>
+					<div class="tab_sub tab_box1" id="rank_order">
+						<div class="nodata"><span class="icon_nodata"></span> 최근 10일동안<br/>판매된 상품이 없습니다.</div>
+						<!--{ ?serviceLimit('H_FR') }-->
+						<div class="free_upgrade">
+							<div class="nodata">
+								죄송합니다.<br/>
+								본 기능은 상위버전으로<br/>
+								업그레이드 후<br/>
+								이용 가능합니다.
+							</div>
+							<div class="pdt5 center">
+								<img class="hand" onclick="serviceUpgrade();" src="../images/common/btn_upgrade.gif" alt="upgrade">
+							</div>
+						</div>
+						<!--{ / }-->
+					</div>
+					<!--{ ? managerInfo.manager_yn != 'Y' }-->
+					<!--<div  class="noauth">
+						<div class="place">
+							<span class="icon_auth"></span> 권한이 없습니다.
+						</div>
+					</div>-->
+					<!--{ / }-->
+					<div class="tab_sub tab_box2" style="display:none;" id="rank_cart">
+						<div class="nodata"><span class="icon_nodata"></span> 최근 10일동안 장바구니에<br/>담긴 상품이 없습니다.</div>
+					</div>
+					<div class="tab_sub tab_box3" style="display:none;" id="rank_wish">
+						<div class="nodata"><span class="icon_nodata"></span> 최근 10일동안 위시리스트에<br/>담긴 상품이 없습니다.</div>
+					</div>
+					<div class="tab_sub tab_box4" style="display:none;" id="rank_provider">
+						<div class="nodata">
+							{ ?serviceLimit('H_AD') }
+							<span class="icon_nodata"></span> 최근 10일동안<br/>매출이 발생한 입점사가 없습니다.
+							{:}
+							<span class="icon_nodata"></span> 최근 10일동안<br/>검색한 내역이 없습니다.
+							{/}
+						</div>
+					</div>
+				</div>
+				<!-- //입점사 매출 상위 TOP 3 -->
+			</li>
+			<li>
+				<div class="box_wrap">
+					<h3>진행중인 이벤트</h3>
+					<div class="table_wrap">
+						<dl class="hand" onclick="location.href='../event/catalog?event_status%5B%5D=ing';">
+							<dt>할인</dt>
+							<dd>{eventCount}개</dd>
+						</dl>
+						<dl class="hand" onclick="location.href='../event/gift_catalog?event_status%5B%5D=ing';">
+							<dt>사은품</dt>
+							<dd>{giftCount}개</dd>
+						</dl>
+					</div>
+				</div>
+				<!-- //진행중인 이벤트 -->
+			</li>
+			<li>
+				<div class="box_wrap">
+					<h3>매출증빙 요청</h3>
+					<div class="table_wrap">
+						<dl class="wx100 hand" onclick="location.href='../order/sales?tstep%5B%5D=1';">
+							<dt>발급대기</dt>
+							<dd>{saleCount}개</dd>
+						</dl>
+					</div>
+				</div>
+				<!-- //매출증빙 요청 -->
+			</li>
+			<li>
+				<div class="box_wrap">
+					<h3>부가서비스</h3>
+					<div class="service_wrap">
+						<!--{ @ serviceHtml }-->
+						<dl>
+							<dt>{.name}</dt>
+							<dd><a href="{.link}">{.servicetxt}</a></dd>
+						</dl>
+						<!--{ / }-->
+					</div>
+				</div>
+				<!-- //부가서비스 -->
+			</li>
+		</ul>
+		<!-- //좌메뉴 -->
+		<div class="sub_cont">
+			<ul class="detail_wrap">
+				<li class="first">
+					<div class="box_wrap">
+						<h3>등록기계 검색</h3>
+						<div class="search-form-container-new">
+							<table class="search-form-table">
+								<tbody>
+									<tr>
+										<td width="765">
+											<table class="sf-keyword-table" style="position: relative; bottom: 1px;">
+												<tbody>
+													<tr>
+														<td class="sfk-td-txt">
+															<div class="relative">
+																<input type="text" name="keyword" title="등록번호, 아이디" />
+															</div>
+														</td>
+														<td class="sfk-td-btn">
+															<button type="button" onclick="go_salesno_search();"><span>검색</span></button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</li>
+			</ul>
+			
+			<ul class="detail_wrap">
+				<li class="first">
+					<div class="box_wrap">
+						<h3>주요지표</h3>
+						<div class="search-form-container-new">
+							<table class="search-form-table">
+								<tbody>
+									<tr>
+										<td width="765">
+											<table class="sf-keyword-table"  style="border: none;">
+												<tbody>
+													<tr>
+														<td class="sfk-td-txt">
+															<div class="relative">
+																<input type="text" class="datepicker mr10" id="rdate_s" style="width: 42%; border: 1px solid #3385d4;" readonly>&nbsp;&nbsp;~&nbsp;&nbsp; 
+																<input type="text" class="datepicker mr10" id="rdate_f" style="width: 42%; border: 1px solid #3385d4;" readonly>
+															</div>
+														</td>
+														<td class="sfk-td-btn">
+															<button type="button" onclick="go_main_search();"><span>검색</span></button>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</td>
+										<td>
+											<span class="btn small ml5">
+												<input type="button" value="오늘" id="today" class="select_date">	
+											</span>
+											<span class="btn small">
+												<input type="button" value="일주일" id="1week" class="select_date">	
+											</span>
+											<span class="btn small">
+												<input type="button" value="1개월" id="1month" class="select_date">	
+											</span>
+											<span class="btn small">
+												<input type="button" value="1년" id="1year" class="select_date">	
+											</span>
+											<span class="btn small">
+												<input type="button" value="전체" id="select_date_all" class="select_date">	
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="table_wrap" id="main_state">	
+							<dl class="hand">
+								<dt>등록기계</dt>
+								<dd>{state_count_01}대</dd>
+							</dl>
+							<dl class="hand">
+								<dt>판매기계</dt>
+								<dd>{state_count_02}대</dd>
+							</dl>
+							<dl class="hand">
+								<dt>현장미팅</dt>
+								<dd>{state_count_03}건</dd>
+							</dl>
+							<dl class="hand">
+								<dt>프리미엄광고</dt>
+								<dd>{state_count_04}건</dd>
+							</dl>
+							<dl class="hand">
+								<dt>성능평가</dt>
+								<dd>{state_count_05}건</dd>
+							</dl>
+							<dl class="hand">
+								<dt>배송대행</dt>
+								<dd>{state_count_06}건</dd>
+							</dl>
+							<dl class="hand">
+								<dt>외주신청</dt>
+								<dd>{state_count_07}건</dd>
+							</dl>
+							<dl class="hand">
+								<dt>수주신청</dt>
+								<dd>{state_count_08}건</dd>
+							</dl>
+							<dl class="hand">
+								<dt>외주완료</dt>
+								<dd>{state_count_09}건</dd>
+							</dl>
+							<dl class="hand">
+								<dt>회원</dt>
+								<dd>{state_count_10}명</dd>
+							</dl>
+						</div>
+					</div>
+				</li>
+			</ul>
+			
+			<ul class="flow_wrap">
+				<li>
+					<div class="box_wrap">
+						<h3>신청승인</h3>
+						<div class="table_wrap" id="main_permit">	
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>판매등록{? permit_new_01 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_01}대</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>현장미팅{? permit_new_02 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_02}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>가격제안{? permit_new_03 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_03}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>즉시구매{? permit_new_04 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_04}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>낙찰내역{? permit_new_05 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_05}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>계약{? permit_new_06 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_06}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>문의{? permit_new_07 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_07}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>외주신청{? permit_new_08 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_08}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>수주신청{? permit_new_09 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_09}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>외주미팅신청{? permit_new_10 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_10}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>배송대행{? permit_new_11 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_11}건</dd>
+							</dl>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="box_wrap">
+						<h3>진행현황</h3>
+						<div class="table_wrap" id="main_progress">	
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>판매등록{? progress_new_01 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_01}대</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>현장미팅{? progress_new_02 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_02}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>가격제안{? progress_new_03 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_03}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>즉시구매{? progress_new_04 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_04}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>낙찰내역{? progress_new_05 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_05}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>계약{? progress_new_06 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_06}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>문의{? progress_new_07 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_07}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>외주{? progress_new_08 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_08}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>수주{? progress_new_09 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_09}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>외주미팅{? progress_new_10 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_10}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>배송대행{? progress_new_11 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{progress_count_11}건</dd>
+							</dl>
+						</div>
+					</div>
+				</li>
+				<li>
+					<div class="box_wrap">
+						<h3>결제확인</h3>
+						<div class="table_wrap" id="main_pay">	
+							<dl class="hand" onclick="show_list_layer()" style="width: 100%;">
+								<dt>셀프판매 & 현장미팅{? pay_new_01 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_01}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>머박다이렉트{? pay_new_02 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_02}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>비교견적{? pay_new_03 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_03}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>프리미엄광고{? pay_new_04 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_04}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>기계평가{? pay_new_05 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_05}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>성능검사{? pay_new_06 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_06}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>배송대행{? pay_new_07 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_07}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>외주{? pay_new_08 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_08}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>대금보호{? pay_new_09 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_09}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()"> 
+								<dt>판매완료{? pay_new_10 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_10}건</dd>
+							</dl>
+							<dl class="hand" onclick="show_list_layer()"> 
+								<dt>외주완료{? pay_new_11 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{pay_count_11}건</dd>
+							</dl>
+						</div>
+					</div>
+				</li>
+			</ul>
+			
+			<!-- //상세정보 -->
+			<ul class="stats_wrap box_wrap">
+				<li>
+					<ul class="tab_menu">
+						<li class="active" style="width: 50%;"><h3>회원<a href="../statistic_member/member_basic" class="more">더보기</a></h3></li>
+						<li style="width: 50%;"><h3>방문<a href="../statistic_visitor/visitor_basic" class="more">더보기</a></h3></li>
+					</ul>
+					<div class="data rank_priod">(2016.10.11~2016.10.20)</div>
+					<div class="tab_sub tab_box1">
+						<div id="chart2">
+							<div class="nodata2">
+								<span class="icon_nodata"></span>  최근 10일동안<br/>가입된 회원이 없습니다.
+							</div>
+						</div>
+					</div>
+					<div class="tab_sub tab_box2">
+						<div id="chart3">
+							<div class="nodata2">
+								<span class="icon_nodata"></span> 최근 10일동안<br/>쇼핑몰로 방문한 데이터가 없습니다.
+							</div>
+						</div>
+					</div>
+					<!--{ ? managerInfo.manager_yn != 'Y' }-->
+					<!--<div class="noauth2">
+						<div class="place">
+							<span class="icon_auth"></span> 권한이 없습니다.
+						</div>
+					</div>-->
+					<!--{ / }-->
+				</li>
+				<li>
+					<h3>유입경로</h3>
+					<div class="data rank_priod">(2016.10.11~2016.10.20)</div>
+					<div class="inflow">
+						<div id="chart4">
+							<div class="nodata2">
+								<span class="icon_nodata"></span> 최근 10일동안<br/>쇼핑몰로 유입된 데이터가 없습니다.
+							</div>
+						</div>
+					</div>
+					<!--{ ?serviceLimit('H_FR') }-->
+					<div class="free_upgrade2">
+						<div class="nodata2">
+							죄송합니다.<br/>
+							본 기능은 상위버전으로<br/>
+							업그레이드 후<br/>
+							이용 가능합니다.
+						</div>
+						<div class="pdt5 center">
+							<img class="hand" onclick="serviceUpgrade();" src="../images/common/btn_upgrade.gif" alt="upgrade">
+						</div>
+					</div>
+					<!--{ / }-->
+					<!--{ ? managerInfo.manager_yn!= 'Y' }-->
+					<!--<div class="noauth2">
+						<div class="place">
+							<span class="icon_auth"></span> 권한이 없습니다.
+						</div>
+					</div>-->
+					<!--{ / }-->
+				</li>
+			</ul>
+			
+			<!-- //통계정보 -->
+			<ul class="board_wap">
+				<li>
+					<div class="box_wrap">
+						<h3>부가서비스</h3>
+						<div class="service_wrap">
+							<!--{ @ serviceHtml }-->
+							<dl>
+								<dt>{.name}</dt>
+								<dd><a href="{.link}">{.servicetxt}</a></dd>
+							</dl>
+							<!--{ / }-->
+						</div>
+					</div>
+					<!-- //부가서비스 -->
+				</li>
+				<li>
+					<div class="box_wrap">
+						<h3>공지사항</h3>
+						<ul id="print_main_news_notice_area">
+						</ul>
+						<a href="http://www.firstmall.kr/ec_hosting/customer/notice.php" target="_blank" title="새창열림" class="more">더보기</a>
+					</div>
+				</li>
+				<li>
+					<div class="box_wrap">
+						<h3>패치리스트</h3>
+						<ul id="print_main_news_upgrade_area">
+						</ul>
+						<a href="http://www.firstmall.kr/ec_hosting/customer/patch.php" target="_blank" title="새창열림" class="more">더보기</a>
+					</div>
+				</li>
+				<li>
+					<div class="box_wrap">
+						<h3>창업교육</h3>
+						<ul class="edu" id="print_main_news_education_area">
+						</ul>
+						<a href="http://www.firstmall.kr/ec_hosting/education/index.php" target="_blank" title="새창열림" class="more">더보기</a>
+					</div>
+				</li>
+			</ul>
+			<!-- //게시판 -->
+		</div>
+		<!-- //우메인 -->
+	</div>
+	<!-- //메인영역 -->
+	{=getGabiaMainPannel()}
+	<!-- //배너 영역 -->
+</div>
+<!-- //메인 정보 -->
+
+<!-- 비밀번호 변경 -->
+<div id="popup_change_pass"></div>
+<!--{ ? is_change_pass_required }-->
+<script type="text/javascript">change_pass(true);</script>
+<!--{ : is_change_pass }-->
+<script type="text/javascript">change_pass();</script>
+<!--{ / }-->
+<!-- 주요 이슈사항 공지 -->
+<div id="notify_popup" style="padding:0px;"></div>
+
+<div id="smsMyFirstmallInfo" class="hide">
+	<img src="https://interface.firstmall.kr/firstmall_plus/images/sms/sms_aimg01.jpg" usemap="#smsFirstmallMap">
+</div>
+
+<div class="hide" id="mallAdd">
+	<div>
+	쇼핑몰을 추가하여 단일한 관리자 화면으로 한국어, <br/>
+	영어 등 다국어 쇼핑몰 혹은 동일한 언어로 2개 <br/>
+	이상의 쇼핑몰을 운영할 수 있습니다. 추가를 원하시면 <br/>
+	“쇼핑몰 추가” 를 클릭해 주세요.
+	</div>
+	<div class="center pdt5">
+	<a href="https://firstmall.kr/myshop/index.php" target="_blank"><span class="btn large black"><button type="button">쇼핑몰 추가</button></span></a>
+	</div>
+</div>
+
+<div class="hide" id="facebookNotice">
+<!-- //페이스북 관련 공지 18.02.28 kmj -->
+{facebook_notice.content}
+<div style="position:absolute; right:10px;">
+	<input type="checkbox" id="fb_notice_view_check" /> <label for="fb_notice_view_check">일주일 동안 이 창을 열지 않음</label>
+</div>
+</div>
+
+{? config_basic.manual_view == 'N'}
+<div class="hide" id="firstmallGlManualPopup">
+	<div style="width:800px; height:700px;">
+		<iframe name="firstmall_manual" id="firstmall_manual" src="//interface.firstmall.kr/firstmall_manual/firstmall_gl_manual.php?service_code={service_code}" width="800px" height="800px" frameborder="0" allowTransparency="true"></iframe>
+	</div>
+	<div style="bottom:0px; width:800px; background:#666; text-indent:20px; color:#fff; line-height:30px;">
+		<input type="checkbox" id="manual_view_check" /> <label for="manual_view_check">다시 보지 않기</label>
+	</div>
+</div>
+{/}
+
+<map name="smsFirstmallMap">
+	<area shape="rect" coords="0,30,172,72" href="#" onclick="window.open('https://firstmall.kr/myshop/sms/sms_send_phone.php?num={config_system.shopSno}');" title="" target="_blank"/>
+</map>
+
+<!-- 메인 팝업 : START -->
+{ main_popup }
+<!-- 메인 팝업 : END -->
+
+{ #layout_footer }
+
+<div id="state_layer" class="hide">
+	<div id="popup-section-01" class="mb25">
+		<div class="popup-item-title">전체 현황</div>
+		<div class="summary_wrap" style="padding-right: 0;">
+			<ul class="box_wrap"></ul>
+		</div>
+	</div>
+	<div id="popup-section-02" class="mb25">
+		<div class="popup-item-title">세부 현황</div>
+		<div style="overflow-x: scroll;">
+			<table class="list-table-style" style="width: 100%"></table>
+		</div>
+	</div>
+	<div id="popup-section-03">
+		<div class="popup-item-title"><span id="list-title"></span>&nbsp;목록</div>
+		<div style="overflow: scroll; height: 302px;">
+			<table class="list-table-style" style="width: 100%"></table>
+		</div>
+	</div>
+</div>
+
+<div id="list_layer" class="hide">
+	<div class="popup-item-title">
+		<span id="list-title"></span>
+		<span class="btn large black" style="position: absolute; right: 25px; bottom: -3px;"><button type="button" onclick="show_process_layer()">프로세스 보기</button></span>
+	</div>
+	<div style="overflow: scroll; height: 500px;">
+		<table class="list-table-style" style="width: 100%"></table>
+	</div>
+</div>
+
+<div id="permit_layer" class="hide">
+	<form action="/admin/main/sale_permit_process" method="post" target="actionFrame">
+		<input type="hidden" name="info_seq" />
+		
+		<div style="line-height:20px;font-size:12px;" id="section_price" class="hide">
+			해당 기계의 판매희망 금액은 <span id="hope_price"></span>입니다. <br/>
+			해당 기계의 판매금액을 <input type="text" name="real_price" size="6"/> 만원 으로 설정하고
+		</div>
+		<div style="line-height:20px;font-size:12px;">
+			승인 처리를 하겠습니다.
+		</div>	
+		<div class="center" style="padding:10px 0 0;">
+			<span class="btn large black"><button type="button" onclick="go_sale_permit()">승인</button></span>
+		</div>	
+	</form>
+</div>
+
+<div id="common_permit_layer" class="hide">
+	<form action="/admin/main/common_permit_process" method="post" target="actionFrame">
+		<input type="hidden" name="type" />
+		<input type="hidden" id="input_seq" />
+		<input type="hidden" name="pay_type" />
+		
+		<div style="line-height:20px;font-size:12px;" id="section_delivery" class="hide">
+			해당 배송서비스의 결제금액을 <input type="text" name="pay_price" size="6"/> 만원 으로 설정하고
+		</div>	
+		<div style="line-height:20px;font-size:12px;">
+			<span id="txt_type"></span>에 대한 <span id="txt_proc"></span> 처리를 하겠습니다.
+		</div>	
+		<div class="center" style="padding:10px 0 0;">
+			<span class="btn large black"><button type="button" onclick="go_common_permit()" id="btn_common"></button></span>
+		</div>	
+	</form>
+</div>
+
+<div id="qna_layer" class="hide">
+	<form action="/admin/main/common_permit_process" method="post" target="actionFrame">
+		<input type="hidden" name="type" />
+		<input type="hidden" id="input_seq" />
+		<input type="hidden" name="qna_type" />
+		
+		<div style="line-height:20px;font-size:12px;" class="hide" id="section_send">
+			제목 <input type="text" name="title" style="width: 385px;"/>
+			<div style="margin-top:15px;">
+				내용 <textarea name="content" style="width: 385px; height: 95px; vertical-align: top; resize: none;"></textarea>
+			</div>
+		</div>
+		<div style="line-height:20px;font-size:12px;" class="hide" id="section_reply">
+			내용 <textarea name="res_content" rows="5" style="width: 385px; height: 130px; vertical-align: top; resize: none;"></textarea>
+		</div>		
+		<div class="center" style="padding:10px 0 0;">
+			<span class="btn large black"><button type="button" onclick="go_qna_process()" id="btn_qna"></button></span>
+		</div>	
+	</form>
+</div>
+
+<div id="change_deliv_layer" class="hide">
+	<form action="/admin/main/change_deliv_process" method="post" target="actionFrame">
+		<input type="hidden" name="deliv_seq" />
+		
+		<div style="line-height:20px;font-size:12px;">
+			해당 배송대행 서비스의 작업상태를
+			<select name="deliv_state">
+				<option value="작업시작전">작업시작전</option>
+				<option value="작업중">작업중</option>
+				<option value="작업완료">작업완료</option>
+			</select> 
+		    (으)로 변경 처리하겠습니다.
+		</div>
+		<div class="center" style="padding:10px 0 0;">
+			<span class="btn large black"><button type="button" onclick="go_change_deliv()">변경</button></span>
+		</div>	
+	</form>
+</div>
+
+<div id="imdbuy_contract_move_layer" class="hide">
+	<form action="/admin/main/imdbuy_contract_move" method="post" target="actionFrame">
+		<input type="hidden" name="buy_seq" />
+		
+		<div style="line-height:20px;font-size:12px;">
+			해당 즉시구매의 구매금액을
+			<input type="text" name="buy_price" size="6" />&nbsp;만원
+		    (으)로 변경하고 계약을 진행하겠습니다.
+		</div>
+		<div class="center" style="padding:10px 0 0;">
+			<span class="btn large black"><button type="button" onclick="go_imdbuy_contract_move()">변경</button></span>
+		</div>	
+	</form>
+</div>
+
+<div id="process_layer" class="hide">
+	<div id="section_info" class="process-wrap hide">
+		<h2 class="process-title"></h2>
+		<div class="process-row">
+			<h3 class="desc-user">
+				판매자&nbsp;<span class="user-01"></span>&nbsp;&nbsp;&nbsp;
+				구매자&nbsp;<span class="user-02"></span>
+			</h3>
+		</div>
+		<div class="process-row">
+			<ul class="desc-info">
+				<li>매매대금 : <span class="desc-price"></span></li>
+			</ul>	
+		</div>
+		<div class="process-row">
+			<ul class="desc-info">
+				<li>기계분류 : <span class="kind_type"></span></li>
+				<li>기계종류 : <span class="kind_name"></span></li>
+				<li>기계명 : <span class="model_name"></span></li>
+				<li>제조사 : <span class="mnf_name"></span></li>
+				<li>연식 : <span class="model_year"></span></li>
+				<li>컨트롤러 : <span class="controller"></span></li>
+				<li>기계사양 : <span class="option_list"></span></li>
+			</ul>
+		</div>
+		<div class="process-step">
+			<ul></ul>
+		</div>
+		<div class="process-timeline">
+			<table></table>
+		</div>
+	</div>
+	<div id="section_osc" class="process-wrap hide">
+	    <h2 class="process-title"></h2>    
+		<div class="process-row">
+			<h3 class="desc-user">
+				외주사&nbsp;<span class="user-01"></span>&nbsp;&nbsp;&nbsp;
+				수주사&nbsp;<span class="user-02"></span>
+			</h3>
+		</div>
+		<div class="process-row">
+			<ul class="desc-info">
+				<li>계약대금 : <span class="desc-price"></span></li>
+			</ul>	
+		</div>
+		<div class="process-row">
+			<ul class="desc-info">
+				<li>카테고리 : <span class="cate"></span></li>
+				<li>세부 : <span class="cate_sub"></span></li>
+				<li>예상기간 : <span class="expect_date"></span></li>
+				<li>업무지역 : <span class="area_name"></span></li>
+				<li>업무시작일 : <span class="start_expect_date"></span></li>
+			</ul>
+		</div>
+		<div class="process-step">
+			<ul></ul>
+		</div>
+		<div class="process-timeline">
+			<table></table>
+		</div>
+	</div>
+</div>
+
+<form method="post" target="actionFrame">
+	<input type="hidden" name="mode" value="" />
+	<input type="hidden" name="serialize" id="serialize" value=""/>
+	<input type="hidden" name="mcount" value="0">
+	<input type="hidden" name="member" value="search">
+	<input type="hidden" name="searchSelect" value="search">
+	<input type="hidden" name="selectMember" value="">
+	<input type="hidden" name="wheres" value=""/>
+</form>
+
+<script>
+	$(document).ready(function(){
+		$('#rdate_s').val(getDate(0));
+		$('#rdate_f').val(getDate(0));
+	});
+	$('.table_wrap dl').on('click', function() {
+		$('.table_wrap dl').removeClass('active');
+		$(this).addClass('active');
+	});
+	
+	function show_sale_permit_layer(type, info_seq, hope_price) {
+		var height = 200;
+		$('#permit_layer #section_price').addClass('hide');
+		if(type == 'emergency' || type == 'direct') {
+			$('#permit_layer #section_price').removeClass('hide');
+			height = 230;
+		}
+		$('#permit_layer input[name=info_seq]').val(info_seq);
+		$('#permit_layer #hope_price').text(price_format(hope_price) + '원');
+		openDialog('판매승인', "permit_layer", {"width":"500","height":height});
+	}
+	
+	function go_sale_permit() {
+ 	    if(!$('#permit_layer #section_price').hasClass('hide')) {
+ 	    	if($('#permit_layer input[name=real_price]').val() == '') {
+ 	    		alert('판매금액을 설정해주세요.');
+ 	    		$('#permit_layer input[name=real_price]').focus();
+ 	    		return;
+ 	    	}
+ 	    }
+ 	    if(confirm('승인 처리하시겠습니까 ?')) {
+ 	    	var price = $('#permit_layer input[name=real_price]').val();
+ 	    	$('#permit_layer input[name=real_price]').val(price + '0000');
+ 	    	$('#permit_layer form').submit();
+ 	    }
+	}
+	
+	function show_common_permit_layer(type, name, seq) {
+		if(type == '배송대행') 
+			$('#common_permit_layer #section_delivery').removeClass('hide');
+		else
+			$('#common_permit_layer #section_delivery').addClass('hide');
+		$('#common_permit_layer input[name=type]').val(type);
+		$('#common_permit_layer #input_seq').attr('name', name);
+		$('#common_permit_layer #input_seq').val(seq);
+		$('#common_permit_layer #txt_type').text(type);
+		$('#common_permit_layer #txt_proc').text('승인');
+		$('#common_permit_layer #btn_common').text('승인');
+		openDialog(type + ' 승인', "common_permit_layer", {"width":"500","height":"200"});
+	}
+	
+	function show_common_pay_layer(type, name, seq, pay_state) {
+		if(pay_state == '결제확인' || pay_state == '취소') {
+			alert('현재 ' + pay_state + ' 상태 입니다.');
+			return;
+		}
+		
+		$('#common_permit_layer input[name=type]').val('결제확인');
+		$('#common_permit_layer input[name=pay_type]').val(type);
+		$('#common_permit_layer #input_seq').attr('name', name);
+		$('#common_permit_layer #input_seq').val(seq);
+		$('#common_permit_layer #txt_type').text(type);
+		$('#common_permit_layer #txt_proc').text('결제확인');
+		$('#common_permit_layer #btn_common').text('확인');
+		
+		if(type == '셀프판매 & 현장미팅') {
+			$('#common_permit_layer form').attr('action', '/admin/sale/visit_pay_check');
+		} else if (type == '셀프판매') {
+			$('#common_permit_layer input[name=type]').val(type);
+		} else {
+			$('#common_permit_layer form').attr('action', '/admin/main/common_permit_process');
+		}
+		openDialog(type + ' 결제확인', "common_permit_layer", {"width":"500","height":"200"});
+	}
+	
+	function go_common_permit() {
+		if(!$('#common_permit_layer #section_delivery').hasClass('hide')) {
+ 	    	if($('#common_permit_layer input[name=pay_price]').val() == '') {
+ 	    		alert('결제금액을 설정해주세요.');
+ 	    		$('#common_permit_layer input[name=pay_price]').focus();
+ 	    		return;
+ 	    	}
+ 	    }
+ 	    if(confirm($('#common_permit_layer #txt_proc').text() + ' 처리하시겠습니까 ?')) {
+ 	    	var price = $('#common_permit_layer input[name=pay_price]').val();
+ 	    	$('#common_permit_layer input[name=pay_price]').val(price + '0000');
+ 	    	$('#common_permit_layer form').submit();
+ 	    }
+	}
+	
+	function show_qna_send_layer(type, name, seq, title, content) {
+		$('#qna_layer #section_send').removeClass('hide');
+		$('#qna_layer #section_reply').addClass('hide');
+		$('#qna_layer input[name=type]').val(type);
+		$('#qna_layer input[name=qna_type]').val('send');
+		$('#qna_layer #input_seq').attr('name', name);
+		$('#qna_layer #input_seq').val(seq);
+		$('#qna_layer input[name=title]').val(title);
+		$('#qna_layer textarea[name=content]').val(content);
+		$('#qna_layer #btn_qna').text('전송');
+		openDialog(type + ' 전송', "qna_layer", {"width":"500","height":"320"});
+	}
+	
+	function show_qna_reply_layer(type, name, seq, res_yn, res_content) {
+		if(res_yn == 'y') {
+			alert('이미 답변을 한 문의입니다.');
+			return;
+		}
+		if(res_content == 'null') 
+			res_content = '';
+		$('#qna_layer #section_send').addClass('hide');
+		$('#qna_layer #section_reply').removeClass('hide');
+		$('#qna_layer input[name=type]').val(type);
+		$('#qna_layer input[name=qna_type]').val('reply');
+		$('#qna_layer #input_seq').attr('name', name);
+		$('#qna_layer #input_seq').val(seq);
+		$('#qna_layer textarea[name=res_content]').val(res_content);
+		$('#qna_layer #btn_qna').text('답변');
+		openDialog(type + ' 답변', "qna_layer", {"width":"500","height":"320"});
+	}
+	
+	function go_qna_process() {
+		var qna_type = $('#qna_layer input[name=qna_type]').val();
+		if(qna_type == 'send') {
+			if($('#qna_layer input[name=title]').val() == '') {
+				alert('제목을 입력해주세요.');
+				$('#qna_layer input[name=title]').focus();
+				return;
+			} else if($('#qna_layer textarea[name=content]').val() == '') {
+				alert('내용을 입력해주세요.');
+				$('#qna_layer textarea[name=content]').focus();
+				return;
+			}
+			if(confirm('위의 내용으로 판매자에게 문의를 전송하시겠습니까 ?')) {
+				$('#qna_layer form').submit();
+			}
+		} else if(qna_type == 'reply') {
+			if($('#qna_layer textarea[name=res_content]').val() == '') {
+				alert('내용을 입력해주세요.');
+				$('#qna_layer textarea[name=res_content]').focus();
+				return;
+			}
+			if(confirm('위의 내용으로 구매자에게 답변을 전송하시겠습니까 ?')) {
+				$('#qna_layer form').submit();
+			}
+		}  
+	}
+	
+	function show_change_deliv_layer(deliv_seq, deliv_state) {
+			$('#change_deliv_layer input[name=deliv_seq]').val(deliv_seq);
+			$.each($('#change_deliv_layer select[name=deliv_state] option'), function(index, value) {
+				 if($(this).val() == deliv_state) {
+					 $(this).prop('selected', true);
+					 return;
+				 }
+			});
+			openDialog('작업상태 변경', "change_deliv_layer", {"width":"500","height":"200"});
+	}
+	
+	function go_change_deliv() {
+		if(confirm('선택하신 상태로 변경하시겠습니까 ?')) {
+			$('#change_deliv_layer form').submit();			 
+		}
+    }   
+	
+    function show_contract_form(cont_seq) {
+        if(confirm('계약서를 작성하시겠습니까 ?')) {
+            $.ajax({
+                type: 'post',
+                url: '/admin/main/contract_write_process',
+                dataType: 'json',
+                data: {'cont_seq': cont_seq},
+                success: function(data) {
+                    if(data.result == true) {
+                        alert('작성 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('일시적인 에러가 발생하였습니다.');
+                    }
+                },
+                error: function() {
+                    console.log('error');
+                }
+            });
+        }    
+    }
+    
+    function go_process_finish(cont_seq) {
+        if(confirm('완료 처리하시겠습니까 ?')) {
+            $.ajax({
+                type: 'post',
+                url: '/admin/main/process_finish',
+                dataType: 'json',
+                data: {'cont_seq': cont_seq},
+                success: function(data) {
+                    if(data.result == true) {
+                        alert('처리 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('일시적인 에러가 발생하였습니다.');
+                    }
+                },
+                error: function() {
+                    console.log('error');
+                }
+            });
+        }
+    }
+	
+	function go_contract_cancel(cont_seq) {
+        if(confirm('취소 처리하시겠습니까 ?')) {
+            $.ajax({
+                type: 'post',
+                url: '/admin/main/contract_cancel',
+                dataType: 'json',
+                data: {'cont_seq': cont_seq},
+                success: function(data) {
+                    if(data.result == true) {
+                        alert('처리 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('일시적인 에러가 발생하였습니다.');
+                    }
+                },
+                error: function() {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    
+    function show_imdbuy_contract_move(buy_seq, buy_price) {
+        $('#imdbuy_contract_move_layer input[name=buy_seq]').val(buy_seq);
+        $('#imdbuy_contract_move_layer input[name=buy_price]').val(String(buy_price).replace('0000', ''));
+        openDialog('즉시구매 확인', "imdbuy_contract_move_layer", {"width":"520","height":"200"});
+    }
+    
+    function go_imdbuy_contract_move() {
+        if(confirm('계약을 진행하시겠습니까 ?')) {
+            var buy_price = $('#imdbuy_contract_move_layer input[name=buy_price]').val() + '0000';
+            $('#imdbuy_contract_move_layer input[name=buy_price]').val(buy_price);
+            $('#imdbuy_contract_move_layer form').submit();
+        }
+    }
+    
+    function go_bid_contract_move(bid_seq, bid_price) {
+        if(confirm('계약을 진행하시겠습니까 ?')) {
+            $.ajax({
+                type: 'post',
+                url: '/admin/main/bid_contract_move',
+                dataType: 'json',
+                data: {'bid_seq': bid_seq, 'bid_price': bid_price},
+                success: function(data) {
+                    if(data.result == true) {
+                        alert('처리 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('일시적인 에러가 발생하였습니다.');
+                    }
+                },
+                error: function() {
+                    console.log('error');
+                }
+            });
+        }
+    }
+    
+	function show_process_layer() {
+		var type = $('#list_layer table .chk_one:checked').data('type');
+		var seq = $('#list_layer table .chk_one:checked').val();
+		
+		if($('#list_layer table .chk_one:checked').length > 1) {
+			alert('하나의 항목만 선택해주세요');
+			return;
+		}
+		if(!type) {
+			alert('프로세스를 보실 항목을 선택해주세요.');
+			return;
+		}
+		if(!seq) {
+			alert('기계정보를 불러올 수 없습니다.');
+			return;
+		}
+		$.ajax({
+			type: 'post',
+			url: '/admin/main/get_process_data',
+			dataType: 'json', 
+			data: {'type': type, 'seq': seq},
+			success: function(data) {
+				var info = data.info;
+				if(type == 'info') {
+					$('#process_layer #section_info').removeClass('hide');
+					$('#process_layer #section_osc').addClass('hide');
+					
+					$('#section_info .process-title').text(info.kind_type + ' ' + info.model_name + ' ' + price_format(info.sort_price) + '원 매매');
+					$('#section_info .desc-user .user-01').text(info.sale_userid);
+					$('#section_info .desc-user .user-02').text(info.buy_userid);
+					$('#section_info .desc-price').text(price_format(info.sort_price) + '원');
+					$('#section_info .kind_type').text(info.kind_type);
+					$('#section_info .kind_name').text(info.kind_name);
+					$('#section_info .model_name').text(info.model_name);
+					$('#section_info .mnf_name').text(info.mnf_name);
+					$('#section_info .model_year').text(info.model_year + '년');
+					$('#section_info .controller').text(info.controller);
+					$('#section_info .option_list').text(info.option_list);
+					
+					var html = '';
+					html += '<li><span class="text-step">프로세스</span></li>';
+					html += '<li' + (data.step == "등록" ? ' class="active"' : '') + '><span class="text-step">등록</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "광고" ? ' class="active"' : '') + '><span class="text-step">광고</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "현장미팅" ? ' class="active"' : '') + '><span class="text-step">현장미팅</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "계약" ? ' class="active"' : '') + '><span class="text-step">계약</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "대금보호" ? ' class="active"' : '') + '><span class="text-step">대금보호</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "배송" ? ' class="active"' : '') + '><span class="text-step">배송</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "완료" ? ' class="active"' : '') + '><span class="text-step">완료</span><span class="arrow"></span></li>';
+					$('#section_info .process-step ul').html(html);
+					
+					html = '';
+					$.each(data.timeline, function(key, value) {
+						html += '<tr>';
+						html += '<th>' + key + '</th>';
+						$.each(value, function(idx, val) {
+							html += '<td' + (val == "-" ? ' class="no-date"' : '') + '>' + val + '</td>';
+						});
+						html += '</tr>';
+					});
+					$('#process_layer .process-timeline table').html(html);
+				} else if (type == 'osc') {
+					$('#process_layer #section_info').addClass('hide');
+					$('#process_layer #section_osc').removeClass('hide');
+					
+                    $('#section_osc .process-title').text(info.osc_name);
+					$('#section_osc .desc-user .user-01').text(info.osc_userid);
+					$('#section_osc .desc-user .user-02').text(info.ptn_userid);
+					$('#section_osc .desc-price').text(price_format(info.budget) + '원');
+					$('#section_osc .cate').text(info.cate_name);
+					$('#section_osc .cate_sub').text(info.cate_sub);
+					$('#section_osc .expect_date').text(info.expect_date);
+					$('#section_osc .area_name').text(info.area_name);
+					$('#section_osc .start_expect_date').text(info.start_expect_date);
+					
+					var html = '';
+					html += '<li><span class="text-step">프로세스</span></li>';
+					html += '<li' + (data.step == "등록" ? ' class="active"' : '') + '><span class="text-step">등록</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "광고" ? ' class="active"' : '') + '><span class="text-step">광고</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "미팅" ? ' class="active"' : '') + '><span class="text-step">미팅</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "계약" ? ' class="active"' : '') + '><span class="text-step">계약</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "대금보호" ? ' class="active"' : '') + '><span class="text-step">대금보호</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "진행" ? ' class="active"' : '') + '><span class="text-step">진행</span><span class="arrow"></span></li>';
+					html += '<li' + (data.step == "완료" ? ' class="active"' : '') + '><span class="text-step">완료</span><span class="arrow"></span></li>';
+					$('#section_osc .process-step ul').html(html);
+					
+					html = '';
+					$.each(data.timeline, function(key, value) {
+						html += '<tr>';
+						html += '<th>' + key + '</th>';
+						$.each(value, function(idx, val) {
+							html += '<td' + (val == "-" ? ' class="no-date"' : '') + '>' + val + '</td>';
+						});
+						html += '</tr>';
+					});
+					$('#process_layer .process-timeline table').html(html);
+				}
+				openDialog("프로세스 보기", "process_layer", {"width":"1300","height":"550"});
+			},
+			error: function() {
+				console.log('error');
+			}
+		});
+	}
+	
+	function go_salesno_search() {
+		 var keyword = $('input[name=keyword]').val();
+		 if(keyword == '') {
+			 alert('검색할 키워드를 입력해주세요.');
+			 $('input[name=keyword]').focus();
+			 return;
+		 }
+		 $.ajax({
+			  type: 'post',
+			  url: 'get_sales_list_search',
+			  dataType: 'json',
+			  data: {'keyword': keyword},
+			  success: function(data) {
+				  var th_data = '';
+				  var td_data = '';
+					if(data.list.length > 0) {
+						th_data += '<th width="60">선택</th>';
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="130">등록일</th>';
+						th_data += '<th width="100">아이디</th>';
+						th_data += '<th width="110">등록번호</th>';
+						th_data += '<th width="120">기계분류</th>';
+						th_data += '<th width="120">기계종류</th>';
+						th_data += '<th width="120">제조사</th>';
+						th_data += '<th width="120">모델명</th>';
+						th_data += '<th width="160">사진</th>';
+						th_data += '<th width="100">판매유형</th>';
+						th_data += '<th width="80">상태</th>';
+						th_data += '<th width="100">바로가기</th>';
+						
+						$.each(data.list, function(index, value) {
+							var type_nm = '';
+							if(value.type == 'self') {
+								type_nm = '셀프판매';
+							} else if(value.type == 'emergency') {
+								type_nm = '긴급판매';
+							} else if(value.type == 'direct') {
+								type_nm = '머박다이렉트';
+							} else if(value.type == 'turnkey') {
+								type_nm = '턴키매각';
+							}
+							var state = '';
+							if(value.wait_yn == 'y')
+								state = '재등록 대기';
+							else
+								state = value.state;
+							
+							td_data += '<tr class="list-row" style="height: 60px;">';
+							td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center">' + value.sales_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+							td_data += '<td align="center">' + value.kind_type + '</td>';
+							td_data += '<td align="center">' + value.kind_name + '</td>';
+							td_data += '<td align="center">' + value.mnf_name + '</td>';
+							td_data += '<td align="center">' + value.model_name + '</td>';
+							td_data += '<td align="left">'
+							$.each(value.picture_list, function(idx, val) {
+								td_data += '<img src="' + val.path + '" width="34" height="35" title="' + val.path + '" style="margin-left:3px; margin-top: 2px; margin-bottom: 2px;" /">';
+							});
+							td_data += '</td>';
+							td_data += '<td align="center">' + type_nm + '</td>';
+							td_data += '<td align="center">' + state + '</td>';
+							td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="이동" onclick="location.href=\'/admin/sale/' + value.type + '_status\'"/></span></div></td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>검색</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">검색된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					var html = get_table_html(th_data, td_data);
+					$('#list_layer #list-title').text('등록기계 검색결과');
+					$('#list_layer table').html(html);
+					openDialog("등록기계 검색", "list_layer", {"width":"1200","height":"700"});
+			  }, 
+			  error: function() {
+				  console.log('error');
+			  }
+		 });
+	}
+	
+	function go_main_search() {
+		var date_s = $('#rdate_s').val();
+		var date_f = $('#rdate_f').val();
+		var type = $('#main_state dl.active dt').text();
+		
+		if(!type) {
+			alert('검색할 지표를 선택해주세요.');
+			return;
+		}
+		var range = '';
+		if(date_s == '' && date_f == '')
+			range = '전체';
+		else
+			range = '검색';
+		$.ajax({
+			type: 'post',
+			url: '/admin/main/get_state_list',
+			dataType: 'json',
+			data: {'type': type, 'date_s': date_s, 'date_f': date_f},
+			success: function(data) {
+				var html_01 = '';
+				var html_02 = '';
+				var th_data = '';
+				var td_data = '';
+				var html_03 = '';
+				
+				$('#popup-section-01').removeClass('hide');
+				$('#popup-section-02').removeClass('hide');
+				$('#popup-section-03').removeClass('hide');
+				if(data.type == '등록기계') {
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 등록기계 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>판매금액 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>셀프판매 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.self_total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>셀프판매 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.self_total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>머박다이렉트 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.direct_total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>머박다이렉트 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.direct_total_price).replace('0000' , '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>긴급판매 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.emergency_total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>긴급판매 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.emergency_total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>턴키매각 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.turnkey_total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>턴키매각 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.turnkey_total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.count_list.head_list.length > 0) {
+						$.each(data.count_list.head_list, function(index, value) {
+							th_data += '<th width="160">' + value + '</th>';
+						});
+						td_data += '<tr class="list-row">';
+						$.each(data.count_list.body_list, function(index, value) {
+							td_data += '<td align="center">' + value + ' 대</td>';
+						});
+						td_data += '</tr>';
+					} else {
+						th_data += '<th>세부현황</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_02 = get_table_html(th_data, td_data);
+					
+					th_data = '';
+					td_data = '';
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="140">등록번호</th>';
+						th_data += '<th width="170">등록일</th>';
+						th_data += '<th width="150">판매자</th>';
+						th_data += '<th width="120">판매유형</th>';
+						th_data += '<th width="170">승인일</th>';
+						th_data += '<th width="100">상태</th>';
+						
+						$.each(data.list, function(index, value) {
+							var type_nm = '';
+							if(value.type == 'self') {
+								type_nm = '셀프판매';
+							} else if(value.type == 'emergency') {
+								type_nm = '긴급판매';
+							} else if(value.type == 'direct') {
+								type_nm = '머박다이렉트';
+							} else if(value.type == 'turnkey') {
+								type_nm = '턴키매각';
+							}
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></a></td>';
+							td_data += '<td align="center">' + value.sales_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center">' + type_nm + '</td>';
+							td_data += '<td align="center">' + value.state_date + '</td>';
+							td_data += '<td align="center">' + value.state + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '판매기계') {
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 판매기계 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>판매금액 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>셀프판매 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.self_total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>셀프판매 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.self_total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>머박다이렉트 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.direct_total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>머박다이렉트 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.direct_total_price).replace('0000' , '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>긴급판매 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.emergency_total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>긴급판매 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.emergency_total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>턴키매각 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.turnkey_total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>턴키매각 <span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.turnkey_total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.count_list.head_list.length > 0) {
+						$.each(data.count_list.head_list, function(index, value) {
+							th_data += '<th width="160">' + value + '</th>';
+						});
+						td_data += '<tr class="list-row">';
+						$.each(data.count_list.body_list, function(index, value) {
+							td_data += '<td align="center">' + value + ' 대</td>';
+						});
+						td_data += '</tr>';
+					} else {
+						th_data += '<th>세부현황</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_02 = get_table_html(th_data, td_data);
+					
+					th_data = '';
+					td_data = '';
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="160">등록번호</th>';
+						th_data += '<th width="200">등록일</th>';
+						th_data += '<th width="180">판매자</th>';
+						th_data += '<th width="160">판매유형</th>';
+						th_data += '<th width="200">판매방식</th>';
+						th_data += '<th width="140">판매금액</th>';
+						
+						$.each(data.list, function(index, value) {
+							var type_nm = '';
+							if(value.type == 'self') {
+								type_nm = '셀프판매';
+							} else if(value.type == 'emergency') {
+								type_nm = '긴급판매';
+							} else if(value.type == 'direct') {
+								type_nm = '머박다이렉트';
+							} else if(value.type == 'turnkey') {
+								type_nm = '턴키매각';
+							}
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+							td_data += '<td align="center">' + value.sales_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center">' + type_nm + '</td>';
+							td_data += '<td align="center">' + value.sales_method + '</td>';
+							td_data += '<td align="center">' + price_format(value.sales_price) + '원</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '현장미팅') {
+					$('#popup-section-02').addClass('hide');
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 현장방문 <span>(건)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="130">등록번호</th>';
+						th_data += '<th width="160">신청일</th>';
+						th_data += '<th width="180">판매자</th>';
+						th_data += '<th width="180">구매자</th>';
+						th_data += '<th width="160">방문예정일</th>';
+						th_data += '<th width="140">진행상태</th>';
+						
+						$.each(data.list, function(index, value) {
+							var state = '';
+							if(value.visit_state == '1')
+								state = '방문신청';
+							else if(value.visit_state == '2')
+								state = '판매자 방문일 선택완료';
+							else if(value.visit_state == '3')
+								state = '미팅예약 완료';
+							else if(value.visit_state == '4')
+								state = '현장방문 완료';
+							else if(value.visit_state == '5')
+								state = '현장방문 취소';
+							var hope_date = '';
+							if(value.hope_date) 
+								hope_date = value.hope_date;
+							else
+								hope_date = '-';
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+							td_data += '<td align="center">' + value.reg_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.sale_userid + '\')">' + value.sale_userid + '</a></td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+							td_data += '<td align="center">' + hope_date + '</td>';
+							td_data += '<td align="center">' + state + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '긴급판매') {
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>전체 긴급판매 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.count_list.head_list.length > 0) {
+						$.each(data.count_list.head_list, function(index, value) {
+							th_data += '<th width="160">' + value + '</th>';
+						});
+						td_data += '<tr class="list-row">';
+						$.each(data.count_list.body_list, function(index, value) {
+							td_data += '<td align="center">' + value + ' 대</td>';
+						});
+						td_data += '</tr>';
+					} else {
+						th_data += '<th>세부현황</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_02 = get_table_html(th_data, td_data);
+					
+					th_data = '';
+					td_data = '';
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="160">등록번호</th>';
+						th_data += '<th width="200">등록일</th>';
+						th_data += '<th width="180">판매자</th>';
+						th_data += '<th width="160">판매유형</th>';
+						th_data += '<th width="120">상태</th>';
+						
+						$.each(data.list, function(index, value) {
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+							td_data += '<td align="center">' + value.sales_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center">' + (value.type == 'self' ? '셀프판매' : (value.type == 'emergency' ? '긴급판매' : '머박다이렉트')) + '</td>';
+							td_data += '<td align="center">' + value.state + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '머박다이렉트') {
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>전체 머박다이렉트 <span>(대)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.count_list.head_list.length > 0) {
+						$.each(data.count_list.head_list, function(index, value) {
+							th_data += '<th width="160">' + value + '</th>';
+						});
+						td_data += '<tr class="list-row">';
+						$.each(data.count_list.body_list, function(index, value) {
+							td_data += '<td align="center">' + value + ' 대</td>';
+						});
+						td_data += '</tr>';
+					} else {
+						th_data += '<th>세부현황</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_02 = get_table_html(th_data, td_data);
+					
+					th_data = '';
+					td_data = '';
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="160">등록번호</th>';
+						th_data += '<th width="200">등록일</th>';
+						th_data += '<th width="180">판매자</th>';
+						th_data += '<th width="160">판매유형</th>';
+						th_data += '<th width="120">상태</th>';
+						
+						$.each(data.list, function(index, value) {
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+							td_data += '<td align="center">' + value.sales_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center">' + (value.type == 'self' ? '셀프판매' : (value.type == 'emergency' ? '긴급판매' : '머박다이렉트')) + '</td>';
+							td_data += '<td align="center">' + value.state + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '프리미엄광고') {
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 프리미엄광고 <span>(건)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>프리미엄광고 금액<span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					if(data.count_list.head_list.length > 0) {
+						$.each(data.count_list.head_list, function(index, value) {
+							th_data += '<th width="160">' + value + '</th>';
+						});
+						td_data += '<tr class="list-row">';
+						$.each(data.count_list.body_list, function(index, value) {
+							td_data += '<td align="center">' + value + ' 건</td>';
+						});
+						td_data += '</tr>';
+					} else {
+						th_data += '<th>세부현황</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_02 = get_table_html(th_data, td_data);
+					
+					th_data = '';
+					td_data = '';
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="160">등록번호</th>';
+						th_data += '<th width="200">신청일</th>';
+						th_data += '<th width="180">판매자</th>';
+						th_data += '<th width="*">프리미엄 광고</th>';
+						
+						$.each(data.list, function(index, value) {
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+							td_data += '<td align="center">' + value.reg_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center">' + value.ad_list + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '성능평가') {
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 성능평가 <span>(건)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 성능평가 금액<span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.count_list.head_list.length > 0) {
+						$.each(data.count_list.head_list, function(index, value) {
+							th_data += '<th width="160">' + value + '</th>';
+						});
+						td_data += '<tr class="list-row">';
+						$.each(data.count_list.body_list, function(index, value) {
+							td_data += '<td align="center">' + value + ' 건</td>';
+						});
+						td_data += '</tr>';
+					} else {
+						th_data += '<th>세부현황</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_02 = get_table_html(th_data, td_data);
+					
+					th_data = '';
+					td_data = '';
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="160">등록번호</th>';
+						th_data += '<th width="200">신청일</th>';
+						th_data += '<th width="200">신청자</th>';
+						th_data += '<th width="*">서비스명</th>';
+						
+						$.each(data.list, function(index, value) {
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+							td_data += '<td align="center">' + value.reg_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center">' + value.service_name + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '배송대행') {
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 배송대행 <span>(건)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 배송대행 금액<span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.count_list.head_list.length > 0) {
+						$.each(data.count_list.head_list, function(index, value) {
+							th_data += '<th width="160">' + value + '</th>';
+						});
+						td_data += '<tr class="list-row">';
+						$.each(data.count_list.body_list, function(index, value) {
+							td_data += '<td align="center">' + value + ' 건</td>';
+						});
+						td_data += '</tr>';
+					} else {
+						th_data += '<th>세부현황</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_02 = get_table_html(th_data, td_data);
+					
+					th_data = '';
+					td_data = '';
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="150">등록번호</th>';
+						th_data += '<th width="180">신청일</th>';
+						th_data += '<th width="130">신청자</th>';
+						th_data += '<th width="*">신청서비스</th>';
+						th_data += '<th width="210">작업기간</th>';
+						th_data += '<th width="150">작업상태</th>';
+						
+						$.each(data.list, function(index, value) {
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+							td_data += '<td align="center">' + value.reg_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center">' + value.service_list + '</td>';
+							td_data += '<td align="center">' + value.duration + '</td>';
+							td_data += '<td align="center">' + value.deliv_state + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '외주신청') {
+					$('#popup-section-02').addClass('hide');
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 외주신청 <span>(건)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 외주신청 금액<span>(만원)</span></dt>';
+					html_01 += '		<dd class="icon third" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(String(data.count_obj.total_price).replace('0000', '')) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="150">신청일</th>';
+						th_data += '<th width="120">외주자</th>';
+						th_data += '<th width="180">외주명</th>';
+						th_data += '<th width="350">외주내용</th>';
+						th_data += '<th width="120">외주금액</th>';
+						th_data += '<th width="120">마감일</th>';
+						th_data += '<th width="280">지원자 (지원일)</th>';
+						th_data += '<th width="120">상태</th>';
+						
+						$.each(data.list, function(index, value) {
+							var state = '';
+							if(value.state == '1') 
+								state = '모집중';
+							else if (value.state == '2') 
+								state = '모집마감';
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center">' + value.reg_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></a></td>';
+							td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+							td_data += '<td align="center">' + price_format(value.budget) + '원</td>';
+							td_data += '<td align="center">' + value.osc_end_date + '</td>';
+							td_data += '<td align="center" class="pd5">';
+							if(value.apply_list.length == 0) {
+								td_data += '없음';
+							} else {
+								$.each(value.apply_list, function (idx, val) {
+									 td_data += '<a href="/mch/partner_info/' + val.partner_seq + '" target="_blank" class="d-block pd5" style="border-bottom: 1px solid #eeeeee; border-top: 1px solid #eeeeee;">' + val.userid + ' (' + val.reg_date + ')</a>';
+								});
+							}
+							td_data += '</td>';
+							td_data += '<td align="center">' + state + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '수주신청') {
+					$('#popup-section-02').addClass('hide');
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 수주신청 <span>(건)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="200">신청일</th>';
+						th_data += '<th width="180">지원자</th>';
+						th_data += '<th width="220">지원한 외주</th>';
+						th_data += '<th width="180">상태</th>';
+						
+						$.each(data.list, function(index, value) {
+							var state = '';
+							if(value.partner_state == '0') 
+								state = '대기';
+							else if (value.partner_state == '1') 
+								state = '미팅';
+							else if (value.partner_state == '2') 
+								state = '계약';
+							else if (value.partner_state == '3') 
+								state = '완료';
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center">' + value.date + '</td>';
+							td_data += '<td align="center">' + value.partner_id + '</td>';
+							td_data += '<td align="center"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></a></td>';
+							td_data += '<td align="center">' + state + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '외주완료') {
+					$('#popup-section-02').addClass('hide');
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>' + range + ' 외주완료 <span>(건)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>외주금액 <span>(원)</span></dt>';
+					html_01 += '		<dd class="icon second" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + comma(data.count_obj.total_price) + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="200">완료일</th>';
+						th_data += '<th width="180">외주자</th>';
+						th_data += '<th width="220">외주명</th>';
+						th_data += '<th width="*">외주내용</th>';
+						th_data += '<th width="220">외주금액</th>';
+						
+						$.each(data.list, function(index, value) {
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center">' + value.finish_date + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center" class="pd5"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></td>';
+							td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+							td_data += '<td align="center">' + price_format(value.budget) + '원</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				} else if (data.type == '회원') {
+					$('#popup-section-02').addClass('hide');
+					console.log(data.count_obj.obj);
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>전체 회원 <span>(명)</span></dt>';
+					html_01 += '		<dd class="icon five" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.total_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>가입한 회원 <span>(명)</span></dt>';
+					html_01 += '		<dd class="icon four" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.regist_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					html_01 += '<li>';
+					html_01 += '	<dl>';
+					html_01 += '		<dt>방문자 수 <span>(명)</span></dt>';
+					html_01 += '		<dd class="icon four" style="background-color: #1abe9c;"></dd>';
+					html_01 += '		<dd id="summary-count">' + data.count_obj.visit_count + '</dd>';
+					html_01 += '	</dl>';
+					html_01 += '</li>';
+					
+					if(data.list.length > 0) {
+						th_data += '<th width="60">번호</th>';
+						th_data += '<th width="70">승인</th>';
+						th_data += '<th width="80">유형</th>';
+						th_data += '<th width="150">아이디</th>';
+						th_data += '<th width="180">이름(닉네임)</th>';
+						th_data += '<th width="180">이메일</th>';
+						th_data += '<th width="160">핸드폰</th>';
+						th_data += '<th width="190">가입일</th>';
+						
+						$.each(data.list, function(index, value) {
+							var bpermit = '';
+							if(value.bpermit_yn == 'y')
+								bpermit = '승인';
+							else
+								bpermit = '미승인';
+							
+							var gubun = '';
+							var username = '';
+							if(value.type == '개인') {
+								gubun = '<img src="../images/common/icon/icon_personal.gif" />';
+								username += value.user_name;
+							} else if(value.type == '기업') {
+								gubun = '<img src="../images/common/icon/icon_besiness.gif" />';
+								username += value.bname;
+							}
+							gubun += value.gubun;
+							
+							if(username == 'null') 
+								username = '없음';
+							else {
+								if(!value.nickname == false)
+									username += '(' + value.nickname + ')';
+							}
+							
+							var email = '';
+							if(value.email && value.email != '--') {
+								email += value.email;
+							} else {
+								email += '없음';
+							}
+							
+							var cellphone = '';
+							if((value.bcellphone && value.bcellphone != '--') || (value.cellphone  && value.cellphone != '--')) {
+								cellphone += value.bcellphone ? value.bcellphone : value.cellphone;
+							} else {
+								cellphone += '없음';
+							}
+							td_data += '<tr class="list-row">';
+							td_data += '<td align="center">' + (index+1) + '</td>';
+							td_data += '<td align="center">' + bpermit + '</td>';
+							td_data += '<td align="center">' + gubun + '</td>';
+							td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+							td_data += '<td align="center">' + username + '</td>';
+							td_data += '<td align="center">' + email + '</td>';
+							td_data += '<td align="center">' + cellphone + '</td>';
+							td_data += '<td align="center">' + value.regist_date + '<br/>' + value.lastlogin_date + '</td>';
+							td_data += '</tr>';
+						});
+					} else {
+						th_data += '<th>' + data.type + '</th>';
+						td_data += '<tr class="list-row">';
+						td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+						td_data += '</tr>';
+					}
+					html_03 = get_table_html(th_data, td_data);
+				}
+				$('#state_layer #list-title').text(data.type);
+				$('#popup-section-01 .summary_wrap > ul').html(html_01);
+				$('#popup-section-02 table').html(html_02);
+				$('#popup-section-03 table').html(html_03);
+				openDialog(data.type + " <span class='desc'>" + data.date_s + " ~ " + data.date_f + " 까지의 주요지표를 확인하실 수 있습니다.</span>", "state_layer", {"width":"1200","height":"760"});
+			},
+			error: function() {
+				console.log('error');
+			}
+		});
+	}
+	
+	function show_list_layer() {
+		setTimeout(function() {
+			var title = $('.table_wrap dl.active').parents('.box_wrap').find('h3').text();
+			var type = $('.table_wrap dl.active').find('dt').text().replace('new', '');
+			
+			$.ajax({
+				type: 'post',
+				url: '/admin/main/get_main_list',
+				dataType: 'json',
+				data: {'title': title, 'type': type},
+				success: function(data) {
+					var html = '';
+					var th_data = '';
+					var td_data = '';
+					
+					if(data.title == '신청승인') {
+						if(data.type == '판매등록') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">등록일</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="120">기계분류</th>';
+								th_data += '<th width="120">기계종류</th>';
+								th_data += '<th width="120">제조사</th>';
+								th_data += '<th width="120">모델명</th>';
+								th_data += '<th width="160">사진</th>';
+								th_data += '<th width="100">판매유형</th>';
+								th_data += '<th width="80">소유권확인</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									var type_nm = '';
+									if(value.type == 'self') {
+										type_nm = '셀프판매';
+									} else if(value.type == 'emergency') {
+										type_nm = '긴급판매';
+									} else if(value.type == 'direct') {
+										type_nm = '머박다이렉트';
+									} else if(value.type == 'turnkey') {
+										type_nm = '턴키매각';
+									}
+									var state = '';
+									if(value.wait_yn == 'y') {
+										state = '재등록 대기';
+									} else {
+										state = value.state;
+									}
+									var check_param = '';
+									if(value.check_list != null)
+										check_param = '\'' + value.check_list.check_01_res  + '\', \'' + value.check_list.check_01_det + '\', \'' + value.check_list.check_02_res + '\', \'' + value.check_list.check_02_det + '\', \'' + value.check_list.check_03_res + '\', \'' + value.check_list.check_04_res + '\'';
+									td_data += '<tr class="list-row" style="height: 60px;">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.sales_date + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.kind_type + '</td>';
+									td_data += '<td align="center">' + value.kind_name + '</td>';
+									td_data += '<td align="center">' + value.mnf_name + '</td>';
+									td_data += '<td align="center">' + value.model_name + '</td>';
+									td_data += '<td align="left">'
+									$.each(value.picture_list, function(idx, val) {
+										td_data += '<img src="' + val.path + '" width="34" height="35" title="' + val.path + '" style="margin-left:3px; margin-top: 2px; margin-bottom: 2px;" /">';
+									});
+									td_data += '</td>';
+									td_data += '<td align="center">' + type_nm + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_check_modal(' + check_param + ')" /></span></div></td>';
+									td_data += '<td align="center">' + state + '</td>';
+									td_data += '<td align="center">';
+									if(value.wait_yn != 'y')
+										td_data += '	<span class="btn small valign-middle"><input type="button" value="승인" onclick="show_sale_permit_layer(\'' + value.type + '\', \'' + value.info_seq + '\', \'' + value.hope_price + '\')"/></span>';
+									td_data += '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '현장미팅') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="120">방문자</th>';
+								th_data += '<th width="140">방문 예정일</th>';
+								th_data += '<th width="180">진행상태</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									var state = '';
+									state = '관리자 승인대기';
+									var hope_date = '';
+									if(value.hope_date) 
+										hope_date = value.hope_date;
+									else
+										hope_date = '-';
+									td_data += '<tr class="list-row" style="height: 60px;">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + hope_date + '</td>';
+									td_data += '<td align="center">' + state + '</td>';
+									td_data += '<td align="center">' + (value.admin_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_common_permit_layer(\'' + data.type + '\', \'visit_seq\', \'' + value.visit_seq + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '가격제안') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">가격제안 신청일</th>';
+								th_data += '<th width="120">판매자</th>';
+								th_data += '<th width="120">구매자</th>';
+								th_data += '<th width="100">최초판매가</th>';
+								th_data += '<th width="100">제안금액</th>';
+								th_data += '<th width="160">상태</th>';
+								th_data += '<th width="140">가격제안 승인일</th>';
+								th_data += '<th width="110">가격제안 승인율</th>';
+								th_data += '<th width="140">카운터딜 신청일</th>';
+								th_data += '<th width="100">카운터딜 금액</th>';
+								th_data += '<th width="160">카운터딜 상태</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									var permit_yn = '';
+									permit_yn = '관리자 승인대기';
+									var counter_price = '';
+									if(value.permit_yn == 'c')
+										counter_price = price_format(value.counter_price) + '원';
+									else
+										counter_price = '-';
+									
+									var counter_permit_yn = '';
+									if(value.permit_yn == 'c') {
+										if(value.counter_permit_yn == 'h') {
+											counter_permit_yn = '구매자 카운터딜 답변대기';
+										} else if (value.counter_permit_yn == 'y') {
+											counter_permit_yn = '구매자 카운터딜 승인';
+										} else if (value.counter_permit_yn == 'x') {
+											counter_permit_yn = '구매자 카운터딜 거절';
+										}
+									}
+									else
+										counter_permit_yn = '-';
+									
+									var permit_date = '';
+									if(value.permit_date == null)
+										permit_date = '-';
+									else
+										permit_date = value.permit_date;
+									var counter_regdate = '';
+									if(value.counter_regdate == null)
+										counter_regdate = '-';
+									else
+										counter_regdate = value.counter_regdate;
+									
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.sale_userid + '\')">' + value.sale_userid + '</a></td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + price_format(value.sort_price) + '원</td>';
+									td_data += '<td align="center">' + price_format(value.prop_price) + '원</td>';
+									td_data += '<td align="center">' + permit_yn + '</td>';
+									td_data += '<td align="center">' + permit_date + '</td>';
+									td_data += '<td align="center">' + value.permit_percent + '</td>';
+									td_data += '<td align="center">' + counter_regdate + '</td>';
+									td_data += '<td align="center">' + counter_price + '</td>';
+									td_data += '<td align="center">' + counter_permit_yn + '</td>';
+									td_data += '<td align="center">' + (value.admin_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_common_permit_layer(\'' + data.type + '\', \'prop_seq\', \'' + value.prop_seq + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '즉시구매') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="120">구매자</th>';
+								th_data += '<th width="100">구매금액</th>';
+								th_data += '<th width="140">희망시간</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + price_format(value.buy_price) + '원</td>';
+									td_data += '<td align="center">' + value.hope_date + ' ' + value.hope_time + '</td>';
+									td_data += '<td align="center">' + (value.permit_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_common_permit_layer(\'' + data.type + '\', \'buy_seq\', \'' + value.buy_seq + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '낙찰내역') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">낙찰일</th>';
+								th_data += '<th width="120">낙찰자</th>';
+								th_data += '<th width="100">낙찰금액</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + price_format(value.bid_price) + '원</td>';
+									td_data += '<td align="center">' + (value.admin_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_common_permit_layer(\'' + data.type + '\', \'bid_seq\', \'' + value.bid_seq + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if(data.type == '계약') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">등록일</th>';
+								th_data += '<th width="*">계약유형</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="100">계약서작성</th>';
+								
+								$.each(data.list, function(index, value) {
+                  var seq = '';
+                  var html_no = '';
+                  if(value.cont_type == '판매') {
+                      seq = value.info_seq;
+                      html_no = '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+                  } else if (value.cont_type == '외주') {
+                      seq = value.osc_seq;
+                      html_no = '<td align="center"><a href="/mch/osc_info/' + value.osc_seq + '" target="black_">' + value.osc_no + '</a></td>';
+                  }
+                                    
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += html_no;
+									td_data += '<td align="center">' + value.cont_reg_date + '</td>';
+                  td_data += '<td align="center">' + value.cont_type + '</td>';
+									td_data += '<td align="center">' + (value.write_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="작성" onclick="show_contract_form(' + value.cont_seq + ')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '문의') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">작성일</th>';
+								th_data += '<th width="120">작성자</th>';
+								th_data += '<th width="180">제목</th>';
+								th_data += '<th width="300">내용</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">전송</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + value.title + '</td>';
+									td_data += '<td align="center">' + value.content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">' + (value.send_yn == 'y' ? '전송' : '미전송') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_qna_send_layer(\'' + data.type + '\', \'qna_seq\', \'' + value.qna_seq + '\', \'' + value.title + '\', \'' + value.content + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '외주신청') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="100">외주자</th>';
+								th_data += '<th width="150">외주명</th>';
+								th_data += '<th width="220">외주내용</th>';
+								th_data += '<th width="120">외주금액</th>';
+								th_data += '<th width="120">마감일</th>';
+								th_data += '<th width="280">지원자 (지원일)</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.osc_seq + '" data-type="osc" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+									td_data += '<td align="center" class="pd5"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></td>';
+									td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">' + price_format(value.budget) + '원</td>';
+									td_data += '<td align="center">' + value.osc_end_date + '</td>';
+									td_data += '<td align="center" class="pd5">';
+									if(value.apply_list.length == 0) {
+										td_data += '없음';
+									} else {
+										$.each(value.apply_list, function (idx, val) {
+											td_data += '<a href="/mch/partner_info/' + val.partner_seq + '" target="_blank" class="d-block pd5" style="border-bottom: 1px solid #eeeeee; border-top: 1px solid #eeeeee;">' + val.userid + ' (' + val.reg_date + ')</a>';
+										});
+									}
+									td_data += '</td>';
+									td_data += '<td align="center">' + (value.permit_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_common_permit_layer(\'' + data.type + '\', \'osc_seq\', \'' + value.osc_seq + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '수주신청') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="100">수주자</th>';
+								th_data += '<th width="150">수주한 외주</th>';
+								th_data += '<th width="220">외주내용</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.osc_seq + '" data-type="osc" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.apply_date + '</td>';
+									td_data += '<td align="center"><a href="/mch/partner_info/' + value.partner_seq + '" target="_blank">' + value.ptn_userid + '</a></td>';
+									td_data += '<td align="center" class="pd5"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></td>';
+									td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">' + (value.admin_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_common_permit_layer(\'' + data.type + '\', \'po_seq\', \'' + value.po_seq + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '외주미팅신청') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="100">외주자</th>';
+								th_data += '<th width="100">수주자</th>';
+								th_data += '<th width="150">수주한 외주</th>';
+								th_data += '<th width="220">외주내용</th>';
+								th_data += '<th width="120">상태</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									var meet_state = '';
+									if(value.meet_state == '1') {
+										meet_state = '미팅신청';
+									} else if(value.meet_state == '2') {
+										meet_state = '수주사 미팅신청 승인';
+									} else if(value.meet_state == '3') {
+										meet_state = '계약서 작성';
+									}
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.osc_seq + '" data-type="osc" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.meet_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.osc_userid + '\')">' + value.osc_userid + '</a></td>';
+									td_data += '<td align="center"><a href="/mch/partner_info/' + value.partner_seq + '" target="_blank">' + value.ptn_userid + '</a></td>';
+									td_data += '<td align="center" class="pd5"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></td>';
+									td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">' + meet_state + '</td>';
+									td_data += '<td align="center">' + (value.meet_admin_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_common_permit_layer(\'' + data.type + '\', \'po_seq\', \'' + value.po_seq + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '배송대행') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="100">신청자</th>';
+								th_data += '<th width="100">기계종류</th>';
+								th_data += '<th width="100">모델명</th>';
+								th_data += '<th width="100">제조사</th>';
+								th_data += '<th width="100">크기</th>';
+								th_data += '<th width="70">중량</th>';
+								th_data += '<th width="220">신청 서비스</th>';
+								th_data += '<th width="220">작업내용</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+                                    if(value.sales_no == '등록기계없음')
+                                        td_data += '<td align="center">' + value.sales_no + '</td>';
+                                    else
+									   td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+									td_data += '<td align="center">' + value.kind_name + '</td>';
+									td_data += '<td align="center">' + value.model_name + '</td>';
+									td_data += '<td align="center">' + value.mnf_name + '</td>';
+									td_data += '<td align="center">' + value.size + '</td>';
+									td_data += '<td align="center">' + value.weight + '</td>';
+									td_data += '<td align="center">' + value.service_list + '</td>';
+									td_data += '<td align="center">' + value.deliv_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">' + (value.pay_state == '승인대기' ? '미승인' : '승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_common_permit_layer(\'' + data.type + '\', \'deliv_seq\', \'' + value.deliv_seq + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						}
+					} else if(data.title == '진행현황') {
+						if(data.type == '판매등록') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="130">등록일</th>';
+								th_data += '<th width="110">등록번호</th>';
+								th_data += '<th width="120">기계분류</th>';
+								th_data += '<th width="120">기계종류</th>';
+								th_data += '<th width="120">제조사</th>';
+								th_data += '<th width="120">모델명</th>';
+								th_data += '<th width="160">사진</th>';
+								th_data += '<th width="100">판매유형</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="130">등록 남은기간</th>';
+								
+								$.each(data.list, function(index, value) {
+									var type_nm = '';
+									if(value.type == 'self') {
+										type_nm = '셀프판매';
+									} else if(value.type == 'emergency') {
+										type_nm = '긴급판매';
+									} else if(value.type == 'direct') {
+										type_nm = '머박다이렉트';
+									} else if(value.type == 'turnkey') {
+										type_nm = '턴키매각';
+									}
+									
+									var reg_rest_time = '';
+									if(value.type == 'self')
+										reg_rest_time = value.reg_rest_time;
+									else
+										reg_rest_time = '-';
+									
+									td_data += '<tr class="list-row" style="height: 60px;">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.sales_date + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.kind_type + '</td>';
+									td_data += '<td align="center">' + value.kind_name + '</td>';
+									td_data += '<td align="center">' + value.mnf_name + '</td>';
+									td_data += '<td align="center">' + value.model_name + '</td>';
+									td_data += '<td align="left">'
+									$.each(value.picture_list, function(idx, val) {
+										td_data += '<img src="' + val.path + '" width="34" height="35" title="' + val.path + '" style="margin-left:3px; margin-top: 2px; margin-bottom: 2px;" /">';
+									});
+									td_data += '</td>';
+									td_data += '<td align="center">' + type_nm + '</td>';
+									td_data += '<td align="center">' + value.state + '</td>';
+									td_data += '<td align="center">' + reg_rest_time + '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '현장미팅') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="120">방문자</th>';
+								th_data += '<th width="140">방문 예정일</th>';
+								th_data += '<th width="180">진행상태</th>';
+								th_data += '<th width="80">현재상태</th>';
+								
+								$.each(data.list, function(index, value) {
+									var state = '';
+									if(value.visit_state == '1') 
+										state = '방문 신청';
+									else if(value.visit_state == '2') 
+										state = '판매자 방문일 선택 완료';
+									else if(value.visit_state == '3') 
+										state = '미팅예약 완료';
+									else if(value.visit_state == '4') 
+										state = '현장방문 완료';
+									else if(value.visit_state == '5') 
+										state = '현장방문 취소';
+									var hope_date = '';
+									if(value.hope_date) 
+										hope_date = value.hope_date;
+									else
+										hope_date = '-';
+									td_data += '<tr class="list-row" style="height: 60px;">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + hope_date + '</td>';
+									td_data += '<td align="center">' + state + '</td>';
+									td_data += '<td align="center">' + (value.admin_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '가격제안') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">가격제안 신청일</th>';
+								th_data += '<th width="120">판매자</th>';
+								th_data += '<th width="120">구매자</th>';
+								th_data += '<th width="100">최초판매가</th>';
+								th_data += '<th width="100">제안금액</th>';
+								th_data += '<th width="160">상태</th>';
+								th_data += '<th width="140">가격제안 승인일</th>';
+								th_data += '<th width="110">가격제안 승인율</th>';
+								th_data += '<th width="140">카운터딜 신청일</th>';
+								th_data += '<th width="100">카운터딜 금액</th>';
+								th_data += '<th width="160">카운터딜 상태</th>';
+								th_data += '<th width="80">현재상태</th>';
+                                th_data += '<th width="80">확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									var permit_yn = '';
+									if(value.permit_yn == 'h') {
+										permit_yn = '판매자 답변대기';
+									} else if (value.permit_yn == 'y') {
+										permit_yn = '판매자 제안승인';
+									} else if (value.permit_yn == 'x') {
+										permit_yn = '판매자 제안거절';
+									} else if (value.permit_yn == 'c') {
+										permit_yn = '판매자 카운터딜';
+									}
+									var counter_price = '';
+									if(value.permit_yn == 'c')
+										counter_price = price_format(value.counter_price) + '원';
+									else
+										counter_price = '-';
+									
+									var counter_permit_yn = '';
+									if(value.permit_yn == 'c') {
+										if(value.counter_permit_yn == 'h') {
+											counter_permit_yn = '구매자 카운터딜 답변대기';
+										} else if (value.counter_permit_yn == 'y') {
+											counter_permit_yn = '구매자 카운터딜 승인';
+										} else if (value.counter_permit_yn == 'x') {
+											counter_permit_yn = '구매자 카운터딜 거절';
+										}
+									}
+									else
+										counter_permit_yn = '-';
+									var permit_date = '';
+									if(value.permit_date == null)
+										permit_date = '-';
+									else
+										permit_date = value.permit_date;
+									var counter_regdate = '';
+									if(value.counter_regdate == null)
+										counter_regdate = '-';
+									else
+										counter_regdate = value.counter_regdate;
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.sale_userid + '\')">' + value.sale_userid + '</a></td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + price_format(value.sort_price) + '원</td>';
+									td_data += '<td align="center">' + price_format(value.prop_price) + '원</td>';
+									td_data += '<td align="center">' + permit_yn + '</td>';
+									td_data += '<td align="center">' + permit_date + '</td>';
+									td_data += '<td align="center">' + value.permit_percent + '</td>';
+									td_data += '<td align="center">' + counter_regdate + '</td>';
+									td_data += '<td align="center">' + counter_price + '</td>';
+									td_data += '<td align="center">' + counter_permit_yn + '</td>';
+									td_data += '<td align="center">' + (value.admin_yn == 'y' ? '승인' : '미승인') + '</td>';
+                                    td_data += '<td align="center">';
+                                    if(value.permit_yn == 'y' || value.counter_permit_yn == 'y') {
+                                        td_data += '<div><span class="btn small valign-middle"><input type="button" value="확인" onclick="go_prop_imdbuy_move(' + value.prop_seq + ')"/></span></div>';
+                                    }
+                                    td_data += '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '즉시구매') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="120">구매자</th>';
+								th_data += '<th width="100">구매금액</th>';
+								th_data += '<th width="140">희망시간</th>';
+								th_data += '<th width="80">현재상태</th>';
+                                th_data += '<th width="80">확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + price_format(value.buy_price) + '원</td>';
+									td_data += '<td align="center">' + value.hope_date + ' ' + value.hope_time + '</td>';
+									td_data += '<td align="center">' + (value.permit_yn == 'y' ? '승인' : '미승인') + '</td>';
+                                    td_data += '<td align="center">';
+                                    td_data += '<div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_imdbuy_contract_move(' + value.buy_seq + ', ' + value.buy_price + ')"/></span></div>';
+                                    td_data += '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '낙찰내역') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">낙찰일</th>';
+								th_data += '<th width="120">낙찰자</th>';
+								th_data += '<th width="100">낙찰금액</th>';
+								th_data += '<th width="80">현재상태</th>';
+                                th_data += '<th width="80">확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + price_format(value.bid_price) + '원</td>';
+									td_data += '<td align="center">' + (value.admin_yn == 'y' ? '승인' : '미승인') + '</td>';
+                                    td_data += '<td align="center">';
+                                    td_data += '<div><span class="btn small valign-middle"><input type="button" value="확인" onclick="go_bid_contract_move(' + value.bid_seq + ', ' + value.bid_price_bid + ')"/></span></div>';
+                                    td_data += '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if(data.type == '계약') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">등록일</th>';
+								th_data += '<th width="*">계약유형</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="70">완료</th>';
+								th_data += '<th width="70">취소</th>';
+								$.each(data.list, function(index, value) {
+                  var seq = '';
+                  var html_no = '';
+                  if(value.cont_type == '판매') {
+                      seq = value.info_seq;
+                      html_no = '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+                  } else if (value.cont_type == '외주') {
+                      seq = value.osc_seq;
+                      html_no = '<td align="center"><a href="/mch/osc_info/' + value.osc_seq + '" target="black_">' + value.osc_no + '</a></td>';
+                  }
+                  
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += html_no;
+									td_data += '<td align="center">' + value.cont_reg_date + '</td>';
+                                    td_data += '<td align="center">' + value.cont_type + '</td>';
+									td_data += '<td align="center">' + (value.write_yn == 'y' ? '계약대기' : '미승인') + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="완료" onclick="go_process_finish(' + value.cont_seq + ')"/></span></div></td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="취소" onclick="go_contract_cancel(' + value.cont_seq + ')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '문의') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">작성일</th>';
+								th_data += '<th width="120">작성자</th>';
+								th_data += '<th width="160">제목</th>';
+								th_data += '<th width="300">내용</th>';
+								th_data += '<th width="300">답변내용</th>';
+								th_data += '<th width="140">작성시간</th>';
+								th_data += '<th width="120">현재상태</th>';
+								th_data += '<th width="80">관리자승인</th>';
+								
+								$.each(data.list, function(index, value) {
+									var res_content = value.res_content
+									if(value.res_content == null)
+										res_content = '-';
+									
+									var cur_state = '';
+									if(value.send_yn == 'n')
+										cur_state = '미전송';
+									else if(value.res_content == '') 
+										cur_state = '판매자 미답변';
+									else {
+										if(value.res_yn == 'n') 
+											cur_state = '판매자 답변완료';
+										else if(value.res_yn == 'y') 
+											cur_state = '관리자 승인완료';
+									}
+									
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.buy_userid + '\')">' + value.buy_userid + '</a></td>';
+									td_data += '<td align="center">' + value.title + '</td>';
+									td_data += '<td align="center">' + value.content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">' + res_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">' + value.res_date + '</td>';
+									td_data += '<td align="center">' + cur_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="답변" onclick="show_qna_reply_layer(\'' + data.type + '\', \'qna_seq\', \'' + value.qna_seq + '\', \'' + value.res_yn + '\', \'' + value.res_content + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '외주') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="100">외주자</th>';
+								th_data += '<th width="150">외주명</th>';
+								th_data += '<th width="220">외주내용</th>';
+								th_data += '<th width="120">외주금액</th>';
+								th_data += '<th width="120">마감일</th>';
+								th_data += '<th width="280">지원자 (지원일)</th>';
+								th_data += '<th width="120">모집상태</th>';
+								th_data += '<th width="80">현재상태</th>';
+								
+								$.each(data.list, function(index, value) {
+									var state = '';
+									if(value.state == '1') 
+										state = '모집중';
+									else if (value.state == '2') 
+										state = '모집마감';
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.osc_seq + '" data-type="osc" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+									td_data += '<td align="center" class="pd5"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></td>';
+									td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">' + price_format(value.budget) + '원</td>';
+									td_data += '<td align="center">' + value.osc_end_date + '</td>';
+									td_data += '<td align="center" class="pd5">';
+									if(value.apply_list.length == 0) {
+										td_data += '없음';
+									} else {
+										$.each(value.apply_list, function (idx, val) {
+											td_data += '<a href="/mch/partner_info/' + val.partner_seq + '" target="_blank" class="d-block pd5" style="border-bottom: 1px solid #eeeeee; border-top: 1px solid #eeeeee;">' + val.userid + ' (' + val.reg_date + ')</a>';
+										});
+									}
+									td_data += '</td>';
+									td_data += '<td align="center">' + state + '</td>';
+									td_data += '<td align="center">' + (value.permit_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '수주') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="100">수주자</th>';
+								th_data += '<th width="150">수주한 외주</th>';
+								th_data += '<th width="220">외주내용</th>';
+								th_data += '<th width="80">현재상태</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.osc_seq + '" data-type="osc" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.apply_date + '</td>';
+									td_data += '<td align="center"><a href="/mch/partner_info/' + value.partner_seq + '" target="_blank">' + value.ptn_userid + '</a></td>';
+									td_data += '<td align="center" class="pd5"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></td>';
+									td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">' + (value.contract_yn == 'y' ? '계약대기' : (value.admin_yn == 'y' ? '승인' : '미승인')) + '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '외주미팅') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="100">외주자</th>';
+								th_data += '<th width="100">수주자</th>';
+								th_data += '<th width="150">수주한 외주</th>';
+								th_data += '<th width="220">외주내용</th>';
+								th_data += '<th width="100">진행단계</th>';
+								th_data += '<th width="160">진행상태</th>';
+								th_data += '<th width="80">현재상태</th>';
+								th_data += '<th width="80">계약</th>';
+								
+								$.each(data.list, function(index, value) {
+									var meet_state = '';
+									if(value.meet_state == '1') {
+										meet_state = '미팅신청 중';
+									} else if(value.meet_state == '2') {
+										meet_state = '수주사 미팅신청 승인';
+									} else if(value.meet_state == '3') {
+										meet_state = '계약서 작성';
+									}
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.osc_seq + '" data-type="osc" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.meet_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.osc_userid + '\')">' + value.osc_userid + '</a></td>';
+									td_data += '<td align="center"><a href="/mch/partner_info/' + value.partner_seq + '" target="_blank">' + value.ptn_userid + '</a></td>';
+									td_data += '<td align="center" class="pd5"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></td>';
+									td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">미팅</td>';
+									td_data += '<td align="center">' + meet_state + '</td>';
+									td_data += '<td align="center">' + (value.meet_admin_yn == 'y' ? '승인' : '미승인') + '</td>';
+									td_data += '<td align="center">';
+									if(value.meet_state == '3') {
+										td_data += '<div><span class="btn small valign-middle"><input type="button" value="승인" onclick="go_osc_contract_move(' + value.po_seq + ')"/></span></div>';
+									}
+									td_data += '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '배송대행') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="120">등록번호</th>';
+								th_data += '<th width="140">신청일</th>';
+								th_data += '<th width="100">신청자</th>';
+								th_data += '<th width="100">기계종류</th>';
+								th_data += '<th width="100">모델명</th>';
+								th_data += '<th width="100">제조사</th>';
+								th_data += '<th width="100">크기</th>';
+								th_data += '<th width="70">중량</th>';
+								th_data += '<th width="220">신청 서비스</th>';
+                                th_data += '<th width="130">업체명</th>';
+                                th_data += '<th width="200">출발지</th>';
+                                th_data += '<th width="200">도착지</th>';
+                                th_data += '<th width="180">작업기간</th>';
+								th_data += '<th width="220">작업내용</th>';
+                                th_data += '<th width="100">결제금액</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="120">작업상태</th>';
+								th_data += '<th width="80">변경</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+                                    if(value.sales_no == '등록기계없음')
+                                        td_data += '<td align="center">' + value.sales_no + '</td>';
+                                    else
+									   td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.reg_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+									td_data += '<td align="center">' + value.kind_name + '</td>';
+									td_data += '<td align="center">' + value.model_name + '</td>';
+									td_data += '<td align="center">' + value.mnf_name + '</td>';
+									td_data += '<td align="center">' + value.size + '</td>';
+									td_data += '<td align="center">' + value.weight + '</td>';
+									td_data += '<td align="center">' + value.service_list + '</td>';
+                                    td_data += '<td align="center">' + value.deliv_company + '</td>';
+                                    td_data += '<td align="center" class="pd5">' + value.start_addr + '</td>';
+                                    td_data += '<td align="center" class="pd5">' + value.end_addr + '</td>';
+                                    td_data += '<td align="center">' + value.duration + '</td>';
+									td_data += '<td align="center" class="pd5">' + value.deliv_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+                                    td_data += '<td align="center">' + price_format(value.pay_price) + '원</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center">' + value.deliv_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="변경" onclick="show_change_deliv_layer(' + value.deliv_seq + ', \'' + value.deliv_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+					} else if (data.type == '외주진행') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">업무시작일</th>';
+								th_data += '<th width="140">업무마감예상일</th>';
+								th_data += '<th width="100">외주자</th>';
+								th_data += '<th width="100">수주자</th>';
+								th_data += '<th width="150">수주한 외주</th>';
+								th_data += '<th width="220">외주내용</th>';
+								th_data += '<th width="100">진행단계</th>';
+								th_data += '<th width="80">현재상태</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.osc_seq + '" data-type="osc" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.start_expect_date + '</td>';
+									td_data += '<td align="center">' + value.osc_end_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.osc_userid + '\')">' + value.osc_userid + '</a></td>';
+									td_data += '<td align="center"><a href="/mch/partner_info/' + value.partner_seq + '" target="_blank">' + value.ptn_userid + '</a></td>';
+									td_data += '<td align="center" class="pd5"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></td>';
+									td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">계약</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} 
+                    } else if (data.title == '결제확인') {
+						if(data.type == '셀프판매 & 현장미팅') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">등록번호</th>';
+								th_data += '<th width="140">결제번호</th>';
+								th_data += '<th width="140">결제자</th>';
+								th_data += '<th width="200">결제내용</th>';
+								th_data += '<th width="150">결제금액</th>';
+								th_data += '<th width="120">결제수단</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="70">결제확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.pay_no + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.pay_userid + '\')">' + value.pay_userid + '</a></td>';
+									td_data += '<td align="center">' + value.pay_content + '</td>';
+									td_data += '<td align="center">' + comma(value.pay_price) + ' 원</td>';
+									td_data += '<td align="center">' + value.pay_method + '</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_common_pay_layer(\'' + data.type + '\', \'info_seq\', \'' + value.info_seq + '\', \'' + value.pay_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if(data.type == '머박다이렉트') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">등록번호</th>';
+								th_data += '<th width="140">결제번호</th>';
+								th_data += '<th width="140">결제자</th>';
+								th_data += '<th width="200">결제내용</th>';
+								th_data += '<th width="150">결제금액</th>';
+								th_data += '<th width="120">결제수단</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="70">결제확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.pay_no + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.pay_userid + '\')">' + value.pay_userid + '</a></td>';
+									td_data += '<td align="center">' + value.pay_content + '</td>';
+									td_data += '<td align="center">' + comma(value.pay_price) + ' 원</td>';
+									td_data += '<td align="center">' + value.pay_method + '</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_common_pay_layer(\'' + data.type + '\', \'pay_seq\', \'' + value.pay_seq + '\', \'' + value.pay_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '비교견적') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">등록번호</th>';
+								th_data += '<th width="140">결제번호</th>';
+								th_data += '<th width="140">결제자</th>';
+								th_data += '<th width="200">결제내용</th>';
+								th_data += '<th width="150">결제금액</th>';
+								th_data += '<th width="120">결제수단</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="70">결제확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.pay_no + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.pay_userid + '\')">' + value.pay_userid + '</a></td>';
+									td_data += '<td align="center">' + value.pay_content + '</td>';
+									td_data += '<td align="center">' + comma(value.pay_price) + ' 원</td>';
+									td_data += '<td align="center">' + value.pay_method + '</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_common_pay_layer(\'' + data.type + '\', \'pay_seq\', \'' + value.pay_seq + '\', \'' + value.pay_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '프리미엄광고') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">등록번호</th>';
+								th_data += '<th width="140">결제번호</th>';
+								th_data += '<th width="140">결제자</th>';
+								th_data += '<th width="200">결제내용</th>';
+								th_data += '<th width="150">결제금액</th>';
+								th_data += '<th width="120">결제수단</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="70">결제확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.pay_no + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.pay_userid + '\')">' + value.pay_userid + '</a></td>';
+									td_data += '<td align="center">' + value.pay_content + '</td>';
+									td_data += '<td align="center">' + comma(value.pay_price) + ' 원</td>';
+									td_data += '<td align="center">' + value.pay_method + '</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_common_pay_layer(\'' + data.type + '\', \'pay_seq\', \'' + value.pay_seq + '\', \'' + value.pay_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '기계평가') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">등록번호</th>';
+								th_data += '<th width="140">결제번호</th>';
+								th_data += '<th width="140">결제자</th>';
+								th_data += '<th width="200">결제내용</th>';
+								th_data += '<th width="150">결제금액</th>';
+								th_data += '<th width="120">결제수단</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="70">결제확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.pay_no + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.pay_userid + '\')">' + value.pay_userid + '</a></td>';
+									td_data += '<td align="center">' + value.pay_content + '</td>';
+									td_data += '<td align="center">' + comma(value.pay_price) + ' 원</td>';
+									td_data += '<td align="center">' + value.pay_method + '</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_common_pay_layer(\'' + data.type + '\', \'pay_seq\', \'' + value.pay_seq + '\', \'' + value.pay_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '성능검사') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">등록번호</th>';
+								th_data += '<th width="140">결제번호</th>';
+								th_data += '<th width="140">결제자</th>';
+								th_data += '<th width="200">결제내용</th>';
+								th_data += '<th width="150">결제금액</th>';
+								th_data += '<th width="120">결제수단</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="70">결제확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.pay_no + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.pay_userid + '\')">' + value.pay_userid + '</a></td>';
+									td_data += '<td align="center">' + value.pay_content + '</td>';
+									td_data += '<td align="center">' + comma(value.pay_price) + ' 원</td>';
+									td_data += '<td align="center">' + value.pay_method + '</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_common_pay_layer(\'' + data.type + '\', \'pay_seq\', \'' + value.pay_seq + '\', \'' + value.pay_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '배송대행') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">결제번호</th>';
+								th_data += '<th width="140">결제자</th>';
+								th_data += '<th width="200">결제내용</th>';
+								th_data += '<th width="150">결제금액</th>';
+								th_data += '<th width="120">결제수단</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="70">결제확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.pay_no + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.pay_userid + '\')">' + value.pay_userid + '</a></td>';
+									td_data += '<td align="center">' + value.pay_content + '</td>';
+									td_data += '<td align="center">' + price_format(value.pay_price) + '원</td>';
+									td_data += '<td align="center">' + value.pay_method + '</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_common_pay_layer(\'' + data.type + '\', \'pay_seq\', \'' + value.pay_seq + '\', \'' + value.pay_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '외주') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">결제번호</th>';
+								th_data += '<th width="140">결제자</th>';
+								th_data += '<th width="200">결제내용</th>';
+								th_data += '<th width="150">결제금액</th>';
+								th_data += '<th width="120">결제수단</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="70">결제확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.osc_seq + '" data-type="osc" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.pay_no + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.pay_userid + '\')">' + value.pay_userid + '</a></td>';
+									td_data += '<td align="center">' + value.pay_content + '</td>';
+									td_data += '<td align="center">' + comma(value.pay_price) + ' 원</td>';
+									td_data += '<td align="center">' + value.pay_method + '</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_common_pay_layer(\'' + data.type + '\', \'pay_seq\', \'' + value.pay_seq + '\', \'' + value.pay_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '대금보호') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">결제번호</th>';
+								th_data += '<th width="140">결제자</th>';
+								th_data += '<th width="200">결제내용</th>';
+								th_data += '<th width="150">결제금액</th>';
+								th_data += '<th width="120">결제수단</th>';
+								th_data += '<th width="100">결제상태</th>';
+								th_data += '<th width="70">결제확인</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.pay_no + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.pay_userid + '\')">' + value.pay_userid + '</a></td>';
+									td_data += '<td align="center">' + value.pay_content + '</td>';
+									td_data += '<td align="center">' + comma(value.pay_price) + ' 원</td>';
+									td_data += '<td align="center">' + value.pay_method + '</td>';
+									td_data += '<td align="center">' + value.pay_state + '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_common_pay_layer(\'' + data.type + '\', \'pay_seq\', \'' + value.pay_seq + '\', \'' + value.pay_state + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if(data.type == '판매완료') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="130">등록일</th>';
+								th_data += '<th width="130">판매완료일</th>';
+								th_data += '<th width="110">등록번호</th>';
+								th_data += '<th width="120">기계분류</th>';
+								th_data += '<th width="120">기계종류</th>';
+								th_data += '<th width="120">제조사</th>';
+								th_data += '<th width="120">모델명</th>';
+								th_data += '<th width="160">사진</th>';
+								th_data += '<th width="100">판매유형</th>';
+								th_data += '<th width="80">현재상태</th>';
+								
+								$.each(data.list, function(index, value) {
+									var type_nm = '';
+									if(value.type == 'self') {
+										type_nm = '셀프판매';
+									} else if(value.type == 'emergency') {
+										type_nm = '긴급판매';
+									} else if(value.type == 'direct') {
+										type_nm = '머박다이렉트';
+									} else if(value.type == 'turnkey') {
+										type_nm = '턴키매각';
+									}
+									
+									td_data += '<tr class="list-row" style="height: 60px;">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.info_seq + '" data-type="info" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.sales_date + '</td>';
+									td_data += '<td align="center">' + value.sales_finish_date + '</td>';
+									td_data += '<td align="center"><a href="/sch/mch_detail/' + value.type + '/' + value.info_seq + '" target="black_">' + value.sales_no + '</a></td>';
+									td_data += '<td align="center">' + value.kind_type + '</td>';
+									td_data += '<td align="center">' + value.kind_name + '</td>';
+									td_data += '<td align="center">' + value.mnf_name + '</td>';
+									td_data += '<td align="center">' + value.model_name + '</td>';
+									td_data += '<td align="left">'
+									$.each(value.picture_list, function(idx, val) {
+										td_data += '<img src="' + val.path + '" width="34" height="35" title="' + val.path + '" style="margin-left:3px; margin-top: 2px; margin-bottom: 2px;" /">';
+									});
+									td_data += '</td>';
+									td_data += '<td align="center">' + type_nm + '</td>';
+									td_data += '<td align="center">' + value.state + '</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '외주완료') {
+							if(data.list.length > 0) {
+								th_data += '<th width="60">선택</th>';
+								th_data += '<th width="60">번호</th>';
+								th_data += '<th width="140">업무완료일</th>';
+								th_data += '<th width="140">업무시작일</th>';
+								th_data += '<th width="140">업무마감일</th>';
+								th_data += '<th width="100">외주자</th>';
+								th_data += '<th width="100">수주자</th>';
+								th_data += '<th width="150">수주한 외주</th>';
+								th_data += '<th width="220">외주내용</th>';
+								th_data += '<th width="100">진행단계</th>';
+								
+								$.each(data.list, function(index, value) {
+									td_data += '<tr class="list-row"">';
+									td_data += '<td align="center"><input type="checkbox" class="chk chk_one" value="' + value.osc_seq + '" data-type="osc" /></td>';
+									td_data += '<td align="center">' + (index+1) + '</td>';
+									td_data += '<td align="center">' + value.finish_date + '</td>';
+									td_data += '<td align="center">' + value.start_expect_date + '</td>';
+									td_data += '<td align="center">' + value.osc_end_date + '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.osc_userid + '\')">' + value.osc_userid + '</a></td>';
+									td_data += '<td align="center"><a href="/mch/partner_info/' + value.partner_seq + '" target="_blank">' + value.ptn_userid + '</a></td>';
+									td_data += '<td align="center" class="pd5"><a href="/mch/osc_info/' + value.osc_seq + '" target="_blank">' + value.osc_name + '</a></td>';
+									td_data += '<td align="left" class="pd5">' + value.osc_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
+									td_data += '<td align="center">완료</td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						}
+					}
+					html = get_table_html(th_data, td_data);
+					$('#list_layer #list-title').text(data.type);
+					$('#list_layer table').html(html);
+					openDialog(data.title + " <span class='desc'>" + data.title + " 내역을 확인하실 수 있습니다.</span>", "list_layer", {"width":"1200","height":"660"});
+				},
+				error: function() {
+					console.log('error');
+				}
+			});
+		}, 1);
+	}
+</script>
+
+<script type="text/template" id="checkModal">
+    <b>★ 소유권 확인 질문사항 ★</b>
+	<div style="margin-top: 15px;">
+		<b style="line-height: 150%">1. 본체 외에 출품기계에 포함된 부분 부속품이 있나요?</b>
+		<p style="margin-top:8px; margin-bottom: 2px;">답변: <span id="check_01_res"></span></p>
+		<p>상세: <span id="check_01_det"></span></p>	
+	</div>	
+	<div style="margin-top: 15px;">
+		<b style="line-height: 150%">2. 화재, 침수, 전손이력, 주요부품 이상, 구조변경 등의 사항이 있나요?</b>
+		<p style="margin-top:8px; margin-bottom: 2px;">답변: <span id="check_02_res"></span></p>
+		<p>상세: <span id="check_02_det"></span></p>	
+	</div>
+	<div style="margin-top: 15px;">
+		<b style="line-height: 150%">3. 출품기계가 본인 소유 또는 소유자로부터 적법하게 양도(처분)권한을 위임받은 기계입니까?</b>
+		<p style="margin-top:8px;">답변: <span id="check_03_res"></span></p>
+	</div>
+	<div style="margin-top: 15px;">
+		<b style="line-height: 150%">4. 담보제공, 압류, 저당 설정 등의 하자가 없으며, 계약 후 즉시 소유권이전 등의 조치가 가능한 기계입니까?</b>
+		<p style="margin-top:8px;">답변: <span id="check_04_res"></span></p>
+	</div>
+</script>
+<script>
+function show_check_modal(check_01_res, check_01_det, check_02_res, check_02_det, check_03_res, check_04_res) {
+    new Dialogify('#checkModal')
+     .title('확인사항')
+     .buttons([
+         {
+             text: '확인',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+            	 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER})
+     .on('show', function(){
+    	 this.$content.find('#check_01_res').text(check_01_res);
+    	 this.$content.find('#check_01_det').text(check_01_det);
+    	 this.$content.find('#check_02_res').text(check_02_res);
+    	 this.$content.find('#check_02_det').text(check_02_det);
+    	 this.$content.find('#check_03_res').text(check_03_res);
+    	 this.$content.find('#check_04_res').text(check_04_res);
+     }).showModal();
+}
+</script>

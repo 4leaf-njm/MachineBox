@@ -1,0 +1,175 @@
+<div class="container-fluid top-pt">
+        <div class="container pt-5">
+            <div class="row">
+                <div class="col-md-2 col-sm-12">
+                    <div class="filter-wrap-02 mb-3">
+                        <button class="search-filter-btn search-filter-btn-active" data-type="cate">검색</button>
+                        <div class="filter-text-wrap partner-filter-wrap" id="filter-cate">
+                            <ul class="d-block" style="height: 300px;">
+                                <li onclick="location.href='/mch/partner_sch/c/1'">전체</li>
+                                <!-- {@ cate_list} -->
+                                <li onclick="location.href='/mch/partner_sch/c/{.cate_seq+1}'">{.cate_name}</li>
+                                <!-- {/} -->
+                            </ul>
+                        </div>
+                        <button class="search-filter-btn search-filter-btn-active" data-type="area">지역</button>
+                        <div class="filter-text-wrap partner-filter-wrap" id="filter-area">
+                            <ul class="d-block" style="height: 300px;">
+                                <!-- {@ area_list} -->
+                                <li onclick="location.href='/mch/partner_sch/a/{.area_seq}'">{.area_name}</li>
+                                <!-- {/} -->
+                            </ul>
+                        </div>
+                    </div>
+                    <button type="button" class="btn large pl-0 pr-0" onclick="location.href='/mch/partner_reg'" style="width: 100%; display: block; margin: 0 auto 45px; font-size: 0.9rem;">파트너 등록</button>
+                    <script>
+                        (function($){
+                            $(".filter-text-wrap > ul").mCustomScrollbar({
+                                theme: "rounded-dark",
+                                scrollbarPosition: "inside"
+                            });
+                            showPartnerFilter('{type}', '{value}');
+                        })(jQuery);
+                    </script>
+                </div>
+                
+                <div class="col-md-10 col-sm-12">
+                
+                        <div class="ad-sale-filter mb-3 normal-machine-filter partner-filter">
+                        <h1 class="wrap-title wrap-title-02 txt-bold">파트너 기업 찾기</h1>
+                        <div class="box-filter">
+                            <span {? order == '1'}class="accent-txt"{/} onclick="location.href='/mch/partner_sch/{type}/{value}/1'">최신순</span>
+                            <span {? order == '2'}class="accent-txt"{/} onclick="location.href='/mch/partner_sch/{type}/{value}/2'">평가 높은 순</span>
+                            <span {? order == '3'}class="accent-txt"{/} onclick="location.href='/mch/partner_sch/{type}/{value}/3'">후기 많은 순</span>
+                       </div>
+                        </div>
+                        <!-- {@ partner_list} -->
+                        <div class="scroll-wrap ad-sale-wrap mb-3">
+                            <div class="scroll-div partner-info-wrap">
+                                <a href="/mch/partner_info/{.partner_seq}">
+                                <div class="product-row-01 partner-row">
+                                <div class="product-row-01 partner-desc">
+                                    <img class="partner-profile-img" src="{.profile_path}"/>
+                                <div class="scroll-desc">
+                                    <div class="product-row-01 partner-row">
+                                        <h4 class="mr-3">{.userid}</h4>
+                                        <div class="review-info">
+                                                <span>
+                                                    <!-- {? .grade == 0} -->
+                                                        <!-- {@ range(0, 4)} -->
+                                                            <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                        <!-- {/} -->
+                                                    <!-- {:} -->
+                                                        <!-- {@ range(0, .grade-1)} -->
+                                                            <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                        <!-- {/} -->
+                                                        <!-- {@ range(.grade, 4)} -->
+                                                            <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                        <!-- {/} -->
+                                                    <!-- {/} -->
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <span>평판 {.grade_cnt}건</span>
+                                        <span>외주완료 {.finish_cnt}건</span>
+                                        <span>주 서비스 : {.main_service}</span>
+                                    </div>
+                                </div>
+                                <div class="partner-badge">
+                                    <span class="btn-type-01 mb-1">{.area_name}</span>
+                                    <!-- {? .tech_list} -->
+                                        <!-- {@ explode(', ', .tech_list)} -->
+                                        <span class="btn-type-01 mb-1">{..value_}</span>
+                                        <!-- {/} -->  
+                                    <!-- {/} -->  
+                                </div>
+                                </div>
+                                <div class="partner-intro">
+                                    <p>{.introduce}</p>
+                                </div>
+                                </a>
+                            </div> 
+                        </div>
+                        <!-- {:} -->
+                        <div class="default-box">
+                            <p class="default-message">해당 조건의 파트너가 없습니다.</p>
+                        </div>
+                        <!-- {/} -->
+                       
+                    <div class="mb-5 page-numbers">
+                        <!-- {@ range(1, page_num)} -->
+                        <span {? .value_ == page}class="page-number-active"{/} onclick="location.href='/mch/partner_sch/{type}/{value}/{order}/{.value_}'">{.value_}</span>
+                        <!-- {:} -->
+                        <span class="page-number-active">1</span>
+                        <!-- {/} -->
+                    </div>
+           
+                    <div class="mb-5">
+                        <h1 class="wrap-title wrap-title-02 mb-3">신규 가입 회원</h1>
+                        <div class="scroll-wrap new-join-wrap">
+                            <!-- {@ new_list} -->
+                            <div class="scroll-div mr-2 new-join-div">
+                                <!--<img class="partner-profile-img" src="{.profile_path}"/>-->
+                                <h4 class="txt-center pb-2">{? .bname}{.bname}{:}{.userid}{/}</h4>
+                                <div style="padding-left: 2rem; padding-right: 2rem;">
+                                    <p>지역 <span>{? .area_name}{.area_name}{:}미등록{/}</span></p>
+                                    <!-- {? .bitem} -->
+                                    <p>업태 <span>{? .bitem}{.bitem}{:}미등록{/}</span></p>
+                                    <!-- {:} -->
+                                    <p>업력 <span>{?career_year}{.career_year}{:}미등록{/}</span></p>
+                                    <!-- {/} -->
+                                    <p>업종 <span>{? .bstatus}{.bstatus}{: .career_type}{.career_type}{:}미등록{/}</span></p>
+                                </div>
+                            </div>
+                            <!-- {:} -->
+                            <div class="default-box">
+                                <p class="default-message">신규 가입한 파트너가 없습니다.</p>
+                            </div>
+                            <!-- {/} -->
+                    </div>
+                    <script>
+                        (function($){
+                            $(".new-join-wrap").mCustomScrollbar({
+                                axis:"x",
+                                theme:"rounded-dark",
+                                scrollbarPosition: "outside",
+                                advanced:{
+                                    autoExpandHorizontalScroll:true
+                                }
+                            });
+                            
+                            var current = 0;
+                            var target = 'new-join-wrap';
+                            var loop = setInterval(function(){
+                                var total = $('.' + target + ' .scroll-div').length;
+                                if(current >= total) {
+                                    current = 0;
+                                    $('.' + target).mCustomScrollbar("scrollTo", 'first');
+                                } else {
+                                    var t = $('.' + target + ' .scroll-div').eq(current++);    
+                                    $('.' + target).mCustomScrollbar("scrollTo", t);
+                                }
+                            }, 3000);
+                            
+                            $('.' + target).hover(function(){
+                                clearInterval(loop);
+                            }, function() {
+                                loop = setInterval(function(){
+                                    var total = $('.' + target + ' .scroll-div').length;
+                                    if(current >= total) {
+                                        current = 0;
+                                        $('.' + target).mCustomScrollbar("scrollTo", 'first');
+                                    } else {
+                                        var t = $('.' + target + ' .scroll-div').eq(current++);    
+                                        $('.' + target).mCustomScrollbar("scrollTo", t);
+                                    }
+                                }, 3000);
+                            });
+                        })(jQuery);
+                    </script>
+                        
+                </div>
+            </div>
+            </div>
+        </div>
+</div>

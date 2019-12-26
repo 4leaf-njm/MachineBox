@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Daum에디터 - 이미지 첨부</title>
+
+<link rel="stylesheet" href="../../css/popup-pixpeen.css" type="text/css"  charset="utf-8"/>
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/jquploadify/uploadify.css" />
+
+<script type="text/javascript" src="/app/javascript/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../js/popup.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquploadify/swfobject.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquploadify/jquery.uploadify.v2.1.4.js"></script>
+<script type="text/javascript" src="../../js/pixpeen.js"></script>
+
+<script type="text/javascript">
+var _mockdata;
+
+$(function(){
+	var setting = {
+		'script'			: '/common/editor_image_upload_temp',
+	    'uploader'			: '/app/javascript/plugin/jquploadify/uploadify.swf',
+	    'buttonImg'			: '/app/javascript/plugin/jquploadify/uploadify-search.gif',
+	    'cancelImg'			: '/app/javascript/plugin/jquploadify/uploadify-cancel.png',
+	    'fileTypeExts'		: '*.jpg;*.gif;*.png;*.jpeg',
+	    'fileTypeDesc'		: 'Image Files (.JPG, .GIF, .PNG)',
+	    'fileSizeLimit'		: '10MB',
+	    'removeCompleted'	: false,
+		'width'				: 64,
+		'height'			: 20,
+	    'auto'				: true,
+	    'multi'				: false,
+	    'completeMsg'		: '첨부 가능',
+	    'onComplete'		: function (event, ID, fileObj, response, data) {
+
+	    	var result = eval(response)[0];
+
+			if(result.status!=1){
+				alert(result.msg,400,150);
+				$("#uploader"+ID).find(".percentage").html("<font color='red'> - "+result.desc+"</font>");
+				return false;
+			}else{
+				_mockdata = {
+					'imageurl': result.filePath,
+					'filename': result.fileInfo.orig_name,
+					'filesize': result.fileInfo.file_size,
+					'imagealign': 'C',
+					'originalurl': result.filePath,
+					'thumburl': result.filePath
+				};
+			}
+		},
+		'onError'			: function (event,ID,fileObj,errorObj) {
+			alert(errorObj.type + ' Error: ' + errorObj.info);
+		}
+	};
+
+	$("#uploader").uploadify(setting);
+});
+</script>
+
+<script type="text/javascript">
+// <![CDATA[
+
+	function done() {
+		if (typeof(execAttach) == 'undefined') { //Virtual Function
+	        return;
+	    }
+
+		if(!_mockdata){
+			 alert('첨부할 이미지를 선택해주세요.');
+		     return;
+		}
+
+		PopupUtil.getOpener().Editor.focusOnBottom();
+
+		execAttach(_mockdata);
+		closeWindow();
+	}
+
+	function initUploader(){
+	    var _opener = PopupUtil.getOpener();
+	    if (!_opener) {
+	        alert('잘못된 경로로 접근하셨습니다.');
+	        return;
+	    }
+
+	    var _attacher = getAttacher('image', _opener);
+	    registerAction(_attacher);
+		autoResizeHeight($tx("wrapper"));
+	}
+
+
+function formMove(gb, no){
+	classCont(no);
+	if(no==2){
+		formMoveSub(gb, 1);
+	}else{
+		if(gb=='grade_write'){
+			$("form[name='memberForm'] input[name='gb']").val('grade_modify');
+		}else{
+			$("form[name='memberForm'] input[name='gb']").val(gb);
+		}
+		$("form[name='memberForm']").attr('action','../member_process/'+gb);
+		set_member_html();
+	}
+}
+
+function formMoveSub(gb, no){
+	$(".ctab-on").addClass("ctab");
+	$(".ctab-on").removeClass("ctab-on");
+	$(".t"+no).addClass("ctab-on");
+	$("form[name='memberForm'] input[name='gb']").val(gb);
+	$("form[name='memberForm']").attr('action','../member_process/'+gb);
+	set_member_html();
+}
+
+function classCont(no){
+	$(".mtabon-left").addClass("mtab-left");
+	$(".mtabon").addClass("mtab");
+	$(".mtabon-right").addClass("mtab-right");
+	$(".mtabon-left").removeClass("mtabon-left");
+	$(".mtabon").removeClass("mtabon");
+	$(".mtabon-right").removeClass("mtabon-right");
+
+	$(".tl"+no).addClass("mtabon-left");
+	$(".tc"+no).addClass("mtabon");
+	$(".tr"+no).addClass("mtabon-right");
+}
+
+// ]]>
+</script>
+</head>
+
+
+<style>
+.ctab {border-top:1px solid #d6d6d6;border-right:1px solid #d6d6d6;border-bottom:1px solid #d6d6d6;width:100px;line-height:30px;text-align:center;background-color:#eeeeee;float:left;font-size:12px;font-family:Dotum;font-weight:bold;color:#757575;}
+.ctab-on {border-top:2px solid #d6d6d6;border-bottom:1px solid #ffffff;border-right:1px solid #d6d6d6;width:100px;line-height:30px;text-align:center;background-color:#ffffff;float:left;font-size:12px;font-family:Dotum;font-weight:bold;color:#000000;}
+</style>
+<body onload="initUploader();">
+<div class="wrapper">
+	<div class="header">
+		<table class="mqs-menu fl">
+			<tr>
+				<td class="left"   >이미지 등록 또는 편집 또는 움직이는 이미지</td>
+				<td class="right" ><p><a href="#" onclick="closeWindow();" title="닫기" class="close">닫기</a></p></td>
+			</tr>
+			</table>
+	</div>
+	<div class="body">
+
+			<div class="center" id="rn_join">
+				<br style="line-height:10px;" />
+				<div >
+				<table cellpadding="0" cellspacing="0">
+					<td class="ctab-on t1"><span class="hand" onclick="formMove('agreement',1);">개별등록</span></td>
+					<td class="ctab t2"><span class="hand" onclick="formMove('privacy',2);">이미지편집</span></td>
+					<td class="ctab t3"><span class="hand" onclick="formMove('joinform',3);">이미지매직</span></td>
+				</tr>
+				</table>
+				</div>
+				<br style="line-height:10px;" />
+			</div>
+
+		<div class="contentefile" >
+				<dl class="alert">
+					<dt>사진 첨부 확인</dt>
+					<dd> <div><input type="file" id="uploader" /></div> </dd>
+				</dl>
+			</div>
+			<div class="footer">
+
+				<ul>
+					<li class="submit"><a href="#" onclick="done();" title="등록" class="btnlink">등록</a> </li>
+					<li class="cancel"><a href="#" onclick="closeWindow();" title="취소" class="btnlink">취소</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="contentepixpeen" >
+			<iframe src="" id="pixpeenifm" name="pixpeenifm" ></iframe>
+		</div>
+
+		<div class="contenteimagemagic" >
+			<iframe src="" id="imagemagicifm" name="imagemagicifm" ></iframe>
+		</div>
+</div>
+
+<!-- //픽스핀추가 @2012-09-07 -->
+<form name="pixpeenfrm" method="post" id="pixpeenfrm" target="" >
+<input type="hidden" name="params" value="<?//=makeEncriptParam("mallid=" . $CI->config_system['service']['cid'])?>">
+</form>
+<!-- //픽스핀추가 @2012-09-07 -->
+
+
+</body>
+</html>

@@ -1,0 +1,776 @@
+{ #common_html_header }
+
+<script type="text/javascript">
+	<!--{ ? is_change_pass_required && uri_string()!='admin/main/index' && uri_string()!='admin/login/index' }-->
+	top.document.location.replace('/admin/main/index');
+	<!--{ / }-->
+
+	<!--{ ? managerInfo.manager_seq }-->
+	setTimeout(function(){
+		loadIssueCounts();
+	},500);
+	<!--{ / }-->
+
+	$(function(){
+		$(".platformhelp").poshytip({
+			className: 'tip-darkgray',
+			bgImageFrameSize: 8,
+			alignTo: 'target',
+			alignX: 'up',
+			alignY: 'bottom',
+			offsetX: -55,
+			offsetY: 6,
+			allowTipHover: false,
+			slide: false,
+			showTimeout : 0
+		});
+
+		// 매뉴얼 버튼 링크
+		$("#page-title-bar").each(function(){
+			{? admin_menual_hidden } return; { / }
+			$(".page-global-btn{goods_quick_topmenu}").appendTo($(this)).show().children("a");
+			$(".page-manual-btn{goods_quick_topmenu}").appendTo($(this)).show().children("a").attr('href','http://gmanual.firstmall.kr/html/manual.php?url={admin_menual_url}');
+		});
+
+		// 매뉴얼 설정창 띄우기
+		$("#hs-global, #page-global-btn").bind("click", function(){
+			env = $(this).attr('env');
+			if	(env != 'all'){
+				title = ' 관리환경 이동';
+				$("#global-setting .global-setting-layer").fadeIn("slow");
+				$("#global-setting .global-setting-bg").fadeIn();
+				$("#global-setting .global-setting-layer a.btn_link").bind("click", function(){
+					$(this).css({"border":"1px solid #b9b9b9",  "color":"#b9b9b9"});
+				});
+				$('#global-setting #global-title').html(title);
+			}
+		});
+		$(".global-setting-bg, .global-setting-layer .close").bind("click", function(){
+			$("#global-setting .global-setting-layer").fadeOut("slow");
+			$("#global-setting .global-setting-bg").fadeOut();
+		});
+	});
+
+	$(function(){
+		$("#layout-header .header-gnb-container ul.header-gnb li.mitem-td").each(function(){
+			$(this)
+			.bind('mouseenter',function(){
+				$("div.submenu",this).stop(true,true).show();
+			})
+			.bind('mouseleave',function(){
+				$("div.submenu",this).stop(true,true).hide();
+			});
+		});
+
+		$("#layout-header .header-gnb-container ul.header-qnb li.gnb-item").each(function(){
+			$(this)
+			.bind('mouseenter',function(){
+				$("ul.gnb-subnb",this).stop(true,true).slideDown('fast');
+			})
+			.bind('mouseleave',function(){
+				$("ul.gnb-subnb",this).stop(true,true).slideUp('fast');
+			});
+		});
+
+		// 상단 메모, 중요알림,myfirstmall link,관리자정보 메뉴 활성 비활성
+		var hsnbClass = ["hsnb-memo","hsnb-notice","hsnb-link","hsnb-admin"];
+		for(var hsnbnum=0; hsnbnum<hsnbClass.length; hsnbnum++){
+			$("#layout-header ul.header-snb li."+hsnbClass[hsnbnum]+" a").eq(0).click(function(){
+				if( $(this).hasClass('opened') ){
+					$("#layout-header ul.header-snb .item > a, #layout-header ul.header-snb .item > .hsnbm-menu").removeClass('opened');
+				}else{
+					$("#layout-header ul.header-snb .item > a, #layout-header ul.header-snb .item > .hsnbm-menu").removeClass('opened');
+					$(this).addClass('opened');
+					$(this).next().addClass('opened');
+				}
+			});
+		}
+		$(".manager_alert_view_btn").bind('click',function(){
+			$("#manager_alert_dialog").load('/admin/common/manager_alert_history');
+			openDialog("중요행위발생을 알려 드립니다!", "manager_alert_dialog", {"width":800});
+		});
+	});
+	//-->
+</script>
+
+<body>
+<div id="env_move" style="display:none">
+	<table class="info-table-style" cellspacing="0">
+		<colgroup>
+			<col width="100px"/>
+			<col width="400px"/>
+			<col width="200px"/>
+			<col width="200px"/>
+			<col width="100px"/>
+		</colgroup>
+		<thead>
+			<tr>
+				<th class="its-th-align">관리명</th>
+				<th class="its-th-align">사용자 화면</th>
+				<th class="its-th-align">안내 언어</th>
+				<th class="its-th-align">기본통화</th>
+				<th class="its-th-align">관리환경</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+</div>
+
+<div id="member_info_layer" class="member_info_layer hide"></div>
+<!-- 다국어 통합설정 -->
+<div id="page-global-btn" class="page-global-btn{goods_quick_topmenu} hide" env="{?env_all}all{:}{this_admin_env.env_name}{/}">	
+	<!--{ ? env_all }-->
+	<a href="javascript:;" title="관리환경 이동"><img src="/data/brand_country/{=strtolower(this_admin_env.language)}.png" alt="{this_admin_env.language}"> <strong>다국어 통합설정</strong></a>
+	<!--{ : }-->
+	<a href="javascript:;" title="관리환경 이동"><img src="/data/brand_country/{=strtolower(this_admin_env.language)}.png" alt="{this_admin_env.language}"> <strong>{this_admin_env.env_name}</strong> {this_admin_env.currency}</a>
+	<!--{ / }-->
+</div>
+<!-- 매뉴얼 버튼 -->
+<div class="page-manual-btn{goods_quick_topmenu} hide">
+	<a href="#" target="_blank">매뉴얼</a>
+</div>
+<!-- 다국어 관리환경 이동 -->
+<div id="global-setting">
+	<div class="global-setting-layer">
+		<h1 id="global-title">관리환경 이동</h1>
+		<table width="650" border="0" cellpadding="0" cellspacing="0">
+			<colgroup>
+				<col /><col /><col width="18%" /><col width="16%" /><col width="16%" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th scope="col">관리명</th>
+					<th scope="col">사용자 화면</th>
+					<th scope="col">안내 언어</th>
+					<th scope="col">기본 통화</th>
+					<th scope="col">관리환경</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!--{ @ env_list }-->
+				<tr>
+					<th scope="row">{.admin_env_name}</th>
+					<td>{.domain}</td>
+					<td class="lang_{.language}">{.lang}</td>
+					<td class="center">{.currency}</td>
+					<td class="center">
+						<!--{ ? .this_admin == 'y' }-->
+						<a class="btn_link" style="border:1px solid #b9b9b9;color:#b9b9b9;">바로가기</a>
+						<!--{ : }-->
+						<a href="javascript:env_move('{.domain}');" class="btn_link">바로가기</a>
+						<!--{ / }-->
+					</td>
+				</tr>
+				<!--{ / }-->
+			</tbody>
+		</table>
+		<a href="javascript:;" class="close">닫기</a>
+	</div>
+	<div class="global-setting-bg"></div>
+</div>
+
+<div id="wrap">
+	<div id="layout-container" class="{service_code}"><!-- free premium expantion proexpantion -->
+		{? main }<div id="layout-body-background"></div>{ / }
+		<div id="layout-background"  {? main }class="main-background-width"{ / }><div class="img_bg {service_code}"></div></div>
+		<!-- //헤더 : 백그라운드 -->
+
+		<!--[ 레이아웃 헤더 : 시작 ]-->
+		<div id="layout-header" {?managerInfo.gnb_icon_view!='n'}class="icon-view"{/}>
+
+			<!-- 헤더 상단부 -->
+			<div class="header-snb-container clearbox">
+				<!-- 로고 -->
+				<a href="/admin"><h1 class="header-logo"><span>Firstmall</span></h1></a>
+
+				<!-- 우측 상단메뉴 -->
+				<ul class="header-snb clearbox">
+					<!--{ ? config_system.operation_type == 'light' && config_system.skin_type == 'responsive' }-->
+					<li class="item hsnb-pc">
+						<a href="http://{mobileDomain}/?setDesignMode=off&setMode=mobile" target="_blank" title="반응형 쇼핑몰 바로가기">반응형 쇼핑몰 바로가기</a>
+					</li>
+					<!--{ : }-->
+					<li class="item hsnb-pc">
+						<a href="http://{pcDomain}/?setDesignMode=off&setMode=pc" target="_blank"  title="PC 쇼핑몰 바로가기">PC 바로가기</a>
+					</li>
+					<li class="item hsnb-mobile">
+						<a href="http://{mobileDomain}/?setDesignMode=off&setMode=mobile" target="_blank" title="모바일 쇼핑몰 바로가기">모바일 쇼핑몰 바로가기</a>
+					</li>
+					<!--{ / }-->
+					<li class="item hsnb-memo">
+						<a href="javascript:;" title="메모">메모</a>
+						<div class="hsnbm-menu">
+							<span class="point_b"></span>
+							<script type="text/javascript" src="/app/javascript/plugin/jquery_pagination/jquery.pager.js" charset="utf8"></script>
+
+							<div id="admin-memo">
+								<div id="admin-memo-container">
+									<div class="memo-input-container clearbox">
+										<form name="newMemoForm" action="../adminmemo_process/save" method="post" target="actionFrame">
+											<textarea class="memo-input" name="contents" title="메모를 남기세요." rows="5"></textarea>
+											<input type="image" src="../../images/main/btn_save_memo.gif" class="btn_save" align="absmiddle" />
+										</form>
+									</div>
+									<div class="memo-search">
+										<form name="searchMemoForm" method="post" onsubmit="get_memo_list('',this.search_keyword.value);return false;">
+											<input type="text" class="memo-search-input" name="search_keyword" value="" class="line" title="메모 검색" />
+											<input type="image" class="memo-search-btn" src="../../images/main/right_search_btn.gif" align="absmiddle"/>
+										</form>
+									</div>
+									<div class="memo-list"></div>
+									<div id="admin-memo-page" class="pager"></div>
+								</div>
+							</div>
+						</div>
+						<script>
+								var memo_page = 1;
+								var memo_animation = false;
+								var addHeight = 0;
+								var memo_opened	= false;
+
+								$(function(){
+									var memoWidth;
+									$("#admin-memo-container").height($("#layout-body").outerHeight());
+									$("#admin-memo-openbtn").toggle(function(){
+										memoWidth = 216;
+										$("#admin-memo-container").outerWidth(memoWidth).height($("#layout-body").outerHeight());
+										if(memo_animation)	$("#admin-memo").animate({'width':memoWidth,'margin-left':-memoWidth});
+										else				$("#admin-memo").css({'width':memoWidth,'margin-left':-memoWidth});
+										$(".memo-closebtn").show();
+										$(".memo-openbtn").hide();
+									},function(){
+										$("#admin-memo").animate({'width':0,'margin-left':0});
+										$(".memo-openbtn").show();
+										$(".memo-closebtn").hide();
+									});
+
+									$("#admin-memo-openbtn").click();
+									memo_animation = true;
+
+									$(".memo-item-openbtn").live('click',function(){
+										$(".memo-item").not($(this).closest('.memo-item')).removeClass('memo-item-opened');
+										$(this).closest('.memo-item').toggleClass('memo-item-opened');
+										if(memo_opened) {
+											$("#admin-memo-container").height(addHeight);		memo_opened = false;
+										} else			{
+											$("#admin-memo-container").height(addHeight + 300); memo_opened = true;
+										}
+										$("#admin-memo").height("100%");
+									});
+
+									$(".memo-item-contents").live('click',function(){
+										if(!$(this).closest('.memo-item').is(".memo-item-opened")){
+											$(this).closest('.memo-item').find(".memo-item-openbtn").click();
+										}
+									});
+
+									$(".memo-item-contents textarea").live('keydown','Ctrl+S',function(event){
+										event.preventDefault();
+										$(this.form).submit();
+										return false;
+									});
+
+									$("#admin-memo-container .memo-input").focus(function(){
+										$(".memo-input-container").addClass('memo-input-container-focused');
+									});
+									get_memo_list();
+								});
+
+								function get_memo_list(page,search_keyword){
+
+									memo_page = page ? page : memo_page;
+
+									if(search_keyword && document.searchMemoForm.search_keyword.value==document.searchMemoForm.search_keyword.title){
+										document.searchMemoForm.search_keyword.value='';
+										search_keyword='';
+									}
+
+									$.ajax({
+										'url' : '../adminmemo_process/get_list',
+										'data' : {'page':page,'search_keyword':search_keyword},
+										'type' : 'post',
+										'dataType' : 'json',
+										'global' : false,
+										'success' : function(result){
+
+											$("#admin-memo-page").show().pager({pagenumber: result.page.nowpage, pagecount: result.page.totalpage, buttonClickCallback:function(clicked_page){
+												get_memo_list(clicked_page,search_keyword);
+											}});
+
+											var html = '';
+											if( result.record ) {
+												for(var i=0;i<result.record.length;i++){
+													html += '<div class="memo-item '+(result.record[i].check=='1'?'checked':'')+'" memo_seq="'+result.record[i].memo_seq+'">';
+													html += '	<form action="../adminmemo_process/edit" method="post" target="actionFrame">';
+													html += '	<input type="hidden" name="memo_seq" value="'+result.record[i].memo_seq+'" />';
+													html += '	<div class="memo-item-important"><span class="icon-star-gray '+(result.record[i].important=='1'?'checked':'')+'" onclick="important_memo('+result.record[i].memo_seq+')"></span></div>';
+													html += '	<div class="memo-item-writer"><span>'+result.record[i].manager_id+'</span></div>';
+													html += '	<div class="memo-item-contents">';
+													html += '		<div class="memo-item-contents-summary">'+result.record[i].contents_htmlspecialchars+'</div>';
+													html += '		<textarea name="contents">'+result.record[i].contents_htmlspecialchars+'</textarea>';
+													html += '	</div>';
+													html += '	<div class="memo-item-openbtn"></div>';
+													html += '	<div class="memo-item-footer clearbox">';
+													html += '		<div class="fl">';
+													html += '			<span class="memo-item-check" onclick="check_memo('+result.record[i].memo_seq+')"></span>';
+													html += '			<input type="image" src="../../images/main/btn_memo_edit.gif" onmouseover="this.src=\'../../images/main/btn_memo_edit_on.gif\'" onmouseout="this.src=\'../../images/main/btn_memo_edit.gif\'" align="absmiddle" title="저장하기" />';
+													html += '			<img src="../../images/main/btn_memo_del.gif" onmouseover="this.src=\'../../images/main/btn_memo_del_on.gif\'" onmouseout="this.src=\'../../images/main/btn_memo_del.gif\'" align="absmiddle" hspace="5" title="삭제하기" class="hand" onclick="delete_memo('+result.record[i].memo_seq+')" />';
+													html += '		</div>';
+													html += '		<div class="fr fx11 gray">'+result.record[i].date+'</div>';
+													html += '	</div>';
+													html += '	</form>';
+													html += '</div>';
+												}
+											}else{
+												html = '<div class="pd5 desc center">검색된 메모가 없습니다.</div>';
+												$("#admin-memo-page").hide();
+											}
+
+											$("#admin-memo .memo-list").html(html);
+
+											addHeight	= $("#layout-body").outerHeight() + $(".memo-list").outerHeight() - 256;
+											if($("#layout-body").outerHeight() <= addHeight )
+												$("#admin-memo-container").height(addHeight);
+											$("#admin-memo").height("100%");
+										}
+									});
+								}
+
+								function delete_memo(memo_seq){
+									openDialogConfirm('메모를 삭제하시겠습니까?',400,200,function(){
+										$.ajax({
+											'url'	: '../adminmemo_process/delete',
+											'type'	: 'post',
+											'data'	: {'memo_seq':memo_seq},
+											'success' : function(){
+												$(".memo-item[memo_seq='"+memo_seq+"']").slideUp();
+												openDialogAlert("메모가 삭제 되었습니다.",400,240,function(){
+													get_memo_list(memo_page);
+												});
+											}
+										});
+									});
+								}
+
+								function important_memo(memo_seq){
+									$.ajax({
+										'url'	: '../adminmemo_process/important',
+										'type'	: 'post',
+										'data'	: {'memo_seq':memo_seq},
+										'global' : false,
+										'success' : function(important){
+											if(important=='1') $(".memo-item[memo_seq='"+memo_seq+"'] .memo-item-important .icon-star-gray").addClass('checked');
+											else $(".memo-item[memo_seq='"+memo_seq+"'] .memo-item-important .icon-star-gray").removeClass('checked');
+										}
+									});
+								}
+
+								function check_memo(memo_seq){
+									$.ajax({
+										'url'	: '../adminmemo_process/check',
+										'type'	: 'post',
+										'data'	: {'memo_seq':memo_seq},
+										'global' : false,
+										'success' : function(check){
+											if(check=='1'){
+												$(".memo-item[memo_seq='"+memo_seq+"']").addClass('checked');
+											}
+											else{
+												$(".memo-item[memo_seq='"+memo_seq+"']").removeClass('checked');
+											}
+										}
+									});
+								}
+							</script>
+					</li>
+					<li class="item hsnb-notice">
+						<div class="header-gnb-issueCount-layer" style="display: block;">
+						<!--{? managerInfo.manager_yn == 'Y' }-->
+							<span class="issueCount">
+								<span class="hgi-left">
+									<span class="hgi-right">
+										<span class="hgi-bg" >{=count(action_history_data)}</span>
+									</span>
+								</span>
+							</span>
+						<!--{ / }-->
+						</div>
+						<a href="javascript:;" title="알림">알림</a>
+						<div class="hsnbm-menu">
+							<span class="point_c"></span>
+							<strong>알림</strong>
+							<ul class="tb_link">
+							<!--{? managerInfo.manager_yn == 'Y' }-->
+								<!--{ @action_history_data }-->
+								<li style="display:inline-block;width:250px;overflow:hidden;text-overflow:ellipsis;" class="manager_alert_view_btn"><a href="#">{=date('Y.m.d',strtotime(.regist_date))}<br />{.action_message}</a></li>
+								<!--{ / }-->
+							<!--{ : }-->
+								<li style="display:inline-block;width:250px;overflow:hidden;text-overflow:ellipsis;"><a href="#">부관리자는 볼수 없습니다.</a></li>
+							<!--{ / }-->
+							</ul>
+							<!--{? managerInfo.manager_yn == 'Y' }-->
+							<a href="javascript:;" class="tb_search manager_alert_view_btn">검색</a>
+							<!--{ / }-->
+						</div>
+						<div id="manager_alert_dialog" class="hide"></div>
+					</li>
+					<li class="item hsnb-link">
+						<a href="javascript:;" title="더보기">더보기</a>
+						<div class="hsnbm-menu">
+							<span class="point_c"></span>
+							<ul class="tb_link">
+								<li><a href="http://www.firstmall.kr/myshop/" target="_blank" title="새창열림">MY퍼스트몰</a></li>
+								<li><a href="http://www.firstmall.kr/ec_hosting/customer/1to1.php" target="_blank" title="새창열림">1:1문의</a></li>
+								<li><a href="http://www.firstmall.kr/ec_hosting/customer/" target="_blank" title="새창열림">고객센터</a></li>
+								<li><a href="http://gmanual.firstmall.kr/" target="_blank" title="새창열림">온라인매뉴얼</a></li>
+								<!--li><a href="http://interface.firstmall.kr/firstmall_plus/data/manual/firstmall_manual.zip">매뉴얼 다운로드</a></li-->
+								<li><a href="http://design.firstmall.kr/" target="_blank" title="새창열림">디자인샵</a></li>
+								<li><a href="javascript:{? solutionServiceCheck(1) }alert('맞춤개발 서비스는 프리미엄몰Plus와 독립몰Plus에서만 적용됩니다.'); { / }void(window.open('http://www.firstmall.kr/ec_hosting/customize/write.php?code=etc'));">맞춤개발</a></li>
+								{? config_system.webmail_domain }
+									<li><a href="http://webmail.{config_system.webmail_domain}/admin/adminhome" target="_blank" title="새창열림">웹메일/세금계산서</a></li>
+								{ : }
+									<li><a href="javascript:openDialogAlert('하이웍스를 신청하지 않으셨거나  쇼핑몰과 별도로 신청을 하셨습니다.<br/>쇼핑몰과 별도로 신청을 하셨다면 퍼스트몰 고객센터 1544-3270 으로 문의주시길 바랍니다.<br/><br/>하이웍스를 신청하려면 My퍼스트몰><a href=\'http://firstmall.kr/myshop\' target=\'_blank\'><span class=\'highlight-link\'>쇼핑몰관리</span></a> 에서 할 수 있습니다.',600,200,function(){});">웹메일/세금계산서</a></li>
+								{ / }
+							</ul>
+						</div>
+					</li>
+					<!--{ ? managerInfo.manager_seq }-->
+					<li class="item hsnb-admin">
+						<a href="javascript:;" title="관리자 정보">관리자 정보</a>
+						<div class="hsnbm-menu">
+							<span class="point_c"></span>
+							<ul class="tb_admin_info">
+								<li class="admin_thumb">
+									<img src={?managerInfo.mphoto}"../../../data/icon/manager/{managerInfo.mphoto}"{:}"../../images/main/def_img.png"{/} width="50" height="50" align="absmiddle" />
+								</li>
+								<li class="admin_info">
+									<p>{managerInfo.manager_id}</p>
+									<p>({managerInfo.mname})</p>
+									<p style="color:#348ddb;">{? managerInfo.manager_yn=='Y' }대표운영자{ : }부운영자{ / }</p>
+								</li>
+								<li class="admin_link">
+									<a href="../setting/manager_reg?manager_seq={managerInfo.manager_seq}">정보수정</a>
+									<a href="../login_process/logout">로그아웃</a>
+								</li>
+							</ul>
+						</div>
+					</li>
+					<!--{ / }-->
+				</ul>
+
+				<!-- 다국어 통합설정 -->
+				<!--{ ? env_all }-->
+				<a href="javascript:;" id="hs-global" class="hs-global" env="all" title="관리환경 이동"><strong>전체 쇼핑몰 통합설정</strong><span class="hs_arrow"></span></a>
+				<!--{ : }-->
+				<a href="javascript:;" id="hs-global" class="hs-global" env="{this_admin_env.env_name}" title="관리환경 이동"><strong>{this_admin_env.env_name}</strong><span class="lang_{this_admin_env.language}"><span class="hide">{this_admin_env.lang} </span>{this_admin_env.currency}</span><span class="hs_arrow"></span></a>
+				<!--{ / }-->
+
+				<!-- 검색창 -->
+				<form name="headForm" id="headForm" class="header-search" action="/admin/order/catalog" style="overflow: visible;">
+					<div class="fl hs-box">
+						<input type="text" name="header_search_keyword" id="header_search_keyword" value="{_GET.header_search_keyword}" title="주문, 출고{ ? serviceLimit('SN4') }, 실물{/}{ ? serviceLimit('S28') }, 티켓{/}, 회원" />
+						<!-- 검색어 입력시 레이어 박스 : start -->
+						<div class="header_search_type_text hide">{_GET.header_search_type_text}</div>
+						<div class="header_searchLayer hide">
+							<input type="hidden" name="header_search_type" id="header_search_type" value="" />
+							<ul class="headerSearchUl">
+								<li><a class="header_link_keyword" s_type="order" href="#">주문검색: <span class="header_txt_keyword"></span> <span class="header_txt_title">-주문 찾기</span></a></li>
+								<li><a class="header_link_keyword" s_type="export" href="#">출고검색: <span class="header_txt_keyword"></span> <span class="header_txt_title">-출고 찾기</span></a></li>
+								<!--{ ? serviceLimit('SN4') }-->
+								<li><a class="header_link_keyword" s_type="goods" href="#">실물상품: <span class="header_txt_keyword"></span> <span class="header_txt_title">-실물 찾기</span></a></li>
+								<!--{ / }
+								{ ? serviceLimit('S28') }-->
+								<li><a class="header_link_keyword" s_type="coupon" href="#">티켓상품: <span class="header_txt_keyword"></span> <span class="header_txt_title">-티켓 찾기</span></a></li>
+								<!--{ / }-->
+								<li><a class="header_link_keyword" s_type="member" href="#">회원검색: <span class="header_txt_keyword"></span> <span class="header_txt_title">-회원 찾기</span></a></li>
+							</ul>
+						</div>
+						<!-- 검색어 입력시 레이어 박스 : end -->
+					</div>
+					<span class="fl"><input type="image" src="../../images/main/btn_search.png" /></span>
+					<div class="relative">
+						<div class="absolute" style="top:5px; left:300px; z-index:1000"><img src="../../images/main/q_icon.png" align="absmiddle" id="search_help" class="hand" /></div>
+						<div class="absolute hide" id="search_information" style="z-index:1000">
+							<div class="center pdb10 fn12 bold">아래의 정의된 검색어로 빠르게 검색하세요</div>
+							<table class="simplelist-table-style" style="width:100%; table-layout:fixed">
+								<tr>
+									<th class="bold">주문 → 주문리스트</th>
+									<th class="bold">출고 → 출고리스트</th>
+									<th class="bold">상품 → 실물 배송 상품</th>
+									<th class="bold">티켓 → 티켓 발송 상품</th>
+									<th class="bold">회원  → 회원리스트</th>
+								</tr>
+								<tr>
+									<td style="border:1px solid #c8c8c8;" valign="top">
+										<div class="pdl5">· 주문자</div>
+										<div class="pdl5 pdt5">· 수령자</div>
+										<div class="pdl5 pdt5">· 입금자</div>
+										<div class="pdl5 pdt5">· 아이디</div>
+										<div class="pdl5 pdt5">· 이메일</div>
+										<div class="pdl5 pdt5">· 휴대폰</div>
+										<div class="pdl5 pdt5">· 상품명</div>
+										<div class="pdl5 pdt5">· 상품 고유값</div>
+										<div class="pdl5 pdt5">· 상품코드</div>
+										<div class="pdl5 pdt5">· 사은품</div>
+										<div class="pdl5 pdt5">· 운송장번호</div>
+										<div class="pdl5 pdt5">· 주문번호</div>
+										<div class="pdl5 pdt5">· 출고번호</div>
+										<div class="pdl5 pdt5">· 반품번호</div>
+										<div class="pdl5 pdt5">· 환불번호</div>
+									</td>
+									<td style="border:1px solid #c8c8c8;" valign="top">
+										<div class="pdl5">· 주문자</div>
+										<div class="pdl5 pdt5">· 수령자</div>
+										<div class="pdl5 pdt5">· 입금자</div>
+										<div class="pdl5 pdt5">· 아이디</div>
+										<div class="pdl5 pdt5">· 이메일</div>
+										<div class="pdl5 pdt5">· 휴대폰</div>
+										<div class="pdl5 pdt5">· 상품명</div>
+										<div class="pdl5 pdt5">· 상품 고유값</div>
+										<div class="pdl5 pdt5">· 상품코드</div>
+										<div class="pdl5 pdt5">· 사은품</div>
+										<div class="pdl5 pdt5">· 운송장번호</div>
+										<div class="pdl5 pdt5">· 주문번호</div>
+										<div class="pdl5 pdt5">· 출고번호</div>
+										<div class="pdl5 pdt5">· 반품번호</div>
+										<div class="pdl5 pdt5">· 환불번호</div>
+									</td>
+									<td style="border:1px solid #c8c8c8;" valign="top">
+										<div class="pdl5">· 상품명</div>
+										<div class="pdl5 pdt5">· 상품 고유값</div>
+										<div class="pdl5 pdt5">· 상품코드</div>
+										<div class="pdl5 pdt5">· 태그</div>
+										<div class="pdl5 pdt5">· 간략설명</div>
+									</td>
+									<td style="border:1px solid #c8c8c8;" valign="top">
+										<div class="pdl5">· 상품명</div>
+										<div class="pdl5 pdt5">· 상품 고유값</div>
+										<div class="pdl5 pdt5">· 상품코드</div>
+										<div class="pdl5 pdt5">· 태그</div>
+										<div class="pdl5 pdt5">· 간략설명</div>
+									</td>
+									<td style="border:1px solid #c8c8c8;" valign="top">
+										<div class="pdl5">· 아이디</div>
+										<div class="pdl5 pdt5">· 회원명</div>
+										<div class="pdl5 pdt5">· 닉네임</div>
+										<div class="pdl5 pdt5">· 이메일</div>
+										<div class="pdl5 pdt5">· 주소</div>
+										<div class="pdl5 pdt5">· 전화번호</div>
+										<div class="pdl5 pdt5">· 핸드폰</div>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<script type="text/javascript">
+						$("#search_help").bind("click",function(){
+							openDialog("빠른 검색", "search_information", {"width":800});
+						});
+						$("#header_search_keyword").blur(function(){
+							if("{_GET.header_search_keyword}" == $("#header_search_keyword").val()){
+								$(".header_search_type_text").show();
+							}
+							setTimeout(function(){
+								$('.header_searchLayer').hide()}, 500
+							);
+						});
+						{? _GET.header_search_type}
+							setHeaderSearchTxt('{_GET.header_search_type}');
+							$('.header_search_type_text').show();
+						{/}
+					</script>
+				</form>
+			</div>
+
+			<!-- 헤더 네비게이션바 -->
+			<div class="header-gnb-container">
+				<ul class="header-gnb-warp clearbox">
+					<!--{ ? !managerInfo.manager_seq }-->
+					<div id="header-gnb-cover" style="top:0px; position:absolute; width:100%; border:1px solid #000000; height:98px; z-index:100000; background-color:#ffffff;"></div>
+					<script>$("#header-gnb-cover").css('opacity',0);</script>
+					<!--{ / }-->
+					<li class="fl">
+						<!-- 좌측 GNB -->
+						<ul class="header-gnb">
+							<li class="mitem-td {?adminMenuCurrent=='main'}current{/}">
+								<span class="mitem mitem_main"><a href="../main/index"><span>홈</span></a></span>
+							</li>
+							<li class="mitem-td {?adminMenuCurrent=='sale'}current{/}">
+								<span class="mitem mitem_main"><a href="../sale/index"><span>판매시스템</span></a></span>
+								<div class="submenu-wrapper">
+									<div class="submenu">
+										<ul>
+											<li>
+												<a href="../sale/self_status">셀프판매</a>
+												<a href="../sale/emergency_status">긴급판매</a>
+												<a href="../sale/direct_status">머박다이렉트</a>
+												<a href="../sale/turnkey_status">턴키매각</a>
+												<a href="../sale/find_status">기계찾아줘</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</li>
+							<li class="mitem-td {?adminMenuCurrent=='osc'}current{/}">
+								<span class="mitem mitem_main"><a href="../osc/index"><span>외주시스템</span></a></span>
+								<div class="submenu-wrapper">
+									<div class="submenu">
+										<ul>
+											<li>
+												<a href="../osc/osc_status">외주 관리</a>
+												<a href="../osc/ptn_status">파트너 관리</a>
+												<a href="../osc/ptn_apply">파트너 지원요청 현황</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</li>
+							<li class="mitem-td {?adminMenuCurrent=='com'}current{/}">
+								<span class="mitem mitem_main"><a href="../com/index"><span>공통</span></a></span>
+								<div class="submenu-wrapper">
+									<div class="submenu">
+										<ul>
+											<li>
+												<a href="../com/category">카테고리 관리</a>
+											</li>
+											<li>
+												<a href="../com/qna">문의사항 관리</a>
+											</li>
+											<li>
+												<a href="../com/rev">이용후기 관리</a>
+											</li>
+											<li>
+												<a href="../com/eval">평가 관리</a>
+											</li>
+											<li>
+												<a href="../com/dealer">공식딜러 관리</a>
+											</li>
+											<li>
+												<a href="../com/perform">성능검사 관리</a>
+											</li>
+											<li>
+												<a href="../com/email">이메일 전송</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</li>
+							<!--{ @ adminMenu }-->
+							<li class="mitem-td {?in_array(adminMenuCurrent,.folders)}current{/}" code="{.key_}">
+								<div class="header-gnb-issueCount-layer" code="{.key_}"></div>
+								<span class="mitem mitem_{.key_}"><a href="{ .childs[0].url }"><span>{.childs[0].name}</span></a></span>
+								<!--{ ? .childs[1] }-->
+								<div class="submenu-wrapper">
+									<div class="submenu">
+										<ul>
+									<!--{ @ .childs }-->
+										<!--{ ? ..index_ > 0 }-->
+										<li>
+											<!--{ ? .folders[..index_] == 'distributor' || .folders[..index_] == 'market_linkage' }-->
+												<div style="border-top:1px solid #C2C2C2;padding-top:3px;width:95%;margin-left:5px;"></div>
+											<!--{ / }-->
+											
+											<!--{ ? ..value_.limit && serviceLimit(..value_.limit,'return') }-->
+											<a href="#" onclick="{=serviceLimit(..value_.limit)}">{..value_.name}</a>
+											<!--{ : }-->
+											<a href="{..value_.url}">{..value_.name}</a>
+											<!--{ / }-->
+										</li>
+												<!--{? count(.childs) >= 11 && ..index_ % adminMenuLimit == 0 }-->
+										</ul>
+										<ul>
+												<!--{ / }-->
+										<!--{ / }-->
+									<!--{ / }-->
+										</ul>
+									</div>
+								</div>
+								<!--{ / }-->
+							</li>
+							<!--{ / }-->
+						</ul>
+					</li>
+					<li class="fr">
+						<!-- 우측 GNB -->
+						<ul class="header-qnb">
+							<!-- 빅데이터 영역 -> 페이지 관리로 대체 :: 2019-01-21 -->
+							<li class="hide gnb-item qnb-bigdata {?adminMenuCurrent=='bigdata'}current{/}">
+								<!--{ ? serviceLimit('H_FR') }-->
+								<a href="#" class="gnb-item-a"><span>빅데이터</span></a>
+								<ul class="gnb-subnb">
+									<li class="gnb-subnb-item"><a href="#" onclick="{=serviceLimit('A1')}">전용페이지 설정</a></li>
+									<li class="gnb-subnb-item"><a href="../bigdata/preview">결과 테스트</a></li>
+								</ul>
+								<!--{ : }-->
+								<a href="../bigdata/catalog" class="gnb-item-a"><span>빅데이터</span></a>
+								<ul class="gnb-subnb">
+									<li class="gnb-subnb-item"><a href="../bigdata/catalog">전용페이지 설정</a></li>
+									<li class="gnb-subnb-item"><a href="../bigdata/preview">결과 테스트</a></li>
+								</ul>
+								<!--{ / }-->
+							</li>
+							<li class="gnb-item qnb-design {?adminMenuCurrent=='design'}current{/}">
+								<!--{ ? serviceLimit('S32') }-->
+								<a href="../design/skin?prefix=fammerce" class="gnb-item-a"><span>디자인</span></a>
+								<!--{ : }-->
+								<a href="../design/index" class="gnb-item-a"><span>디자인</span></a>
+								<!--{ / }-->
+								<ul class="gnb-subnb">
+									<li class="gnb-subnb-item"><a href="../design/skin{?serviceLimit('S32')}?prefix=fammerce{/}">스킨 설정</a></li>
+									<li class="gnb-subnb-item"><a href="../design/skin_add" >스킨 추가</a></li>
+								<!--{ ? config_system.operation_type != 'light' }-->
+									<li class="gnb-subnb-item"><a href="../design/font">폰트 설정</a></li>
+								<!--{ / }-->
+								<!--{ ? config_system.operation_type == 'light' }-->
+									<!--{ ? config_system.skin_type == 'responsive' }-->
+									<li class="gnb-subnb-item"><a href="../design/main?setMode=mobile" target="_blank">디자인환경 (반응형)</a></li>
+									<!--{ : }-->
+									<li class="gnb-subnb-item"><a href="../design/main?setMode=pc" target="_blank">디자인환경 (반응형PC)</a></li>
+									<li class="gnb-subnb-item"><a href="../design/main?setMode=mobile" target="_blank">디자인환경 (반응형Mobile)</a></li>
+									<!--{ / }-->
+								<!--{ : }-->
+									<li class="gnb-subnb-item"><a href="../design/main?setMode=pc" target="_blank">디자인환경 (PC)</a></li>
+									<li class="gnb-subnb-item"><a href="../design/main?setMode=mobile" target="_blank">디자인환경 (Mobile)</a></li>
+									<li class="gnb-subnb-item">
+									<!--{ ? serviceLimit('H_FR') }-->
+										<a href="#" onclick="{=serviceLimit('A1')}">디자인환경 (Facebook)</a>
+									<!--{ : }-->
+										<a href="../design/main?setMode=fammerce" target="_blank">디자인환경 (Facebook)</a>
+									<!--{ / }-->
+									</li>
+								<!--{ / }-->
+									<li class="gnb-subnb-item"><a href="#" onclick="DM_window_eyeeditor('data/skin/{designWorkingSkin}/main/index.html')">HTML 에디터</a></li>
+								</ul>
+							</li>
+							<!--{ ? settingMenu }-->
+							<li class="gnb-item qnb-config {?adminMenuCurrent=='setting'}current{/}">
+								<a href="../setting/index" class="gnb-item-a"><span>설정</span></a>
+								<ul class="gnb-subnb setting">
+								<!--{ @ settingMenu['setting']['childs'] }-->
+									<li class="gnb-subnb-item {.class}">
+										<!--{ ? .limit && serviceLimit(.limit,'return') }-->
+										<a href="#" onclick="{=serviceLimit(.limit)}"><span>{=str_pad(.key_+1,2,"0",STR_PAD_LEFT)}.</span> {.name}</a>
+										<!--{ : }-->
+										<a href="{.url}"><span>{=str_pad(.key_+1,2,"0",STR_PAD_LEFT)}.</span> {.name}</a>
+										<!--{ / }-->
+									</li>
+								<!--{ / }-->
+								</ul>
+							</li>
+							<!--{ / }-->
+						</ul>
+					</li>
+				</ul>
+			</div>
+
+			<!--[ 혜택설정바로가기 : 시작 ]-->
+			<div class="relative">
+				<div class="benifit-popup hide"></div>
+			</div>
+			<!--[ 혜택설정바로가기 : 끝 ]-->
+		</div>
+		<!--[ 레이아웃 헤더 : 끝 ]-->
+
+		<div id="layout-body">
+		<!--[ 레이아웃 바디(본문) : 시작 ]-->

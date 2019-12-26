@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Daum에디터 - 이미지 첨부</title>
+
+<link rel="stylesheet" href="../../css/popup.css" type="text/css"  charset="utf-8"/>
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/jquploadify/uploadify.css" />
+
+<script type="text/javascript" src="/app/javascript/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="../../js/popup.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquploadify/swfobject.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquploadify/jquery.uploadify.v2.1.4.js"></script>
+
+<script type="text/javascript">
+var _mockdata;
+var fsubdomain = '';
+var fdomain = '';
+$.ajax({url: '/common/domainjson',async: false,dataType: 'json',success: function(data) {fsubdomain = data.subdomain;fdomain = data.domain;}});
+
+$(function(){
+	var setting = {
+		'script'			: '/common/editor_image_upload_temp',
+	    'uploader'			: '/app/javascript/plugin/jquploadify/uploadify.swf',
+	    'buttonImg'			: '/app/javascript/plugin/jquploadify/uploadify-search.gif',
+	    'cancelImg'			: '/app/javascript/plugin/jquploadify/uploadify-cancel.png',
+	    'fileTypeExts'		: '*.jpg;*.gif;*.png;*.jpeg;*.dwg',
+	    'fileTypeDesc'		: 'Image Files (.JPG, .GIF, .PNG, .DWG)',
+	    'fileSizeLimit'		: '10MB',
+	    'removeCompleted'	: false,
+		'width'				: 64,
+		'height'			: 20,
+	    'auto'				: true,
+	    'multi'				: false,
+	    'completeMsg'		: '첨부 가능',
+	    'onComplete'		: function (event, ID, fileObj, response, data) {
+
+	    	var result = eval(response)[0];
+
+			if(result.status!=1){
+				alert(result.msg,400,150);
+				$("#uploader"+ID).find(".percentage").html("<font color='red'> - "+result.desc+"</font>");
+				return false;
+			}else{
+				result.fileInfo.file_size = parseInt(result.fileInfo.file_size*1000);
+				_mockdata = 'is_image=1&imageurl='+ result.filePath + '&filename=' + result.fileInfo.client_name+ '&filesize='+ result.fileInfo.file_size+ '&imagealign=C&originalurl='+result.filePath + '&thumburl='+ result.filePath;
+				document.location.href= "http://"+fdomain+"/app/javascript/plugin/editor/pages/trex/filekr.html?"+_mockdata;
+			}
+
+
+		},
+		'onError'			: function (event,ID,fileObj,errorObj) {
+			alert(errorObj.type + ' Error: ' + errorObj.info);
+		}
+	};
+
+	$("#uploader").uploadify(setting);
+});
+</script>
+
+<script type="text/javascript">
+// <![CDATA[
+
+	function done() {
+		if (typeof(execAttach) == 'undefined') { //Virtual Function
+	        return;
+	    }
+
+		if(!_mockdata){
+			 alert('첨부할 이미지를 선택해주세요.');
+		     return;
+		}
+
+		PopupUtil.getOpener().Editor.focus();//focusOnBottom();
+
+		execAttach(_mockdata);
+		closeWindow();
+	}
+
+	function initUploader(){
+	    var _opener = PopupUtil.getOpener();
+	    if (!_opener) {
+	        alert('잘못된 경로로 접근하셨습니다.');
+	        return;
+	    }
+	    var _attacher = getAttacher('image', _opener);
+	    registerAction(_attacher);
+			_mockdata = {
+			'imageurl': '<?echo $_GET[imageurl];?>',
+			'filename': '<?echo $_GET[filename];?>',
+			'filesize': '<?echo $_GET[filesize];?>',
+			'imagealign': '<?echo $_GET[imagealign];?>',
+			'originalurl':'<?echo $_GET[originalurl];?>',
+			'thumburl': '<?echo $_GET[thumburl];?>'
+		};
+		PopupUtil.getOpener().Editor.focus();//focusOnBottom();
+		PopupUtil.getOpener().Editor.getSidebar().getAttacher("image").execAttach(_mockdata);
+		closeWindow();
+	}
+// ]]>
+</script>
+</head>
+<body onload="<? if($_GET['is_files'] || $_GET['is_image']){ ?>initUploader();<?}?>">
+<div class="wrapper">
+	<div class="header">
+		<h1>사진 첨부</h1>
+	</div>
+	<div class="body">
+		<dl class="alert">
+		    <dt>사진 첨부 확인</dt>
+		    <dd>
+
+				<div><input type="file" id="uploader" /></div>
+			</dd>
+		</dl>
+	</div>
+	<div class="footer">
+		<p><a href="#" onclick="closeWindow();" title="닫기" class="close">닫기</a></p>
+		<ul>
+			<li class="submit"><a href="#" onclick="done();" title="등록" class="btnlink">등록</a> </li>
+			<li class="cancel"><a href="#" onclick="closeWindow();" title="취소" class="btnlink">취소</a></li>
+		</ul>
+	</div>
+</div>
+</body>
+</html>

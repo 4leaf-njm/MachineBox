@@ -1,0 +1,140 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-3">문의사항</h1>
+                
+                <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">관리자 문의&nbsp<i class="accent-txt">{= count(qna_list)}</i>&nbsp건</h5>
+                <!-- {@ qna_list} -->
+                <div class="my-service border">
+                    <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">문의 제목 : {.title}</h5>
+                    <ul class="pt-2 pb-2 my-list">
+                        <li class="my-normal-txt spacing-072 list-100 txt-left">문의 시간 : {.reg_date}</li>
+                        <li class="my-normal-txt spacing-072 list-100 txt-left">문의 내용 : {= nl2br(.content)}</li>
+                    </ul>
+                </div>
+                <div class="my-service border mb-3">
+                    <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">관리자 답변</h5>
+                    <ul class="pt-2 pb-2 my-list">
+                        <!-- {? .reply} -->
+                        <li class="my-normal-txt spacing-072 list-100 txt-left">답변 시간 : {.reply_date}</li>
+                        <li class="my-normal-txt spacing-072 list-100 txt-left">답변 내용 : {= nl2br(.reply)}</li>
+                        <!-- {:} -->
+                        <li class="my-normal-txt spacing-072 list-100 txt-center">아직 답변을 못받았습니다. 조금만 기다려주세요.</li>
+                        <!-- {/} -->
+                    </ul>
+                </div>
+                <!-- {:} -->
+                <div class="default-box mb-3">
+					<p class="default-message">작성하신 문의사항이 없습니다.</p>
+				</div>
+                <!-- {/} -->
+
+                <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">보낸 문의&nbsp<i class="accent-txt">{sale_qna_cnt}</i>&nbsp건</h5>
+                <!-- {@ sale_qna_list} -->
+                <div class="my-service border">
+                    <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">등록번호 : <a href="/sch/mch_detail/{.type}/{.info_seq}">{.sales_no}</a></h5>
+                </div>
+                    <!-- {@ .list} -->
+                    <div class="my-service border">
+                        <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-medium">{..index_+1}. 문의 제목 : {..title}</h5>
+                        <ul class="pt-2 pb-2 my-list">
+                            <li class="my-normal-txt spacing-072 list-100">문의시간 : {..reg_date}</li>
+                            <li class="my-normal-txt spacing-072 list-100">문의자 : {..qna_userid}</li>
+                            <li class="my-normal-txt spacing-072 list-100 txt-bold">문의 내용</li>
+                            <li class="my-normal-txt spacing-072 list-100">{= nl2br(..content)}</li>
+                        </ul>
+                    </div>
+                    <div class="my-service border">
+                        <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-medium">판매자 답변</h5>
+                        <ul class="pt-2 pb-2 my-list">
+                            <li class="my-normal-txt spacing-072 list-100">답변시간 : {? ..res_yn == 'y'}{..res_date}{:}-{/}</li>
+                            <li class="my-normal-txt spacing-072 list-100">판매자 : {..sale_userid}</li>
+                            <li class="my-normal-txt spacing-072 list-100 txt-bold">문의 답변</li> 
+                            <li class="my-normal-txt spacing-072 list-100">
+                                <!-- {? ..res_yn == 'y'} -->
+                                    {= nl2br(..res_content)}
+                                <!-- {:} -->
+                                <li class="my-normal-txt spacing-072 list-100">아직 답변을 못받았습니다. 조금만 기다려주세요.</li>
+                                <!-- {/} -->
+                            </li>    
+                        </ul>
+                    </div>
+                    <!-- {/} -->
+                <div class="mb-4"></div>
+                <!-- {:} -->
+                <div class="default-box small mb-5">
+                    <p class="default-message">작성하신 문의사항이 없습니다.</p>
+                </div>
+                <!-- {/} -->   
+                    
+                <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">받은 문의&nbsp<i class="accent-txt">{qna_rec_cnt}</i>&nbsp건</h5>
+                <form action="/sch/qna_res_process" method="post" id="frm_qna" target="actionFrame">
+                    <input type="hidden" name="qna_seq" />
+                    <input type="hidden" name="res_content" />
+                </form>
+                <!-- {@ qna_rec_list} -->
+                <div class="my-service border">
+                    <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">등록번호 : <a href="/sch/mch_detail/{.type}/{.info_seq}">{.sales_no}</a></h5>
+                </div>
+                    <!-- {@ .list} -->
+                    <div class="my-service border">
+                        <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-medium">{..index_+1}. 문의 제목 : {..title}</h5>
+                        <ul class="pt-2 pb-2 my-list">
+                            <li class="my-normal-txt spacing-072 list-100">문의시간 : {..reg_date}</li>
+                            <li class="my-normal-txt spacing-072 list-100">문의자 : {..qna_userid}</li>
+                            <li class="my-normal-txt spacing-072 list-100 txt-bold">문의 내용</li>
+                            <li class="my-normal-txt spacing-072 list-100">{= nl2br(..content)}</li>
+                        </ul>
+                    </div>
+                    <div class="my-service border">
+                        <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-medium">내 답변</h5>
+                        <ul class="pt-2 pb-2 my-list">
+                            <li class="my-normal-txt spacing-072 list-100">{? ..res_content}답변시간 : {..res_date}{/}</li>
+                            <li class="my-normal-txt spacing-072 list-100">판매자 : {..sale_userid}</li>
+                            <li class="my-normal-txt spacing-072 list-100 txt-bold">문의 답변</li> 
+                            <li class="my-normal-txt spacing-072 list-100">
+                                <!-- {? ..res_content} -->
+                                    {= nl2br(..res_content)}
+                                <!-- {:} -->
+                                <textarea class="res_content textarea-style pl-2 pr-2" style="width: 100%;"></textarea>
+                                <div class="txt-center mt-2 mb-2">
+                                    <a href="#" class="btn_style_01 ml-3 btn-qna-res" data-seq="{..qna_seq}">답 변</a>
+                                </div>
+                                <!-- {/} -->
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- {/} -->
+                <div class="mb-4"></div>
+                <!-- {:} -->
+                <div class="default-box small mb-4">
+                    <p class="default-message">받은 문의사항이 없습니다.</p>
+                </div>
+                <!-- {/} --> 
+            </div>
+		</div>
+	</div>
+</div>
+<script>
+    $(".btn-qna-res").on('click', function(e){
+        e.preventDefault();
+        
+        $res_content = $(this).parents('.my-list').find('.res_content');
+        $qna_seq = $(this).data('seq');
+        if($res_content.val() == '') {
+            alert('답변을 입력해주세요.');
+            $res_content.focus();
+            return;
+        }
+        if(confirm('답변을 보내시겠습니까 ?')) {
+            $('input[name=qna_seq]').val($qna_seq);
+            $('input[name=res_content]').val($res_content.val());
+            $('#frm_qna').submit();
+        }
+    });
+</script>

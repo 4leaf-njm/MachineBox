@@ -1,0 +1,36 @@
+.fblikeopengrapybtn{width:100px; height: 20px; vertical-align: bottom;position:relative; padding:0px 5px 0px 5px; border-bottom:0px solid #ddd;text-align: left;}
+
+.pluginCountButton {
+	background: white; padding: 0px 3px; border-radius: 2px; border: 1px solid rgb(137, 143, 156); height: auto; text-align: center; color: rgb(106, 113, 128); line-height: 18px; font-size: 11px; margin-left: 6px; display: inline-block; white-space: nowrap; min-width: 15px;
+}
+ 
+.pluginCountButtonNub {
+	left: 2px; top: -15px; width: 5px; height: 0px; position: relative; z-index: 2;
+}
+.pluginCountButtonNub s {
+	border-width: 4px 5px 4px 0px; border-style: solid; border-color: transparent rgb(137, 143, 156); top: 1px; display: block; position: relative;
+}
+.pluginCountButtonNub i {
+	border-width: 4px 5px 4px 0px; border-style: solid; border-color: transparent rgb(137, 143, 156); top: 1px; display: block; position: relative;
+}
+.pluginCountButtonNub i {
+	left: 2px; top: -7px; border-right-color: rgb(255, 255, 255);
+}
+
+
+.fblikeopengrapyboxbtn{width:61px;position:relative; padding:0px 5px 0px 5px; border-bottom:0px solid #ddd;text-align: left;}
+.pluginCountBox {
+	background: rgb(255, 255, 255); margin: 0px; padding: 6px 5px 2px 3px; border-radius: 2px; border: 1px solid rgb(137, 143, 156); height: 20px; text-align: center; color: rgb(106, 113, 128); font-size: 14px; white-space: nowrap; min-width: 35px;
+} 
+.pluginCountBoxNub {
+	left: 7px; width: 0px; height: 7px; bottom: 1px; position: relative; z-index: 2;
+}
+.pluginCountBoxNub s {
+	border-width: 5px; border-style: solid; border-color: rgb(137, 143, 156) transparent transparent; display: block; position: relative;
+}
+.pluginCountBoxNub i {
+	border-width: 5px; border-style: solid; border-color: rgb(137, 143, 156) transparent transparent; display: block; position: relative;
+}
+.pluginCountBoxNub i {
+	left: 0px; top: -12px; border-top-color: rgb(255, 255, 255);
+} 

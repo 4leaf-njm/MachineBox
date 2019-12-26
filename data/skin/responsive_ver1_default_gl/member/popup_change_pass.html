@@ -1,0 +1,139 @@
+<style>
+.keyboard_guide {position:relative; padding:5px; min-height:10px; text-align:center;}
+.keyboard_guide a[href='#keyboard_specialchars'] {position:absolute; left:5px; top:5px; display:none;}
+.keyboard_guide a[href='#keyboard_hangul'] {position:absolute; left:5px; top:5px; display:none;}
+.keyboard_guide a[href='#keyboard_open'] {position:absolute; right:5px; top:5px;}
+.keyboard_guide a[href='#keyboard_close'] {position:absolute; right:5px; top:5px; display:none;}
+.keyboard_guide_img {display:none}
+.keyboard_guide_img .keyboard_hangul {margin:20px auto 0 auto; width:290px; height:80px; background:url('../images/common/keyboard.gif') no-repeat; background-size:100% auto}
+.keyboard_guide_img .keyboard_specialchars {margin:20px auto 0 auto; width:290px; height:60px; background:url('../images/common/keyboard.gif') no-repeat 0 -85px; background-size:100% auto; display:none;}
+
+.login_form_box {}
+.upPass {display:block; width:100%; border:1px solid #ccc; height:50px !important;  line-height:50px; font-size:14px; font-family:dotum;}
+
+</style>
+
+<script>
+$(function(){
+	$("a[href='#keyboard_specialchars'], a[href='#keyboard_hangul']").click(function(){
+		if($(this).attr('href')=='#keyboard_specialchars'){
+			$("a[href='#keyboard_specialchars']").hide();
+			$("a[href='#keyboard_hangul']").show();
+
+			$(".keyboard_hangul").hide();
+			$(".keyboard_specialchars").show();
+		}else{
+			$("a[href='#keyboard_specialchars']").show();
+			$("a[href='#keyboard_hangul']").hide();
+
+			$(".keyboard_hangul").show();
+			$(".keyboard_specialchars").hide();
+		}
+	});
+
+	$("a[href='#keyboard_open'], a[href='#keyboard_close']").click(function(){
+		if($(this).attr('href')=='#keyboard_open'){
+			$("a[href='#keyboard_hangul']").click();
+			$("a[href='#keyboard_open']").hide();
+			$("a[href='#keyboard_close']").show();
+			$(".keyboard_guide_img").show();
+		}else{
+			$("a[href='#keyboard_specialchars'], a[href='#keyboard_hangul']").hide();
+			$("a[href='#keyboard_open']").show();
+			$("a[href='#keyboard_close']").hide();
+			$(".keyboard_guide_img").hide();
+		}
+	});
+});
+
+$(function(){
+	$("form[name='loginForm'] input[name='userid']").focus();
+});
+
+function submitLoginForm(frm){
+	if($("input[name='save_id']").is(":checked")){
+		$.cookie('save_userid',$("input[name='userid']",frm).val(),{'expires':30,'path':'/'});
+	}else{
+		$.cookie('save_userid','',{'expires':-1,'path':'/'});
+	}
+
+	if($("input[name='save_pw']").is(":checked")){
+		$.cookie('save_password',$("input[name='password']",frm).val(),{'expires':30,'path':'/'});
+	}else{
+		$.cookie('save_password','',{'expires':-1,'path':'/'});
+	}
+
+	return true;
+}//t
+</script>
+
+<div class="sub_title_bar">
+	<h2>비밀번호 변경</h2>
+	<a href="javascript:history.back();" class="stb_back_btn"><img src="../images/design/btn_back.png" width="22" height="22" /></a>
+</div>
+
+<div class="keyboard_guide">
+	<a href="#keyboard_specialchars">특수 기호 보기</a>
+	<a href="#keyboard_hangul">한글 보기</a>
+	<a href="#keyboard_open">PC 키보드 보기 ▼</a>
+	<a href="#keyboard_close">PC 키보드 닫기 ▲</a>
+
+	<div class="keyboard_guide_img">
+		<div class="keyboard_hangul"></div>
+		<div class="keyboard_specialchars"></div>
+	</div>
+</div>
+
+<div class="pd10">
+
+	<form id='passUpdateForm' method='post' action='/login_process/popup_change_pass' target='actionFrame'>
+	<input type='hidden' name='password_mode' value='update'>
+	<table width='100%' cellpadding='0' cellspacing='0' border=0>
+		<tr>
+			<td >
+				회원님의 소중한 개인정보 보호를 위해 비밀번호를 주기적으로 변경하시는 것이 좋습니다.
+			</td>
+		</tr>
+		<tr><td  height='10'></td></tr>
+		<tr>
+			<td height="50">
+				<input type='password' name='old_password' value='' class='passwordField upPass' title=" 현재 비밀번호">
+			</td>
+		</tr>
+		<tr><td  height='5'></td></tr>
+		<tr>
+			<td>
+				<input type='password' name='new_password' value='' class='passwordField upPass' title=" 신규 비밀번호">
+			</td>
+		</tr>
+		<tr><td  height='5'></td></tr>
+		<tr>
+			<td>
+				<input type='password' name='re_new_password' value='' class='passwordField upPass' title=" 신규 비밀번호 확인">
+			</td>
+		</tr>
+		<tr><td  height='5'></td></tr>
+		<tr>
+			<td >
+				<span class='desc'>6~20자, 영문 대소문자 또는 숫자 특수문자 중 2가지 이상 조합</span>
+			</td>
+		</tr>
+		<tr><td  height='10'></td></tr>
+		<tr>
+			<td >
+			<label><input type='checkbox' name='update_rate' value='Y' onclick='update_rate_checked();'> {passwordRate}개월 이후에 비밀번호를 변경하겠습니다.</label>
+			</td>
+		</tr>
+	</table>
+	<div style="padding-top:10px;">
+		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td><button type="button" class="btn_cancel_large" style="width:100%" onclick="passwordAfterUpdate()">취소</button></td>
+			<td width="4"></td>
+			<td width="60%"><input type="submit" value="확인" class="btn_important_large" style="width:100%" /></td>
+		</tr>
+		</table>
+	</div>
+	</form>
+
+</div>

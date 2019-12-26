@@ -1,0 +1,472 @@
+<div class="container top-pt pb-5">
+        <div class="row mt-5">
+            <div class="col-md-6 col-sm-12">
+                <div class="detail-img-wrap">
+                    <!-- {@ picture_list} -->
+                    <a class="lg-img-div img-div d-none" id="img-{.index_+1}" href="{.path}" title="{.part}">
+                        <img src="{.path}" height="500" style="width: 100%;">
+                    </a>
+                    <!-- {/} -->
+                    <div class="sm-img-row">
+                        <!-- {@ picture_list} -->
+                        <div class="sm-img-div" style="width: calc(100% / {= count(picture_list)}); background-image: url('{.path}');">
+                            <span class="desc-picture">{.part}</span>
+                        </div>
+                        <!-- {/} -->
+                    </div>
+                    <div class="box-filter detail-stat mt-2 d-inline-block">
+                        <span>좋아요 <i class="accent-txt" id="likecnt">{like_cnt}</i>개</span>
+                        <span class="mr-1">뷰 <i class="accent-txt">{view_cnt}</i>개</span>
+                    </div>
+                    <div class="d-inline-block" style="position: relative; bottom: 2px;">
+                    <!-- {? hotmark_list} -->
+                        <!-- {@ explode(',', hotmark_list)} -->
+                            <img src="../images/custom/icon/ico_hotmark_0{.value_}.png" class="ico_hotmark_0{.value_} mr-1" />
+                        <!-- {/} -->
+                    <!-- {/} -->
+                    </div>
+                </div>
+                <script>
+                $('.detail-img-wrap #img-1').removeClass('d-none');
+                  $('.detail-img-wrap .img-div').magnificPopup({
+                       type: 'image',
+                       closeBtnInside: true,
+                       fixedContentPos: true,
+                       image: {verticalFit: true},
+                       gallery: {enabled: true},
+                       zoom: {enabled: true, duration: 400}
+                    });
+
+                </script>
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div class="detail-wrap">
+                    <div class="detail-row detail-row-lg mb-3 pb-3">
+                        <p class="detail-title-01">등록번호</p>
+                        <p class="detail-desc-01">{info_list.sales_no}<span style="font-size:14px; color: #666; padding-left: 10px; vertical-align: text-top; line-height: 37px;">{? est == 'est'}[견적제품]{: !info_list.sort_price}[미승인]{/}</span></p>
+                    </div>
+                    <div class="detail-row mb-3 pb-3">
+                            <div class="detail-div-50">
+                                <p class="detail-title-01 mb-1">{? est == 'est'}판매희망가{: info_list.method == '입찰'}즉시판매가{:}판매가{/}(VAT 별도)</p>
+                                <p class="detail-desc-02">
+                                    <!-- {? est == 'est'} -->
+                                        {= price_format(info_list.hope_price)}원
+                                    <!-- {: info_list.sort_price} -->
+                                        {= price_format(info_list.sort_price)}원
+                                    <!-- {:} -->
+                                        <span style="padding-left: 42px;">-</span>
+                                    <!-- {/} -->
+                                </p>
+                            </div>
+                            <div class="detail-div-50 pr-4">
+                                    <p class="detail-title-01 mb-1">동일기계 시세</p>
+                                    <div class="range-wrap">
+                                        <div class="range-div" style="left: {? est == 'est' || info_list.sort_price}{other_model.range}%{:}50%{/}">
+                                            <p class="accent-txt">
+                                                <!-- {? est == 'est'} -->
+                                                    {= price_format(info_list.hope_price)}원
+                                                <!-- {: info_list.sort_price} -->
+                                                    {= price_format(info_list.sort_price)}원
+                                                <!-- {:} -->
+                                                    <span style="position: relative; left: 22px;">-</span>
+                                                <!-- {/} -->
+                                            </p>
+                                        
+                                            <!-- range-circle 이동은 최저,최고 비교해서 left: %비율로 이동 -->
+                                            <div class="range-circle"></div>
+                                        </div>
+                                    </div>
+                                    <div class="range-text">
+                                        <p class="detail-title-01">최저 : {= price_format(other_model.min)}원</p>
+                                        <p class="detail-title-01 txt-right" style="position: relative; left: 10px;">최고 : {= price_format(other_model.max)}원</p>
+                                    </div>
+                            </div>
+                    </div>
+                    <div class="detail-row mb-3 pb-2 {? info_list.method != '입찰'}d-none{/}">
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">시작가</p>
+                                <p class="detail-desc-03">{= price_format(info_list.bid_start_price)}원</p>
+                            </div>
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">현재가</p>
+                                <p class="detail-desc-03" id="currentPrice" data-price="{info_list.bid_current_price}">{= price_format(info_list.bid_current_price)}원</p>
+                            </div>
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">입찰자수</p>
+                                <p class="detail-desc-03" id="bidUserCnt">{bid_user_cnt}</p>
+                                <p class="detail-desc-03 show_bid_user" onclick="show_bid_user('{userInfo.member_seq}', '{info_list.sales_no}', '{bid_user_cnt}', '{info_list.bid_price}')">[상세]</p>
+                            </div>
+                            <div class="detail-div-50 detail-div-50-row mb-2 d-none d-md-block"></div>
+                            <div class="detail-div-100 detail-div-50-row mb-2 clear-font d-none d-md-block">
+                                <p class="detail-title-01 d-inline-block" style="width: 20%;">남은시간</p>
+                                <p class="detail-desc-03 d-inline-block bidTime"></p>
+                            </div>
+                            <div class="detail-div-50 detail-div-50-row mb-2 d-md-none">
+                                <p class="detail-title-01">남은시간</p>
+                                <p class="detail-desc-03 bidTime "></p>
+                            </div>
+                    </div>
+                    <div class="detail-row detail-row-lg mb-3 pb-3">
+                        <p class="detail-title-01">{info_list.kind_type}</p>
+                        <p class="detail-desc-01">{info_list.model_name}</p>
+                    </div>
+                    <div class="detail-row mb-3 pb-2">
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">제조사</p>
+                                <p class="detail-desc-03">{info_list.mnf_name}</p>
+                            </div>
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">연식</p>
+                                <p class="detail-desc-03">{info_list.model_year}</p>
+                            </div>
+                            <div class="detail-div-50 detail-div-50-row">
+                                <p class="detail-title-01">시리얼 넘버</p>
+                                <p class="detail-desc-03">{info_list.serial_num}</p>
+                            </div>
+                            <div class="detail-div-100">
+                                <p class="detail-desc-03 mt-4">기계사양</p>
+                            </div>
+                    </div>
+                    <div class="detail-row">
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">컨트롤러</p>
+                                <p class="detail-desc-03">{info_list.controller}</p>
+                            </div>
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">기계위치</p>
+                                <p class="detail-desc-03">{info_list.area_name}</p>
+                            </div>
+                            <!-- {@ option_list} -->
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">옵션 {.index_+1}</p>
+                                <p class="detail-desc-03">{.option_name}</p>
+                            </div>
+                            <!-- {/} -->
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">기계크기</p>
+                                <p class="detail-desc-03">{info_list.size}</p>
+                            </div>
+                            <div class="detail-div-50 detail-div-50-row mb-2">
+                                <p class="detail-title-01">기계중량</p>
+                                <p class="detail-desc-03">{info_list.weight}</p>
+                            </div>
+                            <div class="detail-div-50 detail-div-50-row">
+                                <p class="detail-title-01">판매자 인도<br />서비스</p>
+                                <p class="detail-desc-03">{? type == 'self'}{info_list.self_deliver_condition}{:}{info_list.deliver_condition}{/}</p>
+                            </div>
+                    </div>
+                </div>
+                <div class="detail-btn-box">
+                    <button class="btn-type-01 {? like_yn == 'y'}btn-type-01-active{/}" onclick="go_ajax_like('{info_list.info_seq}')" id="btnLike">좋아요</button>
+                    <button class="btn-type-01" onclick="go_perform('{perform.perform_seq}', '{perform.upload}')" style="position: relative;">성능검사{? perform.upload}<span style="position: absolute; top: 10px; right: 3px; font-size: 8.4px; padding: 1.5px 3px; color: #f72b2b; background: #fff2f2; border: 1px solid #ff0000; border-radius: 50%;">클릭</span>{/}</button>
+                    <button class="btn-type-01" onclick="location.href='/sch/mch_eval/{type}/{info_list.info_seq}'">기계평가</button>
+                    <button class="btn-type-01" onclick="alert('서비스 준비중입니다.')">다운로드</button>
+                </div>
+                <div class="detail-shop-wrap mt-4">
+                        <div class="detail-shop-row">
+                            <img src="{info_list.partner_profile_path}" alt="">
+                            <p class="detail-shop-title">{userid}</p>
+                            <div class="review-info">
+                                    <span class="mr-1">
+                                        <!-- {? grade == 0} -->
+                                            <!-- {@ range(0, 4)} -->
+                                                <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                            <!-- {/} -->
+                                        <!-- {: grade == 5} -->
+                                            <!-- {@ range(0, 4)} -->
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                            <!-- {/} -->
+                                        <!-- {:} -->
+                                            <!-- {@ range(0, grade-1)} -->
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                            <!-- {/} -->
+                                            <!-- {@ range(grade, 4)} -->
+                                                <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                            <!-- {/} -->
+                                        <!-- {/} -->
+                                    </span>
+                                    <span>평점 {grade}</span>
+                                    <span>{? info_list.partner_area_name != ''}{info_list.partner_area_name}{:}{info_list.area_name}{/}지역</span>
+                                </div>
+                        </div>
+                        <div class="detail-shop-row pl-5">
+                            <div class="review-info pl-3">
+                                <span>평판 {grade_cnt} 건&nbsp;&nbsp;매매중 {sale_ing_cnt} 건&nbsp;&nbsp;매매완료 {sale_finish_cnt} 건</span>
+                                <span></span>
+                            </div>
+                        </div>
+                </div>
+                <div class="detail-btn-box">
+                    <button class="btn-type-01" onclick="location.href='/sch/visit/{type}/{info_list.info_seq}'">현장방문</button>
+                    <button class="btn-type-01" onclick="location.href='/sch/imd_buy/{type}/{info_list.info_seq}'">즉시구매</button>
+                    {? info_list.method == '입찰'}
+                    <button class="btn-type-01" onclick="show_bid_user('{userInfo.member_seq}', '{info_list.sales_no}', '{bid_user_cnt}', '{info_list.bid_price}')">입찰하기</button>
+                    {:}
+                    <button class="btn-type-01" onclick="location.href='/sch/proposal/{type}/{info_list.info_seq}'">가격제안</button>
+                    {/}
+                    <button class="btn-type-01" onclick="show_modal('{userInfo.member_seq}', '{isSaleUser}')">문의</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/template" id="modalContent">
+    <b>문의하실 내용을 작성해주세요.</b>
+    <input type="text" class="text-field" placeholder="제목">
+    <textarea class="text-field" placeholder="내용"></textarea>
+</script>
+<script>
+function show_modal(member_seq, isSaleUser) {
+    if(member_seq == '') {
+        alert('로그인이 필요한 기능입니다.');
+        return;
+    }
+    if(isSaleUser == true) {
+        alert('해당 기계의 판매자는 이용하실 수 없습니다.');
+        return;
+    }
+    new Dialogify('#modalContent')
+     .title('문의하기')
+     .buttons([
+         {
+             text: '문의',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 var info_seq = {info_list.info_seq};
+                 var title = this.$content.find('input.text-field').val();
+                 var content = this.$content.find('textarea.text-field').val();
+                 if(title == '') {
+                     alert('제목을 입력해주세요.');
+                     this.$content.find('input.text-field').focus();
+                     return;
+                 } else if (content == '') {
+                     alert('내용을 입력해주세요.');
+                     this.$content.find('textarea.text-field').focus();
+                     return;
+                 }
+                 if(confirm('작성하신 내용으로 문의를 보내시겠습니까 ?')) {
+                     $.ajax({
+                         type: 'post',
+                         url: '/sch/ajax_question',
+                         dataType: 'json',
+                         data: {'info_seq': info_seq, 'title': title, 'content': content},
+                         success: function(data) {
+                             if(data.result == 'true') {
+                                 alert('작성하신 문의가 등록되었습니다.');
+                             } else {
+                                 alert('문의 등록에 실패하였습니다. 다시 한번 시도해주세요.');
+                             }
+                         },
+                         error: function() {
+                             console.log('error');
+                         }
+                     });
+                     this.close();
+                 }
+             }
+         },
+         {
+             text: '취소',
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER}).showModal();
+}
+
+</script>
+
+<script type="text/template" id="bidModalContent">
+    <b>입찰하실 금액을 입력해주세요.</b>
+    <input type="text" class="text-field current_price" readonly>
+    <input type="text" class="text-field bid_price" placeholder="입찰 금액 (단위: 만원)">
+</script>
+<script>
+var bid_modal;
+function show_bid_modal(member_seq, isSaleUser, bid_buy_price) {
+    if(member_seq == '') {
+        alert('로그인이 필요한 기능입니다.');
+        return;
+    }
+    if(isSaleUser == true) {
+        alert('해당 기계의 판매자는 이용하실 수 없습니다.');
+        return;
+    }
+    new Dialogify('#bidModalContent')
+     .title('입찰하기')
+     .buttons([
+         {
+             text: '입찰',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 var info_seq = {info_list.info_seq};
+                 var current_price = $('#currentPrice').data('price');
+                 var bid_price = this.$content.find('input.bid_price').val();
+                 bid_price = bid_price + '0000';
+                 if(bid_price == '0000') {
+                     alert('입찰 금액을 입력해주세요.');
+                     this.$content.find('input.bid_price').focus();
+                     return;
+                 } else if(isNaN(bid_price) == true) {
+                     alert('입찰 금액은 숫자만 입력할 수 있습니다.');
+                     this.$content.find('input.bid_price').focus();
+                     return;
+                } else if (Number(bid_buy_price) < Number(bid_price)) {
+                     alert('즉시판매가보다 큰 금액은 입력할 수 없습니다. (즉시판매가 : ' + price_format(bid_buy_price) + '원)');
+                     this.$content.find('input.bid_price').focus();
+                     return;
+                } else if(Number(current_price) >= Number(bid_price)) {
+                     alert('현재 입찰가보다 큰 금액을 입력해야 합니다.');
+                     this.$content.find('input.bid_price').focus();
+                     return;
+                } else if(Number(bid_price) % get_bid_unit() != 0) {
+                    alert(price_format(get_bid_unit()) + '원 단위로 입력해주세요.');
+                     this.$content.find('input.bid_price').focus();
+                     return;
+                }
+                 bid_price = parseInt(bid_price);
+                 if(confirm('[' + price_format(bid_price) + '원]으로 입찰을 하시겠습니까 ?')) {
+                     $.ajax({
+                         type: 'post',
+                         url: '/sch/ajax_bid',
+                         dataType: 'json',
+                         data: {'info_seq': info_seq, 'current_price': current_price, 'bid_price': bid_price},
+                         success: function(data) {
+                             if(data.result == true) {
+                                 alert('입찰이 완료되었습니다.');
+                                 $('#currentPrice').data('price', bid_price);
+                                 $('#currentPrice').text(price_format(bid_price) + '원');
+                                 $('#bidUserCnt').text(Number(data.bid_user_cnt));
+                             } else {
+                                 alert('현재가가 변경되어 다시 한번 입찰을 해주세요.');
+                             }
+                         },
+                         error: function() {
+                             console.log('error');
+                         }
+                     });
+                     this.close();
+                     bid_modal.close();
+                 }
+             }
+         },
+         {
+             text: '취소',
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER})
+        .on('show', function(){
+            this.$content.find('input.current_price').val('현재 입찰가: ' + $('#currentPrice').text());
+            this.$content.find('input.current_price').data('price', $('#currentPrice').text());
+            this.$content.parents('.dialogify').css('left', '1055px');
+        }).show();
+}
+    
+</script>
+<script type="text/template" id="bidUserList">
+    <p><b>입찰자:</b> <span class="bid_user_cnt"></span>&nbsp;&nbsp;<b>최고입찰가:</b> <span class="high_price">없음</span>&nbsp;&nbsp;<b>입찰금액 단위:</b> <span class="bid_unit">0 원</span></p>
+    <p><b>남은시간:</b> <span class="bidTime"></span></p>
+    <table class="tbl_modal">
+        <tr>
+            <th>아이디</th>
+            <th>입찰금액</th>
+            <th>입찰시간</th>
+        </tr>
+    </table>
+</script>
+<script>
+var high_price = 0;
+function show_bid_user(member_seq, sales_no, bid_user_cnt, bid_buy_price) {
+    if(member_seq == '') {
+        alert('로그인이 필요한 기능입니다.');
+        return;
+    }
+
+    new Dialogify('#bidUserList')
+     .title(sales_no + ' 입찰 기록')
+     .buttons([
+         {
+             text: '입찰하기',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 if('{bidData.isEnd}' == true) {
+                     alert('입찰기간이 종료되었습니다.');
+                     return;
+                 } 
+                 show_bid_modal('{userInfo.member_seq}', '{isSaleUser}', bid_buy_price);
+             }
+         },
+         {
+             text: '취소',
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER})
+        .on('show', function(){
+            var info_seq = {info_list.info_seq};
+            var $this = this;
+             $.ajax({
+                 type: 'post',
+                 url: '/sch/ajax_bid_user',
+                 dataType: 'json',
+                 data: {'info_seq': info_seq},
+                 success: function(data) {
+                     var html = '';
+                     if(data.length == 0) {
+                         html += '<tr>';
+                         html += '   <td align="center" colspan="3">입찰자가 없습니다.</td>';
+                         html += '</tr>';
+                     } else {
+                         $.each(data, function(index, value) {
+                             var arr_id = value.userid.split('');
+                             for(var i=0; i<arr_id.length; i++) {
+                                 if(i == 0 || i == arr_id.length - 1) continue;
+                                 arr_id[i] = '*';
+                             }
+                             var id = arr_id.join('');
+                             html += '<tr>';
+                             html += '   <td>' + id + '</td>';
+                             html += '   <td>' + price_format(value.bid_price) + '원</td>';
+                             html += '   <td>' + value.bid_date + '</td>';
+                             html += '</tr>';
+                             if(index == data.length - 1) {
+                                 high_price = value.bid_price;
+                                 $this.$content.find('.high_price').text(price_format(value.bid_price) + '원');
+                             }
+                         });
+                     }
+                     $this.$content.find('.tbl_modal').append(html);
+                     $this.$content.find('.bid_user_cnt').text(bid_user_cnt);
+                     $this.$content.find('.bidTime').text(get_bid_time());
+                     $this.$content.find('.bid_unit').text(price_format(get_bid_unit()) + '원');
+                     setInterval(function(){
+                         $this.$content.find('.bidTime').text(get_bid_time());
+                     }, 1000);
+                     $this.$content.parents('.dialogify').css('left', '546px');
+                     bid_modal = $this;
+                 },
+                 error: function() {
+                     console.log('error');
+                 }
+             });
+        }).show();
+}
+
+function get_bid_unit() {
+    if(high_price < 1000000) {
+        return 10000;
+    } else if(high_price < 10000000) {
+        return 50000;
+    } else {
+        return 100000;
+    }
+}
+</script>
+
+<script>
+    $(window).on('load', function(){
+        bid_timer_load('{bidData.isEnd}', '{bidData.restTime}');
+    });
+</script>

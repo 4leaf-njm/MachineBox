@@ -1,0 +1,96 @@
+<div class="container">
+    <div class="visual_title top-pt">
+        <div class="img_area">
+            <img src="../images/design/bnr_agreement_main.jpg" alt="이용약관" />
+        </div>
+        <div class="visual_gon">
+            <ul class="title_inner_a">
+                <li>
+                    <h2><span designElement="text">이용약관</span></h2>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    
+    <div class="Pt60 mb-5">
+        {=nl2br(agreement)}
+    </div>
+
+<script>
+window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1597178370406771',
+      secret     : '80b4133b990caa7825a548963d32f997',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v5.0'
+    });
+  
+    FB.AppEvents.logPageView();   
+};
+
+(function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/ko_KR/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+
+//로그인 함수
+   
+var accessToken;
+    
+function facebookLogin() {
+    FB.login( function(response) {
+          if(response.status === 'connected') {
+              //로그인 되어 있음
+              console.log(response);
+              accessToken = response.authResponse.accessToken;
+               FB.api('/me/permissions', 'get',function(response){        
+                     console.log(response);
+               });
+          } else {
+              //로그인 실패
+              alert("페이스북 로그인에 실패하였습니다.");
+          }
+      },
+      { scope : 'publish_to_groups, manage_pages, publish_pages'}); //로그인 시, 유저에게 승인받을 권한 목록
+}
+
+function postWall(){    
+//로그인 안되어있을 경우 로그인 작업
+  var params = {
+    accessToken: accessToken,
+    message: 'sample message',
+    name : 'Tester',
+    description : 'FB API test',
+    link : 'http://www.naver.com'
+  };
+  FB.api('/me/feed', 'post', params, function(response){        
+      if(!response || response.error){             
+         console.log(response);
+      } else {              
+         // 글이 성공적으로 올라갔을때              
+         alert("글 등록 성공");
+      }      
+   });
+}
+</script>
+    
+<!-- 
+<div id="naver_id_login"></div>
+<script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
+<script>
+    var naver_id_login = new naver_id_login("cA_aPdhTCnemBrUEv4kH", "http://emachinebox.com/user/write_process");
+    var state = naver_id_login.getUniqState();
+    naver_id_login.setButton("white", 2,40);
+    naver_id_login.setDomain("http://emachinebox.com");
+    naver_id_login.setState(state);
+    naver_id_login.setPopup();
+    naver_id_login.init_naver_id_login();
+</script>-->
+    
+    
+</div>

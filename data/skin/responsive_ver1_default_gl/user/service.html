@@ -1,0 +1,164 @@
+<div class="container-fluid top-pt wrap-bg-gray pb-5">
+    <div class="container pt-5">
+        <form action="/user/service_process" method="post" id="frm_service">
+            <input type="hidden" name="info_seq" value="{info_seq}" />
+
+            <div class="row">
+                <div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+                    <h1 class="wrap-title txt-center txt-bold mb-1">광고상품 선택</h1>
+                    <p class="wrap-title-sub">유료 서비스를 통해 판매기계를 더 돋보이게 하시면, 더 빨리 판매할 수 있습니다.</p>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                        <div class="regi-form mb-5">
+                            <p class="form-title-type-02 txt-black txt-bold ad-title mb-3">광고 상품 선택</p>
+                                <div class="form-row-01 ad-checkbox-row">
+                                        <div>
+                                                <span>없음</span>
+                                                <span>0원</span>
+                                        </div>
+                                        <input type="checkbox" name="chk_ad" data-name="없음" checked>
+                                </div>
+                                <div class="form-row-01 ad-checkbox-row">
+                                        <div>
+                                                <span>핫마크</span>
+                                                <span>10,000원</span>
+                                        </div>
+                                        <input type="hidden" name="ad_name[]" value="핫마크" />
+                                        <input type="hidden" name="ad_price[]" value="10000" />
+                                        <input type="checkbox" name="chk_ad" data-name="핫마크" data-price="10000">
+                                </div>
+                                <div class="form-row-01 ad-checkbox-row">
+                                        <div>
+                                                <span>자동 업데이트</span>
+                                                <span>30,000원</span>
+                                        </div>
+                                        <input type="hidden" name="ad_name[]" value="자동 업데이트" />
+                                        <input type="hidden" name="ad_price[]" value="30000" />
+                                        <input type="checkbox" name="chk_ad" data-name="자동 업데이트" data-price="30000"> 
+                                </div>
+                                <div class="form-row-01 ad-checkbox-row">
+                                        <div>
+                                                <span>하이라이트</span>
+                                                <span>100,000원</span>
+                                        </div>
+                                        <input type="hidden" name="ad_name[]" value="하이라이트" />
+                                        <input type="hidden" name="ad_price[]" value="100000" />
+                                        <input type="checkbox" name="chk_ad" data-name="하이라이트" data-price="100000">
+                                </div>
+                                <div class="form-row-01 ad-checkbox-row">
+                                        <div>
+                                                <span>딜러존</span>
+                                                <span>100,000원</span>
+                                        </div>
+                                        <input type="hidden" name="ad_name[]" value="딜러존" />
+                                        <input type="hidden" name="ad_price[]" value="100000" />
+                                        <input type="checkbox" name="chk_ad" data-name="딜러존" data-price="100000">
+                                </div>
+                        </div>
+                    
+                    <!-- {? ad_list} -->
+                        <script>
+                            $('input[name=chk_ad]').eq(0).prop('checked', false);
+                        </script>
+                        <!-- {@ ad_list} -->
+                        <script>
+                            if(!'{.ad_seq}') {
+                                $('input[name=chk_ad]').eq(0).prop('checked', true);
+                            } else if('{.ad_name}' == '핫마크') {
+                                $('input[name=chk_ad]').eq(1).prop('checked', true);
+                            } else if('{.ad_name}' == '자동 업데이트') {
+                                $('input[name=chk_ad]').eq(2).prop('checked', true);
+                            } else if('{.ad_name}' == '하이라이트') {
+                                $('input[name=chk_ad]').eq(3).prop('checked', true);
+                            } else if('{.ad_name}' == '딜러존') {
+                                $('input[name=chk_ad]').eq(4).prop('checked', true);
+                            }
+                        </script> 
+                        <!-- {/} -->
+                    <!-- {/} -->
+                  
+                        <div class="regi-form mb-3">
+                            <p class="form-title-type-02 txt-black mb-3">기계성능평가</p>
+                                <div class="form-row-01">
+                                    <input type="hidden" name="perform_check_yn" value="{? perform.perform_seq}y{:}n{/}" />
+                                    <div class="input-lg txt-left checkbox-div">
+                                        <input type="checkbox" name="chk_offLine" id="offLine" {? perform.perform_seq}checked{/}>
+                                        <label for="offLine">오프라인 성능검사 <i>요금 : 150,000원 (공작기계 기준)</i></label>
+                                    </div>
+                                        <!--
+                                        <div class="input-md txt-left checkbox-div">
+                                                <input type="radio" name="rd_offLine" id="offLineN" value="n" checked>
+                                                <label for="offLineN">신청안함</label>
+                                        </div>
+                                        -->
+                                </div>
+                                <p class="form-sub-title-02">기계 전문가가 현장에 방문하여 성능검사를 진행, 기계상태에 대해 검증 및 성능검사 보고서 등록하여 구매예정자들이 기계상태를 확인하고 구입할 수 있어 빠른 판매가 가능합니다.</p>
+                        </div>
+                        <div class="regi-form mb-5">
+                                <!--<p class="form-title-type-02 txt-black">온라인 기계 평가 옵션</p>-->
+                            <input type="hidden" name="online_eval_yn" value="{? eval.eval_seq}y{:}n{/}" />
+                            <input type="hidden" name="online_eval_option" value="{? eval.eval_seq}{eval.eval_name}{/}" />
+                            
+                                <!--
+                                <div class="form-row-01">
+                                        <div class="input-md txt-left checkbox-div">
+                                            <input type="radio" name="rd_onLine" id="onLineY" value="n">
+                                            <label for="onLineY">오프라인 성능검사 요금 : 150,000원(공작기계 기준)</label>
+                                        </div>
+                                    
+                                        <div class="input-md txt-left checkbox-div">
+                                                <input type="radio" name="rd_onLine" id="onLineN" value="n" checked>
+                                                <label for="onLineN">신청안함</label>
+                                        </div>
+                                    
+                                </div>
+                                -->
+                                <div>
+                                    <div class="input-lg txt-left mb-2 mt-2 checkbox-div" style="justify-content: normal;">
+                                            <input type="checkbox" name="chk_option" id="onLine3" value="온라인 기계평가 3" data-price="30000" {? eval.eval_name == '온라인 기계평가 3'}checked{/}>
+                                            <label for="onLine3">온라인 기계평가 3 <i>(기계평가자에게 포인트 3배 지급) 요금 : 30,000원</i></label>
+                                    </div>
+                                    <div class="input-lg txt-left checkbox-div" style="justify-content: normal;">
+                                            <input type="checkbox" name="chk_option" id="onLine5" value="온라인 기계평가 5" data-price="50000" {? eval.eval_name == '온라인 기계평가 5'}checked{/}>
+                                            <label for="onLine5">온라인 기계평가 5 <i>(기계평가자에게 포인트 5배 지급) 요금 : 50,000원</i></label>
+                                    </div>
+                                </div>
+                            <p class="form-sub-title-02">이용자들이 대상기계 평가 참여로 많은 이용자들에게 광고를 할 수 있게 합니다.<br/>
+온라인 기계평가란? 판매기계의 기본 성능을 기계평가 앱으로 측정, 촬영하여 페이지에 등록하며, 이용자들이 대상기계를 평가하며, 높은 광고효과를 볼 수 있습니다.</p>
+                        </div>
+                        <div class="regi-form mb-5 price-wrap">
+                                <p class="form-title-type-02 txt-black txt-bold ad-title mb-3">총 결제 금액</p>
+                                <div class="form-row-02">
+                                        <div class="price-div" id="price-list">
+                                                <div class="form-row-01 price-row">
+                                                    <span class="txt-left">광고상품 없음</span>
+                                                    <span class="txt-right">0원</span>
+                                                </div>
+                                        </div>
+                                        <div class="price-div" id="price-total">
+                                                <input type="hidden" name="total_price" value="0" />
+                                                <p class="price-text">총 금액:</p>
+                                                <p class="price-number accent-txt">0원</p>
+                                        </div>
+                                </div>
+                                <div class="ad-pay-div pt-4 txt-center">
+                                    <button type="button" id="btn-complete" class="btn-type-02">신청</button>
+                                </div>
+                        </div>
+                </div>
+                <div class="col-md-6 col-sm-12 ad-img-div">
+                    <p class="ad-img-text">광고 상품 미리보기</p>
+                    <div style="height: 500px; border: 1px solid #dedede;">
+                        <img intrinsicsize="468 x 634" src="" class="ad-img-lg">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    setTimeout(function(){
+        update_price();
+    }, 100);
+</script>

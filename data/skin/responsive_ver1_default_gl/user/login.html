@@ -1,0 +1,58 @@
+<div class="container top-pt calc-wrap">
+    <div class="login-wrap">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <h1 class="login-title txt-center mt-1">로그인해주세요.</h1>
+                <p class="wrap-title-sub mb-5">로그인 하시고 머신박스 서비스를 이용하세요</p>
+
+                <form action="{=sslAction('/user/login_process')}" target="actionFrame" method="post" style="width: 85%; margin: 0 auto;">
+                    <div class="login-form mb-3">
+                        <p class="form-title-type-01">아이디</p>
+                        <input autocomplete="new-password" type="text" name="userid" id="userId" spellcheck="false" class="input-style input-lg input-gray">
+                    </div>
+                    <div class="login-form mb-3">
+                        <p class="form-title-type-01">비밀번호</p>
+                        <input autocomplete="new-password" type="password" name="password" id="userPw" spellcheck="false" class="input-style input-lg input-gray">
+                    </div>
+                    <div class="save-id-div">
+                        <input type="checkbox" name="chk_save_id" id="idSaveCheck"/>
+                        <label for="idSaveCheck">아이디 저장</label>
+                    </div>
+                    <div class="login-btn-div mt-5 txt-center">
+                        <button type="submit" class="btn-type-02 btn-radius">로그인</button>
+                    </div>
+                    <div class="find-div">
+                        <a href="/member/find?mode=findid">아이디 찾기</a>
+                        <span>/</span>
+                        <a href="/member/find?mode=findpw">비밀번호 찾기</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 로딩 시 ID Input에 포커스
+        $('input[name=userid]').focus();
+        
+    var key = getCookie("key");
+    $("#userId").val(key); 
+     
+    if($("#userId").val() != ""){ 
+        $("#idSaveCheck").attr("checked", true);
+    }
+     
+    $("#idSaveCheck").change(function(){ 
+        if($("#idSaveCheck").is(":checked")){
+            setCookie("key", $("#userId").val(), 7);
+        }else{ 
+            deleteCookie("key");
+        }
+    });
+     
+    $("#userId").keyup(function(){
+        if($("#idSaveCheck").is(":checked")){
+            setCookie("key", $("#userId").val(), 7);
+        }
+    });
+    </script>
+</div>

@@ -1,0 +1,254 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-2">판매대기 기계</h1>
+
+                <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">
+					임시저장&nbsp<i class="accent-txt" id="temp-data-count"></i>&nbsp건
+				</h5>
+                
+                <div id="temp-data-div"></div>
+                
+				<h5 class="wrap-title-sub txt-left mt-5 mb-2 spacing-072 txt-bold">
+					머박다이렉트 승인대기&nbsp<i class="accent-txt">{= count(direct_list)}</i>&nbsp건
+				</h5>
+
+				<!-- {@ direct_list} -->
+				<div class="my-service border">
+					<h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">등록번호: {.sales_no}</h5>
+					<ul class="pt-2 pb-2 my-list">
+                        <li class="my-normal-txt spacing-072 list-100">등록 신청일 : {.sales_date}</li>
+						<li class="my-normal-txt spacing-072 list-100">판매희망 금액 : {=number_format(.hope_price)} 원</li>
+						<li class="my-normal-txt spacing-072 list-100">승인여부 : {.state}</li>
+					</ul>
+				</div>
+                <div class="my-service border">
+                    <ul class="pt-2 pb-2 my-list">
+                        <li class="my-normal-txt spacing-072 list-100 txt-center">
+                            <a href="/sale/{.type}_reg/{.info_seq}/wait/{.type}" class="d-block txt-bold">등록정보 수정</a> 
+                        </li>
+                    </ul>
+                </div>
+                <div class="my-service border">
+                    <ul class="pt-2 pb-2 my-list">
+                        <li class="my-normal-txt spacing-072 list-50 txt-center">
+                            <a href="javascript:show_sale_finish_layer('{.info_seq}')" class="d-block txt-bold">판매완료</a> 
+                        </li>
+                        <li class="my-normal-txt spacing-072 list-50 txt-center">
+                            <a href="javascript:show_sale_cancel_layer('{.info_seq}')" class="d-block txt-bold">등록취소</a> 
+                        </li>
+                    </ul>
+                </div>
+				<div class="mb-4"></div>
+				<!-- {:} -->
+				<div class="default-box mb-3">
+					<p class="default-message">머박다이렉트 신청 내역이 없습니다.</p>
+				</div>
+				<!-- {/} -->
+
+                <h5 class="wrap-title-sub txt-left mt-5 mb-2 spacing-072 txt-bold">셀프판매 판매대기&nbsp<i class="accent-txt">{= count(self_wait_list)}</i>&nbsp건</h5>
+                <div class="scroll-wrap ad-sale-wrap scroll-y mb-5">
+                    <!-- {@ self_wait_list } -->
+                    <div class="product-wrap-01">
+                        <div class="scroll-div">
+                            <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                                <div class="product-row-01 normal-machine-row">
+                                    <div class="product-machine-desc product-row-01">
+                                        <img class="product-machine-img" src="{.path}" height="115"/>
+                                        <div class="scroll-desc">
+                                            <div class="product-row-01">
+                                                <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                                <a href="/sale/{.type}_reg/{.info_seq}/wait/{.type}/{.wait_yn}" class="btn small mr-1">재등록 하기</a>
+                                                <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                                                <span class="btn-type-01">입찰진행</span>
+                                                <!-- {/} -->
+                                                <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                                                <span class="btn-type-01">입찰마감</span>
+                                                <!-- {/} -->
+                                                <!-- {? .price_proposal != 0} -->
+                                                <span class="btn-type-01">가격제안</span>
+                                                <!-- {/} -->
+                                            </div>
+                                            <span>{= str_replace('년', '', .model_year)}년형</span>
+                                            <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                            <span>{.area_name}</span>
+                                            <!--<span>기타사항</span>-->
+                                            <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                                            <div class="ad-sale-icon-row">
+                                                <div>
+                                                    <img src="../images/custom/icon/ico-heart.png" alt="">
+                                                    <span>{.like_cnt}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-machine-info">
+                                        <!--<img class="product-profile-img" src='{.partner_profile_path}'/>-->
+                                        <p class="pb-1">{.userid}</p>
+                                        <span class="pb-1">
+                                            <!-- {? .grade == 0} -->
+                                                <!-- {@ range(0, 4)} -->
+                                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                <!-- {/} -->
+                                            <!-- {: .grade == 5} -->
+                                                <!-- {@ range(0, 4)} -->
+                                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <!-- {/} -->
+                                            <!-- {:} -->
+                                                <!-- {@ range(0, .grade-1)} -->
+                                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <!-- {/} -->
+                                                <!-- {@ range(.grade, 4)} -->
+                                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                <!-- {/} -->
+                                            <!-- {/} -->
+                                            </span>
+                                        <span>평점 {.grade} 점&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;매매중 {.sale_ing_cnt} 건</span>
+                                        <span>평판 {.grade_cnt} 건&nbsp;&nbsp;매매완료 {.sale_finish_cnt} 건</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- {:} -->
+                    <div class="default-box">
+                        <p class="default-message">셀프판매 판매대기 내역이 없습니다.</p>
+                    </div>
+                    <!-- {/} -->
+                </div>
+                    
+                <h5 class="wrap-title-sub txt-left mt-5 mb-2 spacing-072 txt-bold">
+					셀프판매 입금대기&nbsp<i class="accent-txt">{= count(self_list)}</i>&nbsp건
+				</h5>
+
+				<!-- {@ self_list} -->
+				<div class="my-service border">
+					<h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">등록번호: {.sales_no}</h5>
+					<ul class="pt-2 pb-2 my-list">
+                        <li class="my-normal-txt spacing-072 list-100">등록일 : {.sales_date}</li>
+                        <li class="my-normal-txt spacing-072 list-100">결제 방법 : {.pay_method}</li>
+						<li class="my-normal-txt spacing-072 list-100">결제 금액 : {=number_format(.pay_price)} 원</li>
+						<li class="my-normal-txt spacing-072 list-100">입금 계좌 : 농협은행, 에스디네트웍스(신동훈), 302-1371-4082-81</li>
+					</ul>
+				</div>
+                <div class="my-service border">
+                    <ul class="pt-2 pb-2 my-list">
+                        <li class="my-normal-txt spacing-072 list-100 txt-center">
+                            <a href="/sale/{.type}_reg/{.info_seq}/wait/{.type}" class="d-block txt-bold">등록정보 수정</a> 
+                        </li>
+                    </ul>
+                </div>
+				<div class="mb-4"></div>
+				<!-- {:} -->
+				<div class="default-box mb-3">
+					<p class="default-message">셀프판매 입금대기 내역이 없습니다.</p>
+				</div>
+				<!-- {/} -->
+                
+                <h5 class="wrap-title-sub txt-left mt-5 mb-2 spacing-072 txt-bold">입찰마감&nbsp<i class="accent-txt">{= count(bid_list)}</i>&nbsp건</h5>
+                <div class="scroll-wrap ad-sale-wrap scroll-y mb-5">
+                    <!-- {@ bid_list } -->
+                    <div class="product-wrap-01">
+                        <div class="scroll-div">
+                            <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                                <div class="product-row-01 normal-machine-row">
+                                    <div class="product-machine-desc product-row-01">
+                                        <img class="product-machine-img" src="{.path}" height="115"/>
+                                        <div class="scroll-desc">
+                                            <div class="product-row-01">
+                                                <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                                <a href="/sale/{.type}_reg/{.info_seq}/wait/{.type}" class="btn small mr-1">등록정보 수정</a>
+                                                <a href="javascript:show_sale_finish_layer('{.info_seq}')" class="btn small mr-1">판매완료</a>
+                                                <a href="javascript:show_sale_cancel_layer('{.info_seq}')" class="btn small mr-1">등록취소</a>
+                                                <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                                                <span class="btn-type-01">입찰진행</span>
+                                                <!-- {/} -->
+                                                <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                                                <span class="btn-type-01">입찰마감</span>
+                                                <!-- {/} -->
+                                                <!-- {? .price_proposal != 0} -->
+                                                <span class="btn-type-01">가격제안</span>
+                                                <!-- {/} -->
+                                            </div>
+                                            <span>{= str_replace('년', '', .model_year)}년형</span>
+                                            <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                            <span>{.area_name}</span>
+                                            <!--<span>기타사항</span>-->
+                                            <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                                            <div class="ad-sale-icon-row">
+                                                <div>
+                                                    <img src="../images/custom/icon/ico-heart.png" alt="">
+                                                    <span>{.like_cnt}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-machine-info">
+                                        <!--<img class="product-profile-img" src='{.partner_profile_path}'/>-->
+                                        <p class="pb-1">{.userid}</p>
+                                        <span class="pb-1">
+                                            <!-- {? .grade == 0} -->
+                                                <!-- {@ range(0, 4)} -->
+                                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                <!-- {/} -->
+                                            <!-- {: .grade == 5} -->
+                                                <!-- {@ range(0, 4)} -->
+                                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <!-- {/} -->
+                                            <!-- {:} -->
+                                                <!-- {@ range(0, .grade-1)} -->
+                                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <!-- {/} -->
+                                                <!-- {@ range(.grade, 4)} -->
+                                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                <!-- {/} -->
+                                            <!-- {/} -->
+                                            </span>
+                                        <span>평점 {.grade} 점&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;매매중 {.sale_ing_cnt} 건</span>
+                                        <span>평판 {.grade_cnt} 건&nbsp;&nbsp;매매완료 {.sale_finish_cnt} 건</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- {:} -->
+                    <div class="default-box">
+                        <p class="default-message">입찰 마감된 내역이 없습니다.</p>
+                    </div>
+                    <!-- {/} -->
+                </div>
+            </div>
+		</div>
+	</div>
+</div>
+
+<script>
+    var temp_list = JSON.parse(localStorage.getItem('sale_temp_list'));
+    var html = '';
+    var temp_data_count = 0;
+    if(!temp_list || temp_list.length == 0) {
+        html += '<div class="default-box small">';
+        html += '    <p class="default-message">임시 저장된 데이터가 없습니다.</p>';
+        html += '</div>';
+    } else {
+        temp_data_count = temp_list.length;
+        
+        $.each(temp_list, function(index, value) {
+             html += '<div class="my-service border mb-3">';
+             html += '   <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">임시저장 시간 : ' + value.save_time + ' (' + value.type_str + ')</h5>';
+             html += '   <ul class="pt-2 pb-2 my-list">';
+             html += '        <li class="my-normal-txt spacing-072 list-100 txt-center">';
+             html += '            <a href="/sale/' + value.type + '_reg/' + index + '/temp" class="d-block txt-bold">작성하기</a>';
+             html += '        </li>';
+             html += '    </ul>';
+             html += '</div>';
+        });
+    }
+    $('#temp-data-count').text(temp_data_count);
+    $('#temp-data-div').html(html);
+</script>

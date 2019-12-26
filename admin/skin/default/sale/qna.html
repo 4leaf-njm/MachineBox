@@ -1,0 +1,173 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsRegist.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../css/layer_stock.css" />
+<style>
+	.goodsOptionTable {display:none; position:absolute; border-collapse:collapse; top:-10px; left:60px; border:1px solid #f5f5f5;}
+	.goodsOptionTable table {width:220px;}
+	.goodsOptionTable th {padding:5px; border:1px solid #ddd; background-color:#f5f5f5}
+	.goodsOptionTable td {height:25px !important; border:1px solid #ddd; background-color:#ffffff; text-align:center;}
+
+	div.sub-choose-lay div.choose-form-lay {top:27px;right:0;width:200px;}
+	div.sub-choose-lay div.choose-down-lay {top:27px;right:140px;width:150px;}
+	div.list-string-price-lay {position:relative;}
+	div.list-string-price-lay img {cursor:pointer;}
+	div.view-string-price-lay {position:absolute;top:20px;left:41px;width:300px;z-index:100;background-color:#fff;}
+	.t_tot_stock {text-align:center; border-collapse:collapse; width:570px;}
+	.t_tot_stock td {border:1px solid #666; padding:5px;}
+	.gr_col {color:#666;}
+</style>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>문의요청</h2>
+		</div>
+
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(qna_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+</div>
+
+<!-- 신청리스트 테이블 : 시작 -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<table class="list-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="50" /><!--번호-->
+			<col width="120" /><!--등록번호-->
+			<col width="130" /><!--문의 작성일-->
+			<col width="100" /><!--구매자-->
+			<col width="100" /><!--판매자-->
+			<col width="140" /><!--문의 제목-->
+			<col width="220"/><!--문의 내용-->
+			<col width="220"/><!--답변 내용-->
+			<col width="75"/><!--문의 전송여부-->
+			<col width="75"/><!--문의 답변여부-->
+			<col width="60" /><!--전송-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th>번호</th>
+			<th>등록번호</th>
+			<th>문의 작성일</th>
+			<th>구매자</th>
+			<th>판매자</th>
+			<th>문의 제목</th>
+			<th>문의 내용</th>
+			<th>답변 내용</th>
+			<th>문의 전송여부</th>
+			<th>문의 답변여부</th>
+			<th>전송</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+	<!--{? qna_list }-->
+		<!--{@ qna_list }-->
+			<tr class="list-row" style="height:70px;">
+				<td align="center" class="page_no">{.index_+1}</td>
+				<td align="center">{.sales_no}</td>
+				<td align="center">{.reg_date}</td>
+				<td align="center">{.userid}</td>
+				<td align="center">{.sales_userid}</td>
+				<td align="left" class="pdl5">{.title}</td>
+				<td align="left" class="pdl5">{.content}</td>
+				<td align="left" class="pdl5">{? .res_content == ''}<p style="text-align: center;">-</p>{:}{.res_content}{/}</td>
+				<td align="center">{? .send_yn == 'n'}<b><span style="color:#FF4848;">미전송</span>{:}전송완료{/}</b></td>
+				<td align="center">{? .res_content == ''}-{: .res_yn == 'n'}<b><span style="color:#FF4848;">미답변</span>{:}답변완료{/}</b></td>
+				<td align="center">
+					<div><span class="btn small valign-middle"><input type="button" value="전송" onclick="show_qna_modal('전송', '{.qna_seq}', '{.sales_userid}', '{.title}', '{.content}')"/></span></div>
+					<div style="margin-top:2px;"><span class="btn small valign-middle" style="padding-right: 2px;"><input type="button" value="답변" onclick="show_qna_modal('답변', '{.qna_seq}', '{.userid}', '', '{.res_content}')"/></span></div>
+				</td>
+			</tr>
+		<!--{ / }-->
+	<!--{ : }-->
+		<tr class="list-row">
+			<td align="center" colspan="11">문의를 요청한 구매자가 없습니다.</td>
+		</tr>
+	<!--{ / }-->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+</div>
+<!-- 신청리스트 테이블 : 끝 -->
+
+<script type="text/template" id="qnaModal">
+    <b><span class="text-target"></span>에게 <span class="text-type"></span></b>
+    <input type="text" class="text-field">
+    <textarea class="text-field"></textarea>
+</script>
+<script>
+function show_qna_modal(type, qna_seq, userid, title, content) {
+    new Dialogify('#qnaModal')
+     .title(type + '하기')
+     .buttons([
+         {
+             text: type,
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 var title = this.$content.find('input.text-field').val();
+                 var content = this.$content.find('textarea.text-field').val();
+                 
+                 if(confirm('작성하신 내용으로 문자를 보내시겠습니까 ?')) {
+                     $.ajax({
+                         type: 'post',
+                         url: 'ajax_send_qna',
+                         dataType: 'json',
+                         data: {'type': type, 'qna_seq': qna_seq, 'userid': userid, 'title': title, 'content': content},
+                         success: function(data) {
+                             if(data.result == 'true') {
+                                 alert('작성하신 내용으로 전송이 완료되었습니다.');
+                                 location.reload();
+                             } else {
+                                 alert('전송에 실패했습니다. 다시 한번 시도해주세요.');
+                             }
+                         },
+                         error: function() {
+                             console.log('error');
+                         }
+                     });
+                     this.close();
+                 }
+             }
+         },
+         {
+             text: '취소',
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER})
+     .on('show', function(){
+    	 this.$content.find('.text-type').text(type);
+    	 this.$content.find('input.text-field').val(title);
+    	 this.$content.find('textarea.text-field').val(content);
+    	 if (type == '답변') {
+    		 this.$content.find('.text-target').text('구매자');
+    		 this.$content.find('input.text-field').hide();
+    	 } else if (type == '전송') {
+    		 this.$content.find('.text-target').text('판매자');
+    	 }
+     }).showModal();
+}
+</script>
+{ #layout_footer }

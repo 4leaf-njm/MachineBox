@@ -1,0 +1,127 @@
+{ #layout_header }
+
+<style style="text/css">
+	.btnhelp {display:inline-block; width:14px; height:14px; cursor:pointer; background:url('../images/common/bg_icon.png'); vertical-align:middle;margin-bottom:2px}
+</style>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.fmdomsaver.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.colorpicker.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+<script type="text/javascript" src="/app/javascript/js/scm.common.js"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsQuickRegist.js"></script>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>문의사항 관리</h2>
+		</div>
+
+		<!-- 좌측 버튼 -->
+		<ul class="page-buttons-left"></ul>
+
+		<!-- 우측 버튼 -->
+		<ul class="page-buttons-right"></ul>
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+<br style="line-height:30px;" />
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(qna_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+</div>
+
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<form action="/admin/com/qna_process" method="post" id="frm_qna" target="actionFrame">
+		<input type="hidden" name="qna_seq" />
+		<input type="hidden" name="reply" />
+		<!-- 신청리스트 테이블 : 시작 -->
+		<table class="list-table-style info-table-style" cellspacing="0">
+			<!-- 테이블 헤더 : 시작 -->
+			<colgroup>
+				<col width="40" /><!--번호-->
+				<col width="120" /><!--문의 시간-->
+				<col width="100" /><!--문의자-->
+				<col width="140" /><!--문의 제목-->
+				<col width="300" /><!--문의 내용-->
+				<col width="300" /><!--답변-->
+				<col width="55" /><!--비고-->
+			</colgroup>
+			<thead class="lth">
+			<tr>
+				<th>번호</th>
+				<th>문의 시간</th>
+				<th>문의자</th>
+				<th>문의 제목</th>
+				<th>문의 내용</th>
+				<th>답변</th>
+				<th>비고</th>
+			</tr>
+			</thead>
+			<!-- 테이블 헤더 : 끝 -->
+		
+			<!-- 리스트 : 시작 -->
+			<tbody class="ltb">
+		<!--{? qna_list }-->
+			<!--{@ qna_list }-->
+				<tr class="list-row" style="height:70px;" data-seq="{.qna_seq}">
+					<td align="center" class="page_no">{.index_+1}</td>	
+					<td align="center">{.reg_date}</td>
+					<td align="center">{.userid}</td>
+					<td align="center">{.title}</td>
+					<td align="left" class="pd10">{= nl2br(.content)}</td>
+					<!-- {? .reply} -->
+					<td align="left" class="pd10">{= nl2br(.reply)}</td>
+					<!-- {:} -->
+					<td align="center">
+						<textarea class="simple txt_reply" style="width: 90%;" rows="3"></textarea>
+					</td>
+					<!-- {/} -->
+					<td align="center">
+					<!-- {? !.reply} -->
+					<div><span class="btn small valign-middle"><a href="#" class="btn_reply">답변</a></span></div>
+					<!-- {/} -->
+					</td>
+				</tr>
+			<!--{ / }-->
+		<!--{ : }-->
+			<tr class="list-row">
+				<td align="center" colspan="7">문의 사항이 없습니다.</td>
+			</tr>
+		<!--{ / }-->
+			</tbody>
+			<!-- 리스트 : 끝 -->
+		
+		</table>
+		<!-- 신청리스트 테이블 : 끝 -->
+	</form>
+</div>
+
+<script>
+$('.btn_reply').click(function(e) {
+	e.preventDefault();
+	
+	var seq = $(this).parents('tr').data('seq');
+	var reply = $(this).parents('tr').find('.txt_reply').val();
+	var userid = $(this).parents('tr').data('userid');
+	
+	if(reply == '') {
+		alert('답변 내용을 입력해주세요.')
+		$(this).parents('tr').find('.txt_reply').focus();
+		return;
+	}
+	if(confirm('입력하신 내용으로 답변을 보내시겠습니까 ?')) {
+		$('input[name=qna_seq]').val(seq);
+		$('input[name=reply]').val(reply);
+		$('input[name=userid]').val(userid);
+		$('#frm_qna').submit();
+	}
+});
+</script>
+{ #layout_footer }

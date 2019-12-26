@@ -1,0 +1,524 @@
+{=showDesignLightPopup(2)}
+{=showDesignLightPopup(7)}
+{=showDesignLightPopup(6)}
+{=showDesignLightPopup(5)}
+    <!-- 메인 배너 시작 -->
+    <div class="swiper-container swiper-banner">
+        <div class="swiper-wrapper banner-wrap">
+            <div class="swiper-slide slider_item banner01">
+                <img src="../images/custom/main/banner_01.png" class="d-none d-md-inline-block" style="width: 1000px;">
+                <img src="../images/custom/main/m_banner_01.png" class="d-block d-md-none" style="width: 100%; height: 100%;">
+                <div class="banner01-bg1"></div>
+                <div class="banner01-bg2"></div>
+            </div>
+            <div class="swiper-slide slider_item banner02">
+                <img src="../images/custom/main/banner_02.png" class="d-none d-md-inline-block" style="width: 1000px;">
+                <img src="../images/custom/main/m_banner_02.png" class="d-block d-md-none" style="width: 100%; height: 100%;">
+                <div class="banner02-bg1"></div>
+                <div class="banner02-bg2"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // swiper 설정
+        var swiper_banner = new Swiper('.swiper-banner', {
+            effect: 'fade',
+            slidesPerView: 1,
+            allowTouchMove: false
+        });
+        
+        // 배너 5초에 한번씩 변경
+        var slide_index = 0;
+        setInterval(function(){
+            slide_index = slide_index == 0 ? 1 : 0;
+            swiper_banner.slideToLoop(slide_index, 1000, mobile_header_change());  
+        }, 5000);
+        
+        // 모바일 헤더영역 이미지 변경
+        function mobile_header_change() {
+            /*
+            if(slide_index == 0) {
+                $(".header-bg-change .logo-mobile img").attr("src", '../images/custom/common/logo-2.png');
+                $(".header-bg-change .btn_side img").attr("src", '../images/custom/icon/ico_bar_black.png');
+            } else {
+                $(".header-bg-change .logo-mobile img").attr("src", '../images/custom/common/logo-1.png');
+                $(".header-bg-change .btn_side img").attr("src", '../images/custom/icon/ico_bar_white.png');
+            }
+            */
+        }
+    </script>
+    <!-- 메인 배너 끝 -->
+    
+    <!-- 등록 횟수 영역 시작 -->
+   <div class="container-fluid count-wrap pt-2 pb-2">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 col-sm-11 count-col">
+                    <h2 class="count-title">판매기계</h2>
+                    <div class="count-row">
+                        <div class="count-divide">
+                            <p class="accent-txt count-num">{sales_new_cnt}</p>
+                            <p class="count-gubun">신규등록</p>
+                            <img src="../images/custom/main/bg_bar.png" class="count-line"/>
+                        </div>
+                        <div class="count-divide">
+                            <p class="accent-txt count-num">{sales_total_cnt}</p>
+                            <p class="count-gubun">전체등록</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5 col-sm-11 count-col">
+                    <h2 class="count-title">외주의뢰</h2>
+                    <div class="count-row">
+                        <div class="count-divide">
+                            <p class="accent-txt count-num">{osc_new_cnt}</p>
+                            <p class="count-gubun">신규등록</p>
+                            <img src="../images/custom/main/bg_bar.png" class="count-line"/>
+                        </div>
+                        <div class="count-divide">
+                            <p class="accent-txt count-num">{osc_total_cnt}</p>
+                            <p class="count-gubun">전체등록</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 등록 횟수 영역 끝 -->
+    
+    <!-- 머신박스 존 시작 -->
+   <div class="container wrap-margin">
+       <h1 class="wrap-title">머신박스 존</h1>
+       <div class="box-filter mb-3">
+           <span class="accent-txt" data-target="zone-01">최저가격</span>
+           <span data-target="zone-02">NEW 기계</span>
+           <span data-target="zone-03">외주 의뢰</span>
+           <span data-target="zone-04">우수 회원</span>
+       </div>
+       <div class="scroll-wrap main-wrap scroll-x machine-zone" id="zone-01">
+            <!-- {@ zone_list_01} -->
+            <div class="scroll-div">
+                <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                <i class="event-badge event-active">입찰진행</i>
+                <!-- {/} -->
+                <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                <i class="event-badge event-active">입찰마감</i>
+                <!-- {/} -->
+                <!-- {? .price_proposal != 0} -->
+                <i class="event-badge event-active">가격제안</i>
+                <!-- {/} -->
+                <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                    <img src="{.path}" alt="">
+                    <div class="scroll-desc">
+                        <h4 class="desc-kind">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                        <span>{= str_replace('년', '', .model_year)}년형</span>
+                        <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                        <span>{.area_name}</span>
+                        <p><span class="accent-txt">{= number_format(.min_price)}</span>원</p>
+                    </div>
+                </a>
+            </div>
+            <!-- {:} -->
+            <div class="default-box">
+                <p class="default-message">현재 등록된 기계가 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+       <div class="scroll-wrap main-wrap scroll-x machine-zone" id="zone-02" style="display: none">
+            <!-- {@ zone_list_02} -->
+            <div class="scroll-div">
+                <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                <i class="event-badge event-active">입찰진행</i>
+                <!-- {/} -->
+                <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                <i class="event-badge event-active">입찰마감</i>
+                <!-- {/} -->
+                <!-- {? .price_proposal != 0} -->
+                <i class="event-badge event-active">가격제안</i>
+                <!-- {/} -->
+                <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                    <img src="{.path}" alt="">
+                    <div class="scroll-desc">
+                        <h4 class="desc-kind">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                        <span>{= str_replace('년', '', .model_year)}년형</span>
+                        <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                        <span>{.area_name}</span>
+                        <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                    </div>
+                </a>
+            </div>
+            <!-- {:} -->
+            <div class="default-box">
+                <p class="default-message">현재 등록된 기계가 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+       <div class="scroll-wrap scroll-y machine-zone" id="zone-03" style="display: none">
+            <!-- {@ zone_list_03} -->
+            <div class="scroll-wrap mb-3">
+                <div class="scroll-div work-div">
+                    <a href="/mch/osc_info/{.osc_seq}">
+                        <i class="work-badge"><!-- {? .state == 1} -->모집중<!-- {: .state == 2} -->모집완료<!-- {/} --></i>
+                        <div class="product-row-01 partner-row">
+                            <div class="product-row-01 partner-desc work-intro">
+                                <div class="scroll-desc">
+                                    <h4 class="mr-3 txt-bold">{.osc_name}</h4>
+                                    <span>등록일 : {= date('Y.m.d', strtotime(.reg_date))}</span>
+                                    <span>예상일 : {= date('Y.m.d', strtotime(.start_expect_date))}</span>
+                                    <p style="height: 1.4em; -webkit-line-clamp: 1; margin-bottom: 15px;">{= nl2br(.osc_content)}</p>
+                                    <div class="product-row-01">
+                                        <p>지역 : {.area_name}</p>
+                                        <p>관련기술 : 
+                                        <!-- {@ tech_list} -->
+                                        <span class="btn-type-01 d-inline-block mb-0">{..value_}</span>
+                                        <!-- {:} -->없음
+                                        <!-- {/} -->
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="work-info">
+                                <p class="work-info-price"><b>{= number_format(.budget)}</b>원</p>
+                                <div class="work-info-row">
+                                    <p>마감일 <i>{= date('Y.m.d', strtotime(.osc_end_date))}</i></p>
+                                    <p>지원자 <i>{.apply_cnt}명</i></p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div> 
+            </div>
+            <!-- {:} -->
+            <div class="default-box">
+                <p class="default-message">현재 등록된 외주 업무가 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+       
+        <div class="scroll-wrap scroll-y machine-zone" id="zone-04" style="display: none">
+            <!-- {@ zone_list_04} -->
+            <div class="scroll-wrap ad-sale-wrap mb-3">
+                <div class="scroll-div partner-info-wrap">
+                    <a href="/mch/partner_info/{.partner_seq}">
+                        <div class="product-row-01 partner-row">
+                            <div class="product-row-01 partner-desc">
+                                <img class="partner-profile-img" src="{.profile_path}"/>
+                                <div class="scroll-desc">
+                                    <div class="product-row-01 partner-row">
+                                        <h4 class="mr-3">{.userid}</h4>
+                                        <div class="review-info">
+                                            <span>
+                                                <!-- {? .grade == 0} -->
+                                                    <!-- {@ range(0, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {:} -->
+                                                    <!-- {@ range(0, .grade-1)} -->
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                    <!-- {/} -->
+                                                    <!-- {@ range(.grade, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {/} -->
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <span>평가 {.eval_cnt}명</span>
+                                    <span>실적 {.osc_cnt}명</span>
+                                    <span>주 서비스 : {.main_service}</span>
+                                </div>
+                            </div>
+                            <div class="partner-badge">
+                                <span class="btn-type-01 mb-1">{.area_name}</span>
+                                <!-- {? .tech_list} -->
+                                    <!-- {@ explode(', ', .tech_list)} -->
+                                    <span class="btn-type-01 mb-1">{..value_}</span>
+                                    <!-- {/} -->  
+                                <!-- {/} -->
+                            </div>
+                        </div>
+                        <div class="partner-intro">
+                            <p>{.introduce}</p>
+                        </div>
+                    </a>
+                </div> 
+            </div>
+            <!-- {:} -->
+            <div class="default-box">
+                <p class="default-message">현재 등록된 파트너가 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+        <script>
+            var current_machine = 0;
+            var target_machine = 'zone-01';
+             $('.box-filter > span').on('click', function() {
+                 if($(this).hasClass('accent-txt')) return;
+                 $('.box-filter > span').removeClass('accent-txt');
+                 $(this).addClass('accent-txt');
+                 var target = $(this).data('target');
+                 target_machine = target;
+                 $('.machine-zone').hide();
+                 $('#' + target).fadeIn(800);
+                 current_machine = 0;
+              });
+            var loop_01 = setInterval(function(){
+                var total_machine = $('#' + target_machine + ' .scroll-div').length;
+                if(current_machine >= total_machine) {
+                    current_machine = 0;
+                    $('#' + target_machine).mCustomScrollbar("scrollTo", 'first');
+                } else {
+                    var target = $('#' + target_machine + ' .scroll-div').eq(current_machine++);    
+                    $('#' + target_machine).mCustomScrollbar("scrollTo", target);
+                }
+            }, 3000);
+            $('.machine-zone').hover(function(){
+                clearInterval(loop_01);
+            }, function() {
+                loop_01 = setInterval(function(){
+                    var total_machine = $('#' + target_machine + ' .scroll-div').length;
+                    if(current_machine >= total_machine) {
+                        current_machine = 0;
+                        $('#' + target_machine).mCustomScrollbar("scrollTo", 'first');
+                    } else {
+                        var target = $('#' + target_machine + ' .scroll-div').eq(current_machine++);    
+                        $('#' + target_machine).mCustomScrollbar("scrollTo", target);
+                    }
+                }, 3000);
+            });
+       </script>
+    </div>
+    <!-- 머신박스 존 끝 -->
+
+    <!-- 머박다이렉트 시작 -->
+    <div class="container wrap-margin">
+        <h1 class="wrap-title">머박다이렉트</h1>
+        <div class="scroll-wrap main-wrap scroll-x direct-zone">
+            <!-- {@ direct_list} -->
+            <div class="scroll-div">
+                <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                    <img src="{.path}" alt="">
+                    <div class="scroll-desc">
+                        <h4 class="desc-kind">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                        <span>{= str_replace('년', '', .model_year)}년형</span>
+                        <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                        <span>{.area_name}</span>
+                        <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                    </div>
+                </a>
+            </div>
+            <!-- {:} -->
+            <div class="default-box">
+                <p class="default-message">현재 등록된 기계가 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+        <script>
+            var current_direct = 0;
+            var target_direct = 'direct-zone';
+            var loop_02 = setInterval(function(){
+                var total_direct = $('.' + target_direct + ' .scroll-div').length;
+                if(current_direct >= total_direct) {
+                    current_direct = 0;
+                    $('.' + target_direct).mCustomScrollbar("scrollTo", 'first');
+                } else {
+                    var target = $('.' + target_direct + ' .scroll-div').eq(current_direct++);    
+                    $('.' + target_direct).mCustomScrollbar("scrollTo", target);
+                }
+            }, 3000);
+            
+            $('.direct-zone').hover(function(){
+                clearInterval(loop_02);
+            }, function() {
+                loop_02 = setInterval(function(){
+                    var total_direct = $('.' + target_direct + ' .scroll-div').length;
+                    if(current_direct >= total_direct) {
+                        current_direct = 0;
+                        $('.' + target_direct).mCustomScrollbar("scrollTo", 'first');
+                    } else {
+                        var target = $('.' + target_direct + ' .scroll-div').eq(current_direct++);    
+                        $('.' + target_direct).mCustomScrollbar("scrollTo", target);
+                    }
+                }, 3000);
+            });
+        </script>
+    </div>
+    <!-- 머박다이렉트 끝 -->
+    
+    <!-- 등록비용 시작 -->
+    <div class="container regi-wrap wrap-margin">
+        <h1 class="wrap-title txt-center txt-medium mb-2">등록비용 걱정없이 무료로 기계 등록하세요.</h1>
+        <p class="wrap-title-sub txt-light">기계 등록하시면 홍보는 머신박스에서 도와드립니다.</p>
+        <div class="row">
+            <span class="line"></span>
+            <div class="col-md-6 col-lg-3">
+                <div class="regi-circle regi-bg1">
+                    <p>1.</p>
+                    <img src="../images/custom/main/main-1.png" alt=""/>
+                </div>
+                <div class="regi-desc">
+                    <h3>나에게 맞는 판매방법 선택</h3>
+                    <p>- 직접 등록, 판매는~            <b>셀프판매</b><br/>- 딜러에게 빠른 판매는~     <b>긴급판매</b><br/>- 머신박스에 판매위탁은~  <b>머박다이렉트</b></p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="regi-circle regi-bg2">
+                    <p>2.</p>
+                    <img src="../images/custom/main/main-2.png" alt=""/>
+                </div>
+                <div class="regi-desc" style="left: 19px;">
+                    <h3>무료 광고 서비스 시작</h3>
+                    <p>- 플랫폼 머신박스에 무료 등록 광고<br/>- 등록정보 SNS, SMS, 이메일로 간편 광고<br/>- 매주 등록정보 기계 관계사에 메일발송</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="regi-circle regi-bg3">
+                    <p>3.</p>
+                    <img src="../images/custom/main/main-3.png" alt=""/>
+                </div>
+                <div class="regi-desc" style="left: 19px;">
+                    <h3>특별한 판매 촉진 시스템</h3>
+                    <p>- 최저가격 비교 시스템<br/>- 고정가격판매, 경매입찰판매 <br/>- 기계 성능평가 시스템<br/>- 이용자 평판시스템</p>
+                </div>
+            </div> 
+            <div class="col-md-6 col-lg-3">
+                <div class="regi-circle regi-bg4">
+                    <p>4.</p>
+                    <img src="../images/custom/main/main-4.png" alt=""/>
+                </div>
+                <div class="regi-desc" style="left: 12px;">
+                    <h3>머신박스의 특별한 서비스</h3>
+                    <p>- 온라인 스마트 안전 계약<br />- 거래대금 안전보호<br />- 분쟁조정서비스<br />- 수리, 배송, 해체/설치 등 원스톱서비스</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 등록비용 끝 -->
+
+    <!-- 무료 기계등록 시작 -->
+    <div class="container free-wrap wrap-margin">
+        <h1 class="wrap-title txt-medium mb-3">판매기계 무료 광고</h1>
+        <div class="row">
+            <div class="col-sm-12 col-md-4 regi-bg1">
+                <h3 class="free-title">셀프판매</h3>
+                <p class="free-text">판매자가 원하는 가격에 직접 등록하고,  머신박스 서비스 이용을 원하시면~</p>
+                <a href="/sale/self_reg" class="accent-txt">셀프 판매하기</a>
+            </div>
+            <div class="col-sm-12 col-md-4 regi-bg2">
+                <h3 class="free-title">긴급판매</h3>
+                <p class="free-text">시간이 부족하신 분들의 위한, 딜러에게 입찰 견적을 받고 빠르게 판매를 원하시면~</p>
+                <a href="/sale/emergency_reg" class="accent-txt">긴급 판매하기</a>
+            </div>
+            <div class="col-sm-12 col-md-4 regi-bg3">
+                <h3 class="free-title">머박 다이렉트</h3>
+                <p class="free-text">머신박스 전문가가 1:1 상담에서 판매까지 신경쓰지 않고, 위탁판매를 원하시면~</p>
+                <a href="/sale/direct_reg" class="accent-txt">위탁 판매하기</a>
+            </div>
+        </div>
+    </div>
+    <!-- 무료 기계등록 끝 -->
+
+    <!-- 서비스 소개 시작 -->
+    <div class="container wrap-margin service-wrap">
+        <h1 class="wrap-title txt-medium mb-3">서비스 소개</h1>
+        <div class="row">
+            <div class="col-md-12 col-lg-6 service-div">
+                <div class="service-row">
+                    <h2 class="service-title">기계 성능평가</h2>
+                    <p class="service-text">성능검사는 기계 전문가가 방문하여 기계 성능검사를 진행, 판매기계를 검증하고, 이용자가 실시간 검사 보고서 확인을 통해 판매자는 검증을 통한 빠른 판매를 구매자는 불안요소를 해소시키는 안심서비스입니다 </p>
+                </div>
+                <img src="../images/custom/main/main-5.png" alt="" class="service-image01">
+            </div>
+            <div class="col-md-12 col-lg-6 service-div">
+                <div class="service-row">
+                    <h2 class="service-title">스마트안전계약</h2>
+                    <p class="service-text">머신박스의 스마트안전계약은 계약서 작성, 날인을 온라인으로 진행하는 편리한 방법이며, 머신박스가 중개사로 참여하는 3자계약으로 전자서명법 상 날인 즉시 계약의 효력이 발생합니다</p>
+                </div>
+                <img src="../images/custom/main/main-6.png" alt="" class="service-image02">
+            </div>
+            <div class="col-md-12 col-lg-6 service-div">
+                <div class="service-row">
+                    <h2 class="service-title">대금보호시스템</h2>
+                    <p class="service-text">거래를 시작할 때 계약 대금을 지급받아 보호하고, 거래 완료가 확인되면 대금을 입금해주는 머신박스 에스크로 서비스로 거래 당사자 모두 안전하게 거래보호를 받을 수 있습니다.</p>
+                </div>
+                <img src="../images/custom/main/main-7.png" alt="" class="service-image03" style="top: 0.2rem;">   
+            </div>
+            <div class="col-md-12 col-lg-6 service-div">
+                <div class="service-row">
+                    <h2 class="service-title">마케팅서비스</h2>
+                    <p class="service-text">매주 기계 관계사들에게 머신박스존, 머박다이렉트 업데이트 자료를 이메일 발송 광고하며, 등록 기계 정보를 원클릭으로 SMS, 페이스북, 인스타그램, 블로그, 카페, 이메일에 등록하여 광고를 할 수 있습니다.</p>
+                </div>
+                <img src="../images/custom/main/main-8.png" alt="" class="service-image04">
+            </div>
+        </div>
+    </div>
+    <!-- 서비스 소개 끝 -->
+
+    <!-- 이용후기 시작 -->
+    <div class="container-fluid review-wrap wrap-margin pt-5 pb-5">
+        <div class="container">
+            <h1 class="wrap-title">머신박스 이용후기</h1>
+            <div class="scroll-wrap scroll-x review-zone">
+                <!-- {@ review_list} -->
+                <div class="scroll-div review-div" onclick="location.href='/rev/rev_info/{.rev_seq}'">
+                    <img src="{.path}" alt="">
+                    <div class="review-desc">
+                        <h4 class="review-title">{.title}</h4>
+                        <div class="review-info">
+                            <span class="mr-1">{= date('Y.m.d', strtotime(.reg_date))}</span>
+                            <span>
+                                <!-- {? .grade == 0} -->
+                                    <!-- {@ range(0, 4)} -->
+                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                    <!-- {/} -->
+                                <!-- {: .grade == 5} -->
+                                    <!-- {@ range(0, 4)} -->
+                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <!-- {/} -->
+                                <!-- {:} -->
+                                    <!-- {@ range(0, .grade-1)} -->
+                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <!-- {/} -->
+                                    <!-- {@ range(.grade, 4)} -->
+                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                    <!-- {/} -->
+                                <!-- {/} -->
+                            </span>
+                        </div>
+                        <h4 class="review-user">{.userid}</h4>
+                        <p>{.content}</p>
+                    </div>
+                </div>
+                <!-- {:} -->
+                <div class="default-box">
+                    <p class="default-message">현재 작성된 이용후기가 없습니다.</p>
+                </div>
+                <!-- {/} -->
+            </div>
+        </div>
+    </div>
+    <!-- 이용후기 끝 -->
+
+<style>
+        #zone-03.scroll-y { height: 334.8px; }
+        #zone-04.scroll-y { height: 334.8px; }
+        .review-zone.scroll-x { height: 136px; }
+</style>
+<script>
+    loadScrollbar(0);
+    $('.box-filter > span').on('click', function(){
+        var index = $(this).index();
+        loadScrollbar(index);
+    });
+    
+    function loadScrollbar(index) {
+        $(".scroll-wrap.scroll-x").eq(index).mCustomScrollbar({
+            axis:"x",
+            theme:"rounded-dark",
+            scrollbarPosition: "outside",
+            advanced:{
+                autoExpandHorizontalScroll:true
+            }
+        });
+    }
+</script>

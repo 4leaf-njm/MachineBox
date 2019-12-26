@@ -1,0 +1,326 @@
+<!--{? getSessionFlashdata('message') }-->
+<script>
+    alert('{= getSessionFlashdata('message')}');
+</script>
+<!--{/}-->
+
+<form action="/user/sale_finish_process" method="post" target="actionFrame" id="frm_sale">
+    <input type="hidden" name="type" />
+    <input type="hidden" name="info_seq" />
+    <input type="hidden" name="sales_method" />
+    <input type="hidden" name="sales_price" />
+    <input type="hidden" name="sales_cancel_reason" />
+</form>
+
+<script type="text/template" id="sale_finish_modal">
+    <b>1. 어떤 방식으로 판매를 하셨나요 ? <span style="display: block; font-weight: 600; font-size: 0.94em; padding: 5px 0 0 10px;">ex) 오프라인 매장판매, 온라인 판매(웹사이트 이름)</span></b>
+    <input type="text" class="text-field sales_method" placeholder="판매 방식" style="margin-bottom: 18px;">
+    <b>2. 기계의 판매금액은 얼마인가요 ?</span></b>
+    <input type="text" class="text-field sales_price" placeholder="금액 (만원)">
+</script>
+<script type="text/template" id="sale_cancel_modal">
+    <b>1. 취소하신 이유가 무엇인가요 ?</span></b>
+    <input type="text" class="text-field sales_cancel_reason" placeholder="취소 사유">
+</script>
+<script>
+
+function show_sale_finish_layer(info_seq) {
+    new Dialogify('#sale_finish_modal')
+     .title('판매완료')
+     .buttons([
+         {
+             text: '제출',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 var sales_method = this.$content.find('input.sales_method').val();
+                 var sales_price = this.$content.find('input.sales_price').val();
+                 if(sales_method == '') {
+                     alert('판매방식을 입력해주세요.');
+                     this.$content.find('input.sales_method').focus();
+                     return;
+                 } else if(sales_price == '') {
+                     alert('판매금액을 입력해주세요.');
+                     this.$content.find('input.sales_price').focus();
+                     return;
+                 } else if(isNaN(sales_price) == true) {
+                     alert('판매금액은 숫자만 입력할 수 있습니다.');
+                     this.$content.find('input.sales_price').focus();
+                     return;
+                 }
+                 if(confirm('기계가 판매완료된 경우에만 제출해주세요.')) {
+                     sales_price = sales_price + '0000';
+                     $('#frm_sale input[name=type]').val('finish');
+                     $('#frm_sale input[name=info_seq]').val(info_seq);
+                     $('#frm_sale input[name=sales_method]').val(sales_method);
+                     $('#frm_sale input[name=sales_price]').val(sales_price);
+                     $('#frm_sale').submit();
+                 }
+                 this.close();
+             }
+         },
+         {
+             text: '취소',
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER}).show();
+}
+    
+function show_sale_cancel_layer(info_seq) {
+    new Dialogify('#sale_cancel_modal')
+     .title('등록취소')
+     .buttons([
+         {
+             text: '제출',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 var sales_cancel_reason = this.$content.find('input.sales_cancel_reason').val();
+
+                 if(sales_cancel_reason == '') {
+                     alert('취소사유를 입력해주세요.');
+                     this.$content.find('input.sales_cancel_reason').focus();
+                     return;
+                 }
+                 if(confirm('등록을 취소하고 싶으신 경우에만 제출해주세요.')) {
+                     $('#frm_sale input[name=type]').val('cancel');
+                     $('#frm_sale input[name=info_seq]').val(info_seq);
+                     $('#frm_sale input[name=sales_cancel_reason]').val(sales_cancel_reason);
+                     $('#frm_sale').submit();
+                 }   
+                 this.close();
+             }
+         },
+         {
+             text: '취소',
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER}).show();
+}
+    
+function add_scroll(target, axis) {
+    $(target).mCustomScrollbar({
+        axis: axis,
+        theme:"rounded-dark",
+        scrollbarPosition: "outside",
+        advanced:{
+            autoExpandHorizontalScroll:true
+        }
+    });
+}
+
+function add_scroll_loop(target) {
+    var current = 0;
+    var loop = setInterval(function(){
+        var total = $(target + ' .scroll-div').length;
+        if(current >= total) {
+            current = 0;
+            $(target).mCustomScrollbar("scrollTo", 'first');
+        } else {
+            var target = $(target + ' .scroll-div').eq(current++);    
+            $(target).mCustomScrollbar("scrollTo", target);
+        }
+    }, 3000);
+    
+    $(target).hover(function(){
+        clearInterval(loop);
+    }, function() {
+        loop = setInterval(function(){
+            var total = $(target + ' .scroll-div').length;
+            if(current >= total) {
+                current = 0;
+                $(target).mCustomScrollbar("scrollTo", 'first');
+            } else {
+                var t = $(target + ' .scroll-div').eq(current++);    
+                $(target).mCustomScrollbar("scrollTo", t);
+            }
+        }, 3000);
+    });
+}
+
+$(document).ready(function() {
+    add_scroll('.ad-sale-wrap.scroll-y', 'y');
+});
+</script>
+
+<div id="layout_footer" class="layout_footer">
+    <div class="footer_b">
+        <div class="container">
+            <div class="resp_wrap">
+                <ul class="menu2">
+                    <li><a href="/" designElement="text">HOME</a></li>
+                    <li><a href="/service/privacy" designElement="text">개인정보취급방침</a></li>
+                    <li><a href="/service/agreement" designElement="text">이용약관</a></li>
+    
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer_c">
+        <div class="container">
+            <div class="resp_wrap">
+                <ul class="menu3">
+                    <li><span designElement="text">회사명 :</span> <span class="pcolor">{config_basic.companyName}</span></li>
+                    <li><span designElement="text">대표자 :</span> <span class="pcolor">{config_basic.ceo} </span></li>
+                    <li><span designElement="text">주소 :</span> <span class="pcolor">{? config_basic.companyAddress_type == "street"}{config_basic.companyAddress_street}{:}{config_basic.companyAddress}{/} {config_basic.companyAddressDetail}</span></li>
+                </ul>
+                <ul class="menu3">
+                    <li><span designElement="text">사업자등록번호 :</span> <span class="pcolor">{config_basic.businessLicense} {=confirmLicenseLink("[사업자정보확인]")}</span></li>
+                    <li><span designElement="text">통신판매업신고번호 :</span> <span class="pcolor">{config_basic.mailsellingLicense}</span></li>
+                    <li><span designElement="text">개인정보보호책임자 :</span> <span class="pcolor">{config_basic.member_info_manager} (<a class="pcolor" href="mailto:{config_basic.companyEmail}">{config_basic.companyEmail}</a>)</span></li>
+                </ul>
+                <p class="copyright" designElement="text">COPYRIGHT(c): <span class="pcolor">{config_basic.companyName}</span> ALL Rights reserved</p>
+                <div class="escrow_fix"></div>
+                <!--div class="escrow">{=escrow_mark(60)}</div-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--{?preg_match('/goods\/view/',_SERVER.REQUEST_URI)}-->
+	<!--{? navercheckout_tpl }-->
+<div class="pcHideMoShow" style="height:117px;">&nbsp;</div>
+	<!--{ / }-->
+<div class="pcHideMoShow" style="height:80px;">&nbsp;</div>
+<!--{ / }-->
+<!-- 하단영역 : 끝 -->
+
+<!-- 플로팅 - BACK/TOP(대쉬보드) -->
+<div id="floating_over">
+	<a href="javascript:history.back();" class="ico_floating_back" title="뒤로 가기"></a>
+	<a href="javascript:history.forward();" class="ico_floating_foward" title="앞으로 가기"></a>
+	<a href="#layout_header" class="ico_floating_top" title="위로 가기">TOP</a>
+	<!--{? (preg_match('/main\/index/',_SERVER.REQUEST_URI) || preg_match('/goods\/catalog/',_SERVER.REQUEST_URI) || preg_match('/goods\/brand/',_SERVER.REQUEST_URI) || preg_match('/goods\/location/',_SERVER.REQUEST_URI) || preg_match('/goods\/search/',_SERVER.REQUEST_URI) || preg_match('/bigdata\/catalog/',_SERVER.REQUEST_URI)) && dataRightQuicklist && !preg_match('/goods\/view/',_SERVER.REQUEST_URI) }-->
+	{? push_count_today_images}<a href="javascript:;" class="ico_floating_recently"><span designElement="text">최근본</span><br /><img src="{push_count_today_images}" onerror="this.src='../images/common/noimage.gif'"></a>{/}
+	<!--{ / }-->
+
+	<!-- 최근 본 상품(LAYER) -->
+	<!--{ ? (preg_match('/main\/index/',_SERVER.REQUEST_URI) || preg_match('/goods\/catalog/',_SERVER.REQUEST_URI) || preg_match('/goods\/brand/',_SERVER.REQUEST_URI) || preg_match('/goods\/location/',_SERVER.REQUEST_URI) || preg_match('/goods\/search/',_SERVER.REQUEST_URI) || preg_match('/bigdata\/catalog/',_SERVER.REQUEST_URI)) && dataRightQuicklist }-->
+	<div id="recently_popup">
+		<div class="recently_popup">
+			<h1>최근 본 상품</h1>
+			<div class="recently_thumb">
+				<div id="recently_slide_bottom" style="width:285px; min-height:80px;">
+					<div class="thumb">
+					<!--{ ? dataRightQuicklist }-->
+						<ul>
+							<!--{ @ dataRightQuicklist }-->
+							{? ( .index_ < 40 ) //10page까지 노출}
+								{? (.index_ && (.index_%4) == 0 )}</ul><ul>{/}
+								<li><a href="../goods/view?no={.goods_seq}" class="right_quick_goods"><img src="{.image}" onerror="this.src='../images/common/noimage_list.gif'" alt="{.goods_name}"></a><a href="javascript:rightDeleteItem('mobile_bottom_item_recent', '{.goods_seq}',$(this))" class="btn_delete cover">삭제</a></li>
+							{/}
+							<!--{ / }-->
+						</ul>
+					<!--{ : }-->
+						<h2> 최근 본 상품이 없습니다.</h2>
+					<!--{ / }-->
+					</div>
+				</div>
+				<div class="recently_page">
+					<a href="javascript:;" class="btn_page cover">선택</a>
+				</div>
+			</div>
+			<a href="javascript:;" class="btn_close">모두보기</a>
+		</div>
+		<div class="recently_bg"></div>
+	</div>
+		<!--{ ? dataRightQuicklist.size_ > 3 }-->
+	<script type="text/javascript">
+	<!--
+		$(function(){
+			/* 최근 본 상품 - LAYER(슬라이드) */
+			$("#recently_slide_bottom").touchSlider({
+				flexible:true, roll:true, paging:$("#recently_slide_bottom").next().find(".btn_page"),
+				initComplete:function(e){$("#recently_slide_bottom").next().find(".btn_page").each(function(i, el){$(this).text("page " + (i+1));});},
+				counter:function(e){$("#recently_slide_bottom").next().find(".btn_page").removeClass("on").eq(e.current-1).addClass("on");}
+			});
+		});
+	//-->
+	</script>
+		<!--{ / }-->
+	<!--{ / }-->
+</div>
+<!-- //플로팅 - BACK/TOP(대쉬보드) -->
+
+
+<script type="text/javascript">
+$(function() {
+	/* 반응형 슬라이드 배너 관련( 절대 삭제 금지 ) */
+	{? settle }
+		$('.slider_before_loading').remove();
+	{ : }
+		$('.slider_before_loading').removeClass('slider_before_loading');
+	{ / }
+
+	// 상품 색상 코드값 디자인( old 상품정보 - new 상품정보 개발 완료후 삭제 요망 )
+	/*
+	if ( $('.goods_color_area').length > 0 ) {
+		$('.goods_color_area .color').filter(function() {
+			return ( $(this).css('color') == 'rgb(255, 255, 255)' );
+		}).addClass('border');
+	}
+	*/
+	// 상품 색상 코드값 디자인( new 상품정보 )
+	if ( $('.displaY_color_option').length > 0 ) {
+		$('.displaY_color_option .areA').filter(function() {
+			return ( $(this).css('background-color') == 'rgb(255, 255, 255)' );
+		}).addClass('border');
+	}
+
+	$( window ).on('resize', function() {
+		if ( window.innerWidth != WINDOWWIDTH ) {
+			setTimeout(function(){ WINDOWWIDTH = window.innerWidth; }, 10);
+		}
+	});
+});
+
+/*######################## 17.12.19 gcs yjy : 앱 처리(fb 로그아웃) s */
+function logoutfb(){
+	FB.getLoginStatus(logoutfb_process);
+}
+function logoutfb_process(){
+	FB.api('/me', function(response) {
+
+		FB.logout(function(response) {
+
+		});
+
+		isLogin = false;
+		{? defined('__ISUSER__')}
+		loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+			$.ajax({
+			'url' : '../sns_process/facebooklogout',
+			'dataType': 'json',
+			'success': function(res) {
+
+				if(res.result == true){
+					alert("로그아웃되었습니다.");
+
+				{? mobileapp=='y'}
+				{? m_device=='iphone'}
+				window.webkit.messageHandlers.CSharp.postMessage("Logout?");
+//				window.webkit.messageHandlers.CSharp.postMessage('GoHome');
+				{:}
+				CSharp.postMessage("Logout?");
+//				CSharp.postMessage('GoHome');
+				{/}
+				{/}
+
+
+				}else{
+					document.location.reload();
+				}
+			}
+			});
+		{/}
+		if (fbId != "")  initializeFbTokenValues();
+		if (fbUid != "") initializeFbUserValues();
+
+		return false;
+	});
+}
+/*######################## 17.12.19 gcs yjy : 앱 처리(fb 로그아웃) e */
+</script>

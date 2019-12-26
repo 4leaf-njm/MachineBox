@@ -1,0 +1,233 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsRegist.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../css/layer_stock.css" />
+<style>
+	.goodsOptionTable {display:none; position:absolute; border-collapse:collapse; top:-10px; left:60px; border:1px solid #f5f5f5;}
+	.goodsOptionTable table {width:220px;}
+	.goodsOptionTable th {padding:5px; border:1px solid #ddd; background-color:#f5f5f5}
+	.goodsOptionTable td {height:25px !important; border:1px solid #ddd; background-color:#ffffff; text-align:center;}
+
+	div.sub-choose-lay div.choose-form-lay {top:27px;right:0;width:200px;}
+	div.sub-choose-lay div.choose-down-lay {top:27px;right:140px;width:150px;}
+	div.list-string-price-lay {position:relative;}
+	div.list-string-price-lay img {cursor:pointer;}
+	div.view-string-price-lay {position:absolute;top:20px;left:41px;width:300px;z-index:100;background-color:#fff;}
+	.t_tot_stock {text-align:center; border-collapse:collapse; width:570px;}
+	.t_tot_stock td {border:1px solid #666; padding:5px;}
+	.gr_col {color:#666;}
+</style>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>외주 관리</h2>
+		</div>
+
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(osc_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+	
+	<ul class="right-btns">
+		<li>
+			<span class="btn medium">
+				<button onclick="go_osc_excel_download()">엑셀출력</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn medium">
+				<button onclick="show_osc_apply_layer()">지원현황</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn medium black">
+				<button onclick="go_osc_insert()">신규</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn medium deepblue">
+				<button onclick="go_osc_modify()">변경</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn medium red">
+				<button onclick="go_osc_delete()">삭제</button>
+			</span>
+		</li>
+	</ul>
+</div>
+
+<!-- 신청리스트 테이블 : 시작 -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<table class="list-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="40" /><!--선택-->
+			<col width="40" /><!--번호-->
+			<col width="150" /><!--등록일-->
+			<col width="110" /><!--등록번호-->
+			<col width="100" /><!--아이디-->
+			<col width="100" /><!--카테고리-->
+			<col width="160" /><!--외주명-->
+			<col width="100" /><!--지출예산-->
+			<col width="70" /><!--예상기간-->
+			<col width="110"/><!--모집마감일-->
+			<col width="110"/><!--업무시작예상일-->
+			<col width="70"/><!--지원자수-->
+			<col width="100"/><!--수주사-->
+			<col width="80"/><!--진행상태-->
+			<col width="100"/><!--계약금액-->
+			<col width="80" /><!--모집여부-->	
+			<col width="70" /><!--상태-->
+			<col width="70" /><!--승인-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th>선택</th>
+			<th>번호</th>
+			<th>등록일</th>
+			<th>등록번호</th>
+			<th>아이디</th>
+			<th>카테고리</th>
+			<th>외주명</th>
+			<th>지출예산</th>
+			<th>예상기간</th>
+			<th>모집마감일</th>
+			<th>업무시작예상일</th>
+			<th>지원자수</th>
+			<th>진행상태</th>
+			<th>수주사</th>
+			<th>계약금액</th>
+			<th>모집여부</th>
+			<th>상태</th>
+			<th>승인</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+	<!--{? osc_list }-->
+		<!--{@ osc_list }-->
+			<tr class="list-row" style="height:70px;">
+				<td align="center" ><input type="checkbox" class="chk chk_one" name="chk_osc_seq" value="{.osc_seq}" /></td>
+				<td align="center" class="page_no">{.index_+1}</td>
+				<td align="center">{.reg_date}</td>
+				<td align="center">{.osc_no}</td>
+				<td align="center"><a href="javascript:show_user_layer('{.userid}')">{.userid}</a></td>
+				<td align="center">{.cate_name}</td>
+				<td align="center"><a href="/mch/osc_info/{.osc_seq}" target="_blank">{.osc_name}</a></td>
+				<td align="center">{= price_format(.budget)}원</td>
+				<td align="center">{.expect_date}</td>
+				<td align="center">{.osc_end_date}</td>
+				<td align="center">{.start_expect_date}</td>
+				<td align="center">{.apply_cnt} 명</td>
+				<td align="center">
+				<!-- {? .ptn_state == '0'} -->
+				대기
+				<!-- {: .ptn_state == '1'} -->
+				미팅
+				<!-- {: .ptn_state == '2'} -->
+				계약
+				<!-- {: .ptn_state == '3'} -->
+				완료
+				<!-- {:} -->
+				-
+				<!-- {/} -->
+				</td>
+				<td align="center"><a href="/mch/partner_info/{.partner_seq}" target="_blank">{? .ptn_userid == ''}-{:}{.ptn_userid}{/}</a></td>
+				<td align="center">{? .contract_price != ''}{= price_format(.contract_price)}원{:}-{/}</td>
+				<td align="center">{? .state == 1}모집중{: .state == 2}모집마감{/}</td>
+				<td align="center">
+					<b id="item-state-{.osc_seq}">{? .contract_yn == 'y'}<span>계약대기</span>{: .permit_yn == 'y'}승인{: .permit_yn == 'n'}<span style="color:#FF4848;">미승인</span>{/}</b>
+				</td>
+				<td align="center">
+					<div><span class="btn small valign-middle"><input type="button" value="승&nbsp;&nbsp;인" onclick="show_permit_modal('{.permit_yn}', 'y', '{.osc_seq}')"/></span></div>
+					<div style="margin-top:2px;"><span class="btn small valign-middle" style="padding-right: 2px;"><input type="button" value="미승인" onclick="show_permit_modal('{.permit_yn}', 'n', '{.osc_seq}')"/></span></div>
+				</td>
+			</tr>
+		<!--{ / }-->
+	<!--{ : }-->
+		<tr class="list-row">
+			<td align="center" colspan="18">
+					등록된 외주가 없습니다.
+			</td>
+		</tr>
+	<!--{ / }-->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+</div>
+<!-- 신청리스트 테이블 : 끝 -->
+
+<form action="osc_permit_process" method="post" id="frm_permit" target="actionFrame">
+	<input type="hidden" name="osc_seq" />
+	<input type="hidden" name="state" />
+	<input type="hidden" name="message" />
+</form>
+
+<form action="osc_delete_process" method="post" id="frm_delete" target="actionFrame">
+	<input type="hidden" name="osc_seq" />
+</form>
+
+<script type="text/template" id="permitModal">
+    <b>사용자에게 보낼 메시지를 작성해주세요.</b>
+    <textarea class="text-field" placeholder="메시지"></textarea>
+</script>
+<script>
+function show_permit_modal(cur_state, state, osc_seq) {
+	var str_state = state == 'y' ? '승인' : '미승인';
+	if(cur_state == state) {
+		alert('이미 [' + str_state + '] 상태입니다.');
+		return;
+	}
+    new Dialogify('#permitModal')
+     .title(str_state)
+     .buttons([
+         {
+             text: str_state,
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 var message = this.$content.find('textarea.text-field').val();
+                 if (message == '') {
+                     alert('보낼 메시지를 입력해주세요.');
+                     this.$content.find('textarea.text-field').focus();
+                     return;
+                 }
+                 if(confirm('작성하신 내용으로 메시지를 보내시겠습니까 ?')) {
+                	 $('#frm_permit input[name=osc_seq]').val(osc_seq);
+                	 $('#frm_permit input[name=state]').val(state);
+                	 $('#frm_permit input[name=message]').val(message);
+                	 $('#frm_permit').submit();
+                	
+                     this.close();
+                 }
+             }
+         },
+         {
+             text: '취소',
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER}).showModal();
+}
+</script>
+
+{ #layout_footer }

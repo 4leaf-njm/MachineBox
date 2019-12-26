@@ -1,0 +1,417 @@
+<style>
+.filter-text-wrap > ul {
+    height: 380px;
+    width: 90px;
+}
+</style>
+
+<div class="container-fluid top-pt">
+        <div class="container pt-5">
+            <div class="row">
+                <div class="col-md-3 col-sm-12 col-filter">
+                    <div class="filter-wrap">
+                        <div class="filter-icon-wrap">
+                            <div class="filter-icon-div {? selected == 'k'}icon-selected{/}" data-cate="k">
+                                <img src="../images/custom/icon/filter-machine.png" alt="">
+                                <span>기계분류</span>
+                            </div>
+                            <div class="filter-icon-div {? selected == 't'}icon-selected{/}" data-cate="t">
+                                <img src="../images/custom/icon/filter-machine.png" alt="">
+                                <span>기계종류</span>
+                            </div>
+                            <div class="filter-icon-div {? selected == 'f'}icon-selected{/}" data-cate="f">
+                                <img src="../images/custom/icon/filter-manufacturer.png" alt="">
+                                <span>제조사</span>
+                            </div>
+                            <div class="filter-icon-div {? selected == 'm'}icon-selected{/}" data-cate="m">
+                                <img src="../images/custom/icon/filter-model.png" alt="">
+                                <span>모델</span>
+                            </div>
+                            <div class="filter-icon-div {? selected == 'y'}icon-selected{/}" data-cate="y">
+                                <img src="../images/custom/icon/filter-old.png" alt="">
+                                <span>연식</span>
+                            </div>
+                            <div class="filter-icon-div {? selected == 'p'}icon-selected{/}" data-cate="p">
+                                <img src="../images/custom/icon/filter-price.png" alt="">
+                                <span>가격</span>
+                            </div>
+                            <div class="filter-icon-div {? selected == 'a'}icon-selected{/}" data-cate="a">
+                                <img src="../images/custom/icon/filter-location.png" alt="">
+                                <span>지역</span>
+                            </div>
+                        </div>  
+                        <div class="filter-text-wrap">
+                            <ul id="kindList">
+                                <!-- {@ kind_group} -->
+                                <li{? cate_k == .kind_no} class="accent-txt"{/} data-seq="{.kind_no}" onclick="search_filter('k', '{.kind_no}')">{.kind_type}</li>
+                                <!-- {/} -->
+                            </ul>
+                            <ul id="kindTypeList">
+                                <!-- {@ kind_type} -->
+                                <li{? cate_t == .kind_seq} class="accent-txt"{/} data-seq="{.kind_seq}" onclick="search_filter('t', '{.kind_seq}')">{.kind_name}</li>
+                                <!-- {/} -->
+                            </ul>
+                            <ul id="mnfList">
+                                <!-- {@ mnf_list} -->
+                                <li{? cate_f == .mnf_seq} class="accent-txt"{/} data-seq="{.mnf_seq}" onclick="search_filter('f', '{.mnf_seq}')">{.mnf_name}</li>
+                                <!-- {/} -->
+                            </ul>
+                            <ul id="modelList">
+                                <!-- {@ model_list} -->
+                                <li{? cate_m == .model_seq} class="accent-txt"{/} data-seq="{.model_seq}" onclick="search_filter('m', '{.model_seq}')">{.model_name}</li>
+                                <!-- {/} -->
+                            </ul>
+                            <ul id="yearList">
+                                <h3 class="cate-input-tit">연식 검색범위</h3>
+                                <div class="cate-input-div">
+                                    <input type="text" name="min_year" class="cate-input" value="{? str_split_arr(cate_y,':',0) != '-1' && str_split_arr(cate_y,':',0) != '0'}{= str_split_arr(cate_y,':',0)}{/}" /> 
+                                    <span class="cate-input-unit">년</span>
+                                </div>
+                                <p class="cate-input-msg">부터</p>
+                                <div class="cate-input-div">
+                                    <input type="text" name="max_year" class="cate-input" value="{? str_split_arr(cate_y,':',1) != '-1'}{= str_split_arr(cate_y,':',1)}{/}"/>
+                                    <span class="cate-input-unit">년</span>
+                                </div>
+                                <p class="cate-input-msg">까지</p>
+                                <button type="button" class="cate-button" onclick="search_year()">검색</button>
+                            </ul>
+                            <ul id="priceList">
+                                <h3 class="cate-input-tit">가격 검색범위</h3>
+                                <div class="cate-input-div">
+                                    <input type="text" name="min_price" class="cate-input" value="{? str_split_arr(cate_p,':',0) != '-1' && str_split_arr(cate_p,':',0) != '0'}{= substr(str_split_arr(cate_p,':',0), 0, -4)}{/}"/> 
+                                    <span class="cate-input-unit">만원</span>
+                                </div>
+                                <p class="cate-input-msg">부터</p>
+                                <div class="cate-input-div">
+                                    <input type="text" name="max_price" class="cate-input" value="{? str_split_arr(cate_p,':',1) != '-1' && str_split_arr(cate_p,':',1) != '0' }{= substr(str_split_arr(cate_p,':',1), 0, -4)}{/}"/>
+                                    <span class="cate-input-unit">만원</span>
+                                </div>
+                                <p class="cate-input-msg">까지</p>
+                                <button type="button" class="cate-button" onclick="search_price()">검색</button>
+                            </ul>
+                            <ul id="areaList">
+                                <!-- {@ area_list} -->
+                                <li{? cate_a == .area_seq} class="accent-txt"{/} data-seq="{.area_seq}" onclick="search_filter('a', '{.area_seq}')">{.area_name}</li>
+                                <!-- {/} -->
+                            </ul>
+                        </div>
+                  
+                        <script>
+                            (function($){
+                                $(".filter-text-wrap > ul").mCustomScrollbar({
+                                    theme: "rounded-dark",
+                                    scrollbarPosition: "outside"
+                                });
+                                showFilter('{selected}');
+                                setTimeout(function(){
+                                    show_search_history('{cate_k}', '{cate_t}', '{cate_f}', '{cate_m}', '{cate_y}', '{cate_p}', '{cate_a}');
+                                }, 1);
+                                
+                            })(jQuery);
+                        </script>
+                    
+                    </div>
+                </div>
+                <div class="col-md-9 col-sm-12">
+                    
+                    <!-- {? cate_k != '0' || cate_t != '0' || cate_f != '0' || cate_m != '0' || cate_y != '0' || cate_p != '0' || cate_a != '0'} -->
+                    <div class="search-select mb-5" id="divSearchHistory">
+                        <div class="history">
+                            <ul id="ulSearchHistory"></ul>
+                        </div>
+                    </div>
+                    <!-- {/} -->
+                <!-- 하이라이트 존 시작 -->
+                <div class="mb-5" id="highlightZone">
+                    <div class="txt-right mb-4 mob-filter-text">
+                        <span onclick="show_mob_filter()">Filter ></span>
+                    </div>
+                    <div class="ad-sale-filter">
+                        <h1 class="wrap-title wrap-title-02">하이라이트 존</h1>
+                        <button class="btn-type-01 more-btn-mob txt-medium" onclick="show_more('h')">더 많은 기계보기</button>
+                    </div>
+                    <div class="ad-sale-filter mb-3 mob-filter-wrap">
+                        <div class="box-filter col-12 col-md-8 col-lg-9" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between;">
+                            <!-- {@ kind_group } -->
+                                <span {? .index_ == h-1 }class="accent-txt"{/}data-no="{.kind_no}" onclick="search_kind_group('h', '{.kind_no}')">{.kind_type}</span>
+                            <!-- {/} -->
+                       </div>
+                        <div class="col-md-4 col-lg-3 txt-right">
+                           <button class="btn-type-01 more-btn-web txt-medium" onclick="show_more('h')">더 많은 기계보기</button>
+                        </div>
+                    </div>
+                    <div class="scroll-wrap ad-sale-wrap scroll-x">
+                        <!-- {@ sale_list_01} -->
+                        <div class="scroll-div">
+                            <!-- 이벤트뱃지 있는 애들은 event-active 클래스 -->
+                            <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                            <i class="event-badge event-active">입찰진행</i>
+                            <!-- {/} -->
+                            <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                            <i class="event-badge event-active">입찰마감</i>
+                            <!-- {/} -->
+                            <!-- {? .price_proposal != 0} -->
+                            <i class="event-badge event-active">가격제안</i>
+                            <!-- {/} -->
+                            <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                                <img src="{.path}" alt="">
+                                <div class="scroll-desc">
+                                    <h4 class="desc-kind">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                    <span>{= str_replace('년', '', .model_year)}년형</span>
+                                    <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                    <span>{.area_name}</span>
+                                    <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                                    <div class="ad-sale-icon-row">
+                                        <div>
+                                            <img src="../images/custom/icon/ico-heart.png" alt="">
+                                            <span>{.like_cnt}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <!-- {:} -->
+                        <div class="default-box">
+                            <p class="default-message">해당 조건을 만족하는 기계가 없습니다.</p>
+                        </div>
+                        <!-- {/} -->
+                    </div>
+                </div>
+                <div id="highlightZoneFocus"></div>
+                <!-- 하이라이트 존 끝 -->
+                <!-- 딜러 존 시작 -->
+                <div class="mb-5" id="dealerZone">
+                        <div class="ad-sale-filter">
+                            <h1 class="wrap-title wrap-title-02">딜러 존</h1>
+                            <button class="btn-type-01 more-btn-mob txt-medium" onclick="show_more('d')">더 많은 기계보기</button>
+                        </div>
+                    
+                        <div class="ad-sale-filter mb-3 mob-filter-wrap">
+                            <div class="box-filter col-12 col-md-8 col-lg-9" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between;">
+                                <!-- {@ kind_group } -->
+                                    <span {? .index_ == d-1 }class="accent-txt"{/}data-no="{.kind_no}" onclick="search_kind_group('d', '{.kind_no}')">{.kind_type}</span>
+                                <!-- {/} -->
+                           </div>
+                            <div class="col-md-4 col-lg-3 txt-right">
+                               <button class="btn-type-01 more-btn-web txt-medium" onclick="show_more('d')">더 많은 기계보기</button>
+                            </div>
+                        </div>
+                    
+                         <div class="scroll-wrap ad-sale-wrap scroll-x">
+                            <!-- {@ sale_list_02} -->
+                            <div class="scroll-div">
+                                <!-- 이벤트뱃지 있는 애들은 event-active 클래스 -->
+                                <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                                <i class="event-badge event-active">입찰진행</i>
+                                <!-- {/} -->
+                                <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                                <i class="event-badge event-active">입찰마감</i>
+                                <!-- {/} -->
+                                <!-- {? .price_proposal != 0} -->
+                                <i class="event-badge event-active">가격제안</i>
+                                <!-- {/} -->
+                                <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                                    <img src="{.path}" alt="">
+                                    <div class="scroll-desc">
+                                        <h4 class="desc-kind">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                        <span>{= str_replace('년', '', .model_year)}년형</span>
+                                        <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                        <span>{.area_name}</span>
+                                        <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                                        <div class="ad-sale-icon-row">
+                                            <div>
+                                                <img src="../images/custom/icon/ico-heart.png" alt="">
+                                                <span>{.like_cnt}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <!-- {:} -->
+                            <div class="default-box">
+                                <p class="default-message">해당 조건을 만족하는 기계가 없습니다.</p>
+                            </div>
+                            <!-- {/} -->
+                        </div>
+                    </div>
+                    <div id="dealerZoneFocus"></div>
+                    <!-- 딜러 존 끝 -->
+                    <!-- 일반기계 시작 --> 
+                <div class="mb-5" id="normalZone">
+                    <div class="ad-sale-filter mb-3 normal-machine-filter">
+                    <h1 class="wrap-title wrap-title-02">일반 기계</h1>
+                        <div class="box-filter">
+                            <span class="{? o == 1}accent-txt{/}" onclick="search_order('1')">최신순</span>
+                            <span class="{? o == 2}accent-txt{/}" onclick="search_order('2')">높은 가격 순</span>
+                            <span class="{? o == 3}accent-txt{/}" onclick="search_order('3')">낮은가격 순</span>
+                            <span class="{? o == 4}accent-txt{/}"onclick="search_order('4')">연식</span>
+                        </div>
+                    </div>
+                    <div class="scroll-wrap ad-sale-wrap scroll-y">
+                        <!-- {@ sale_list_03 } -->
+                        <div class="product-wrap-01">
+                            <div class="scroll-div">
+                                <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                                    <div class="product-row-01 normal-machine-row">
+                                        <div class="product-machine-desc product-row-01">
+                                            <img class="product-machine-img" src="{.path}" height="115"/>
+                                            <div class="scroll-desc">
+                                                <div class="product-row-01" style="flex-wrap: wrap;">
+                                                    <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                                    <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                                                    <span class="btn-type-01 mr-2">입찰진행</span>
+                                                    <!-- {/} -->
+                                                    <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                                                    <span class="btn-type-01 mr-2">입찰마감</span>
+                                                    <!-- {/} -->
+                                                    <!-- {? .price_proposal != 0} -->
+                                                    <span class="btn-type-01 mr-2">가격제안</span>
+                                                    <!-- {/} -->
+                                                    
+                                                    <div class="d-inline-block">
+                                                    <!-- {? .hotmark_list} -->
+                                                        <!-- {@ explode(',', .hotmark_list)} -->
+                                                            <img src="../images/custom/icon/ico_hotmark_0{..value_}.png" class="ico_hotmark_0{..value_} mr-2" />
+                                                        <!-- {/} -->
+                                                    <!-- {/} -->
+                                                    </div>
+                                                </div>
+                                                <span>{= str_replace('년', '', .model_year)}년형</span>
+                                                <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                                <span>{.area_name}</span>
+                                                <!--<span>기타사항</span>-->
+                                                <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                                                <div class="ad-sale-icon-row">
+                                                    <div>
+                                                        <img src="../images/custom/icon/ico-heart.png" alt="">
+                                                        <span>{.like_cnt}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="product-machine-info">
+                                            <!--<img class="product-profile-img" src='{.partner_profile_path}'/>-->
+                                            <p class="pb-1">{.userid}</p>
+                                            <span class="pb-1">
+                                                <!-- {? .grade == 0} -->
+                                                    <!-- {@ range(0, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {: .grade == 5} -->
+                                                    <!-- {@ range(0, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {:} -->
+                                                    <!-- {@ range(0, .grade-1)} -->
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                    <!-- {/} -->
+                                                    <!-- {@ range(.grade, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {/} -->
+                                                </span>
+                                            <span>평점 {.grade} 점&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;매매중 {.sale_ing_cnt} 건</span>
+                                            <span>평판 {.grade_cnt} 건&nbsp;&nbsp;매매완료 {.sale_finish_cnt} 건</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- {:} -->
+                        <div class="default-box">
+                            <p class="default-message">해당 조건을 만족하는 기계가 없습니다.</p>
+                        </div>
+                        <!-- {/} -->
+                        <script>
+                            (function($){
+                                $(".ad-sale-wrap.scroll-y").mCustomScrollbar({
+                                    theme: "rounded-dark",
+                                    scrollbarPosition: "outside",
+                                    advanced:{
+                                        autoExpandHorizontalScroll:true
+                                    }
+                                });
+                            })(jQuery);
+                        </script>
+                    </div>
+                </div>
+                <div id="normalZoneFocus"></div>
+                <!-- 일반기계 끝 -->                                               
+            </div>
+            <form action="/sch/mch_search" method="post" id="frm_search">
+                <input type="hidden" name="selected" value="{selected}"/>
+                <input type="hidden" name="cate_k" value="{cate_k}" />
+                <input type="hidden" name="cate_t" value="{cate_t}" />
+                <input type="hidden" name="cate_f" value="{cate_f}" />
+                <input type="hidden" name="cate_m" value="{cate_m}" />
+                <input type="hidden" name="cate_y" value="{cate_y}" />
+                <input type="hidden" name="cate_p" value="{cate_p}" />
+                <input type="hidden" name="cate_a" value="{cate_a}" />
+                <input type="hidden" name="h" value="{h}" />
+                <input type="hidden" name="d" value="{d}" />
+                <input type="hidden" name="o" value="{o}" />
+                <input type="hidden" name="more" value="{more}" />
+                <input type="hidden" name="focus" value="{focus}" />
+            </form>
+        </div>
+    </div>
+    <script>
+       if('{more}' == 'h') {
+           $('#highlightZone .ad-sale-wrap').removeClass('scroll-x');
+           $('#highlightZone .ad-sale-wrap').addClass('more');
+           $('#dealerZone').hide();
+           $('#normalZone').hide();
+       } else if('{more}' == 'd') {
+           $('#dealerZone .ad-sale-wrap').removeClass('scroll-x');
+           $('#dealerZone .ad-sale-wrap').addClass('more');
+           $('#highlightZone').hide();
+           $('#normalZone').hide();
+       }
+
+        // $('{focus}').attr('tabIndex', -1).focus();
+    </script>
+    
+    <script>
+        (function($){
+            $(".ad-sale-wrap.scroll-x").mCustomScrollbar({
+                axis:"x",
+                theme:"rounded-dark",
+                scrollbarPosition: "outside",
+                advanced:{
+                    autoExpandHorizontalScroll:true
+                }
+            });
+        })(jQuery);
+        
+        scrollMove('highlightZone .scroll-x');
+        scrollMove('dealerZone .scroll-x');
+        function scrollMove(target) {
+            var current = 0;
+            var loop = setInterval(function(){
+                var total = $('#' + target + ' .scroll-div').length;
+                if(current >= total) {
+                    current = 0;
+                    $('#' + target).mCustomScrollbar("scrollTo", 'first');
+                } else {
+                    var to = $('#' + target + ' .scroll-div').eq(current++);    
+                    $('#' + target).mCustomScrollbar("scrollTo", to);
+                }
+            }, 3000);
+            $('#' + target).hover(function(){
+                clearInterval(loop);
+            }, function() {
+                loop = setInterval(function(){
+                    var total = $('#' + target + ' .scroll-div').length;
+                    if(current >= total) {
+                        current = 0;
+                        $('#' + target).mCustomScrollbar("scrollTo", 'first');
+                    } else {
+                        var to = $('#' + target + ' .scroll-div').eq(current++);    
+                        $('#' + target).mCustomScrollbar("scrollTo", to);
+                    }
+                }, 3000);
+            });
+        }
+    </script>
+</div>
+                    

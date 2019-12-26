@@ -1,0 +1,650 @@
+{ #layout_header }	
+
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jstree/jquery.jstree.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.colorpicker.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-font-decoration.js"></script>
+<script type="text/javascript" src="/app/javascript/js/base64.js"></script>
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/jquploadify/uploadify.css" />
+<script type="text/javascript" src="/app/javascript/plugin/jquploadify/swfobject.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquploadify/jquery.uploadify.v2.1.4.js"></script>
+<script type="text/javascript">
+	show_category('{type}', '{mnf_kind}', '{model_kind}', '{model_mnf}');	
+	var current_type = '';
+	function show_category(type, mnf_kind, model_kind, model_mnf) {
+		$('.btn_category').val('생성');
+		
+		setTimeout(function() {
+			$.each($("#sel_mnf_kind option"), function(index, value) {
+				if($(this).data('seq') == mnf_kind) {
+					$(this).prop('selected', true);
+					return false;
+				}
+			});
+			$.each($("#sel_model_kind option"), function(index, value) {
+				if($(this).data('seq') == model_kind) {
+					$(this).prop('selected', true);
+					return false;
+				}
+			});
+			$.each($("#sel_model_mnf option"), function(index, value) {
+				if($(this).data('seq') == model_mnf) {
+					$(this).prop('selected', true);
+					return false;
+				}
+			});
+		}, 1)
+		if(!mnf_kind) mnf_kind = '0';
+		if(!model_kind) model_kind = '0';
+		if(!model_mnf) model_mnf = '0';
+		$.ajax({
+			url: 'ajax_get_category',
+			type: 'post',
+			dataType: 'json',
+			data: {'type': type, 'mnf_kind': mnf_kind, 'model_kind': model_kind, 'model_mnf': model_mnf},
+			success: function(data) {
+				var html = '';
+				var val = '';
+				var seq = '';
+				$('.category-data').remove();
+				if(type == 'kind') {
+					$('#input_category_kind').removeClass('hide');
+					$('#sel_mnf_kind').addClass('hide');
+					$('#sel_model_kind').addClass('hide');
+					$('#sel_model_mnf').addClass('hide');
+ 				} else if(type == 'mnf') {
+ 					$('#input_category_kind').addClass('hide');
+					$('#sel_mnf_kind').removeClass('hide');
+					$('#sel_model_kind').addClass('hide');
+					$('#sel_model_mnf').addClass('hide');
+				} else if(type == 'model') {
+					$('#input_category_kind').addClass('hide');
+					$('#sel_mnf_kind').addClass('hide');
+					$('#sel_model_kind').removeClass('hide');
+					$('#sel_model_mnf').removeClass('hide');
+				}
+				if(data) {
+					$.each(data, function(index, value) {
+						html += '<tr class="category-data">';
+						html += '	<td class="its-td">';
+						if(type == 'kind') {
+							val = ' ('  + value.kind_type + ') ' + value.kind_name;
+							seq = value.kind_seq;
+						}
+						else if (type == 'mnf') {
+							val = ' ('  + value.mnf_kind + ') ' + value.mnf_name;
+							seq = value.mnf_seq;		
+						}
+						else if (type == 'model') {
+							val = value.model_kind + '&&' + value.model_mnf + '&&' + value.model_name;
+							seq = value.model_seq;		
+						}
+						html += '   <label><input type="checkbox" class="chk chk_one mr-1" data-seq="' + seq + '" data-val="' + val + '"/>';
+						html += '		<span class="ml10 mr5">' + (type == 'model' ? val.split('&&')[2] : val) + '</span></label>';
+						html += '	</td>';
+						html += '</tr>';
+					});
+				}
+				$('#category-append').append(html);
+				current_type = type;
+			}, 
+			error: function() {
+				console.log('error'); 
+			}
+		});
+	}
+	
+	function category_process() {
+		var value = $('#input_category').val();
+		var kind = $('#input_category_kind').val();
+		var mnf_kind = $('#sel_mnf_kind option:selected').data('seq');
+		var model_kind = $('#sel_model_kind option:selected').data('seq');
+		var model_mnf = $('#sel_model_mnf option:selected').data('seq');
+		
+		if(current_type == '') {
+			alert('생성할 카테고리를 선택해주세요.');
+			return;
+		} else if(current_type == 'kind' && kind == '') {
+			alert('분류를 입력해주세요.');
+			$('#input_category_kind').focus();
+			return;
+		} else if(current_type == 'mnf' && !mnf_kind) {
+			alert('기계종류를 선택해주세요.');
+			$('#sel_mnf_kind').focus();
+			return;
+		} else if(current_type == 'model' && !model_kind) {
+			alert('기계종류를 선택해주세요.');
+			$('#sel_model_kind').focus();
+			return;
+		} else if(current_type == 'model' && !model_mnf) {
+			alert('제조사를 선택해주세요.');
+			$('#sel_model_mnf').focus();
+			return;
+		} else if(value == '') {
+			alert('값을 입력해주세요.');
+			$('#input_category').focus();
+			return;
+		}
+		
+		if($('.btn_category').val() == '생성') {
+			$.ajax({
+				url: 'ajax_add_category',
+				type: 'post',
+				dataType: 'json',
+				data: {'type': current_type, 'name': value, 'kind': kind, 'mnf_kind': mnf_kind, 'model_kind': model_kind, 'model_mnf': model_mnf},
+				success: function(data) {
+					if(data.result == 'true') {
+						alert('생성이 완료되었습니다.');
+						if(current_type == 'mnf') 
+							location.href = '/admin/com/category?type=' + current_type + '&kind=' + mnf_kind;
+						else if(current_type == 'model') 
+							location.href = '/admin/com/category?type=' + current_type + '&kind=' + model_kind + '&mnf=' + model_mnf;
+						else
+							location.href = '/admin/com/category?type=' + current_type;
+					}
+				},
+				error: function() {
+					console.log('error');
+				}
+			});
+		} else if ($('.btn_category').val() == '변경') {
+			if(!confirm('변경하시겠습니까 ?')) return;
+			var seq = $('.btn_category').data('seq');
+			$.ajax({
+				url: 'ajax_modify_category',
+				type: 'post',
+				dataType: 'json',
+				data: {'type': current_type, 'name': value, 'seq': seq, 'kind': kind, 'mnf_kind': mnf_kind, 'model_kind': model_kind, 'model_mnf': model_mnf},
+				success: function(data) {
+					if(data.result == 'true') {
+						alert('변경이 완료되었습니다.');
+						if(current_type == 'mnf') 
+							location.href = '/admin/com/category?type=' + current_type + '&kind=' + mnf_kind;
+						else if(current_type == 'model') 
+							location.href = '/admin/com/category?type=' + current_type + '&kind=' + model_kind + '&mnf=' + model_mnf;
+						else
+							location.href = '/admin/com/category?type=' + current_type;
+					}
+				},
+				error: function() {
+					console.log('error');
+				}
+			});
+		}
+	}
+	
+	function modify_category() {
+		$('#input_category').focus();
+		var seq = $('.chk_one:checked').data('seq');
+		var val = $('.chk_one:checked').data('val');
+		if(current_type == 'kind') {
+			val = val.split(') ');
+			$('#input_category_kind').val(val[0].replace(' (', ''));
+			$('#input_category').val(val[1]);
+		} else if (current_type == 'model') {
+			val = val.split('&&');
+			$.each($('#sel_model_kind option'), function(index, value){
+				if($(this).data('val') == val[0]) {
+					$(this).prop('selected', true);
+					return;
+				}
+			});
+			$.each($('#sel_model_mnf option'), function(index, value){
+				if($(this).data('val') == val[1]) {
+					$(this).prop('selected', true);
+					return;
+				}
+			});
+			$('#input_category').val(val[2]);
+		} else if (current_type == 'mnf') {
+			val = val.split(') ');
+			$.each($('#sel_mnf_kind option'), function(index, value){
+				if($(this).data('val') == val[0].replace(' (', '')) {
+					$(this).prop('selected', true);
+					return;
+				}
+			});
+			$('#input_category').val(val[1]);
+		}
+		$('.btn_category').val('변경');
+		$('.btn_category').data('seq', seq);
+	}
+	
+	function remove_category() {
+		var mnf_kind = $('#sel_mnf_kind option:selected').data('seq');
+		var model_kind = $('#sel_model_kind option:selected').data('seq');
+		var model_mnf = $('#sel_model_mnf option:selected').data('seq');
+		var seq = $('.chk_one:checked').data('seq');
+		if(confirm('정말 삭제하시겠습니까 ? 삭제하기 전 신중하게 생각해주세요.')) {
+			$.ajax({
+				type: 'post',
+				url: 'ajax_remove_category',
+				dataType: 'json',
+				data: {'type': current_type, 'seq': seq},
+				success: function(data) {
+					if(data.result == 'true') {
+						alert('삭제가 완료되었습니다.');
+						if(current_type == 'mnf') 
+							location.href = '/admin/com/category?type=' + current_type + '&kind=' + mnf_kind;
+						else if(current_type == 'model') 
+							location.href = '/admin/com/category?type=' + current_type + '&kind=' + model_kind + '&mnf=' + model_mnf;
+						else
+							location.href = '/admin/com/category?type=' + current_type;
+					}
+				},
+				error: function() {
+					console.log('error');
+				}
+			});
+		}
+	}
+	$(document).on('change', '#sel_mnf_kind', function(){
+		if($('.btn_category').val() == '변경') return;
+		var mnf_kind = $('#sel_mnf_kind option:selected').data('seq');
+		show_category('mnf', mnf_kind);
+	});
+	$(document).on('change', '#sel_model_kind', function(){
+		if($('.btn_category').val() == '변경') return;
+		var model_kind = $('#sel_model_kind option:selected').data('seq');
+		var model_mnf = $('#sel_model_mnf option:selected').data('seq');
+		show_category('model', '', model_kind, model_mnf);
+	});
+	$(document).on('change', '#sel_model_mnf', function(){
+		if($('.btn_category').val() == '변경') return;
+		var model_kind = $('#sel_model_kind option:selected').data('seq');
+		var model_mnf = $('#sel_model_mnf option:selected').data('seq');
+		show_category('model', '', model_kind, model_mnf);
+	});
+</script>
+<style>
+	table.help-table-style {border-collapse:collapse; border-top:1px solid #aaa; border-right:1px solid #dadada;}
+	table.help-table-style .help-th {font-size:11px; font:Dotum; color:#000000; height:36px; border-left:1px solid #e6e6e6; border-bottom:1px solid #cecece; text-align:center;}
+	table.help-table-style .help-td {font-size:11px; font:Dotum; color:#000000; height:36px; letter-spacing:-1px; border-left:1px solid #e6e6e6; border-bottom:1px solid #cecece; padding:0px 10px 0px 10px;}
+</style>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<form target="actionFrame">
+<input type="hidden" name="categoryCode" value="" />
+<input type="hidden" name="mode" value="" />
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>카테고리 관리</h2>
+		</div>
+
+		<ul class="page-buttons-right hide">
+			<li><span class="btn large gray"><input type="button" id="viewCategory" value="화면보기"/></span></li>
+			<li><span class="btn large black"><button type="button" onclick="categorySettingFormSubmit()">저장하기<span class="arrowright"></span></button></span></li>
+		</ul>
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<!-- 서브메뉴 바디 : 시작-->
+<div class="relative" style="margin-top:-1px;">
+	<div class="absolute" style="top:0px; left:0px; width:312px;">
+		<table width="100%" class="info-table-style">
+			<col />
+			<tr>
+				<th class="its-th" id="mmenu" style="padding:6px 10px;">
+					카테고리
+					<input type="button" id="remove" value="-" style="display:none; float:left;"/>
+					<span class="hide" style="float:right; padding-top:5px;">카테고리영역 디자인  <span class="helpicon" title="{category_design_ex}"></span></span>
+				</th>		
+			</tr>	
+			<tr>
+				<td class="its-td" style="background:rgba(255,255,238,0.9); padding:5px 0 0 0;">	
+					<div id="category" class="tree" style="width:290px;height:520px;overflow:auto; padding-left: 10px;">
+						<p><a href="/admin/com/category?type=kind">기계종류</a></p>
+						<p><a href="/admin/com/category?type=mnf">제조사</a></p>
+						<p><a href="/admin/com/category?type=model">모델</a></p>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>	
+		
+	<div style="padding-left:311px;">
+		<table width="100%" class="info-table-style" id="categoryInfoFirst">
+			<col />	
+			<tr>
+				<th class="its-th" style="height:20px; padding-left:15px;">카테고리 정보</th>
+			</tr>
+			<tbody id="category-append">
+			<tr>				
+				<td class="its-td">
+					<input type="text" size="30" id="input_category_kind" placeholder="분류" class="hide" />
+					<select name="sel_kind" class="input-style input-lg select-style select-active hide" id="sel_mnf_kind">
+             <option data-val="0">기계종류</option>
+             <!-- {@ kind_map} -->
+             <optgroup label="{.kind_type}" data-no="{.kind_no}">
+                 <!-- {@ .kind_list} -->
+                 <option data-seq="{..kind_seq}" data-val="{..kind_name}">{..kind_name}</option>
+                 <!-- {/} -->
+             </optgroup>
+             <!-- {/} -->
+          </select>
+					<select name="sel_kind" class="input-style input-lg select-style select-active hide" id="sel_model_kind">
+             <option data-val="0">기계종류</option>
+             <!-- {@ kind_map} -->
+             <optgroup label="{.kind_type}" data-no="{.kind_no}">
+                 <!-- {@ .kind_list} -->
+                 <option data-seq="{..kind_seq}" data-val="{..kind_name}">{..kind_name}</option>
+                 <!-- {/} -->
+             </optgroup>
+             <!-- {/} -->
+          </select>	
+          <select name="sel_mnf" class="input-style input-lg select-style hide" id="sel_model_mnf">
+              <option data-val="0">제조사</option>
+              <!-- {@ mnf_list} -->
+              <option data-seq="{.mnf_seq}" data-val="{.mnf_name}">{.mnf_name}</option>
+              <!-- {/} -->
+          </select>	
+					<input type="text" size="30" id="input_category" placeholder="값" />	
+					<span class="btn small cyanblue"><input type="button" value="생성" onclick="category_process()" class="btn_category" /></span>
+					<span class="btn small lightblue"><input type="button" value="수정" onclick="modify_category()"/></span>
+					<span class="btn small red"><input type="button" value="삭제" onclick="remove_category()"/></span>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		<div id="categorySettingContainer"></div>
+	</div>
+</div>
+
+<!--{ ? groups }-->
+<div id="setGroupsPopup" class="hide">
+<!--{ @ groups }-->
+<div style="float:left;padding-right:5px;">
+	<label><input type="checkbox" name="memberGroup" value="{.group_seq}" class="line" >{.group_name}</label>
+</div>
+<!--{ / }-->
+</div>
+<!--{ / }-->
+
+</form>
+
+<!-- 서브메뉴 바디 : 끝 -->
+
+{ #layout_footer }
+
+<!-- JavaScript neccessary for the tree -->
+<script type="text/javascript">
+
+var categoryUrl = "http://{_SERVER.HTTP_HOST}/goods/catalog?code=";
+$(function () {
+
+var treeLoaded = false;
+var node_cnt = 0;
+
+$("#tree")
+	.bind("before.jstree", function (e, data) {
+		$("#alog").append(data.func + "<br />");		
+	})
+	.jstree({ 
+		// List of active plugins
+		"plugins" : [ 
+			"themes","json_data","ui","crrm","cookies","dnd","search","types","hotkeys","contextmenu" 
+		],
+
+		// I usually configure the plugin that handles the data first
+		// This example uses JSON as it is most common
+		"json_data" : { 
+			// This tree is ajax enabled - as this is most common, and maybe a bit more complex
+			// All the options are almost the same as jQuery's AJAX (read the docs)
+			"ajax" : {
+				// the URL to fetch the data
+				"url" : "./tree",
+				// the `data` function is executed in the instance's scope
+				// the parameter is the node being loaded 
+				// (may be -1, 0, or undefined when loading the root nodes)
+				"data" : function (n) { 
+					// the result is fed to the AJAX request `data` option					
+					return { 
+						"operation" : "get_children",
+						"id" : n.attr ? n.attr("id").replace("node_","") : 1 
+					}; 
+					
+				}
+			}
+		},
+				
+		// Using types - most of the time this is an overkill
+		// read the docs carefully to decide whether you need types
+		"types" : {
+			// I set both options to -2, as I do not need depth and children count checking
+			// Those two checks may slow jstree a lot, so use only when needed
+			//"max_depth" : -2, //2017-11-30 jhs update
+			"max_depth" : 5, //2017-12-29 ldb update2
+			"max_children" : -2,
+			// I want only `drive` nodes to be root nodes 
+			// This will prevent moving or creating any other type as a root node
+			"valid_children" : [ "drive" ],
+			"types" : {
+				// The default type
+				"default" : {
+					// I want this type to have no children (so only leaf nodes)
+					// In my case - those are files
+					"valid_children" : "none",
+					// If we specify an icon for the default type it WILL OVERRIDE the theme icons
+					
+				},
+				// The `folder` type
+				"folder" : {
+					// can have files and other folders inside of it, but NOT `drive` nodes
+					"valid_children" : [ "default", "folder" ],
+					
+				},
+				// The `drive` nodes 
+				"drive" : {
+					// can have files and folders inside, but NOT other `drive` nodes
+					"valid_children" : [ "default", "folder" ],
+					"icon" : {
+						"image" : "../images/common/_drive.png"
+					},
+					// those prevent the functions with the same name to be used on `drive` nodes
+					// internally the `before` event is used
+					"start_drag" : false,
+					"move_node" : false,
+					"delete_node" : false,
+					"remove" : false
+				}
+			}
+		},
+		// UI & core - the nodes to initially select and open will be overwritten by the cookie plugin
+
+		// the UI plugin - it handles selecting/deselecting/hovering nodes
+		/*"ui" : {
+			// this makes the node with ID node_4 selected onload
+			"initially_select" : [ "node_2" ]
+		},
+		*/
+		// the core plugin - not many options here
+		"core" : { 
+			// just open those two nodes up
+			// as this is an AJAX enabled tree, both will be downloaded from the server
+			"initially_open" : [ "node_2" ] 
+		},
+		"ui" : {
+			"select_limit" : 1
+		}
+	})
+	.bind("create.jstree", function (e, data) {
+		$.post(
+			"./tree", 
+			{ 
+				"operation" : "create_node", 
+				"id" : data.rslt.parent.attr("id").replace("node_",""), 
+				"position" : data.rslt.position,
+				"title" : data.rslt.name,
+				"type" : 'folder'
+			}, 
+			function (r) {
+				if(r == 'auth'){
+					alert('권한이 없습니다.');
+					location.reload();
+					return;
+				}else{
+					if(r.status) {
+						$(data.rslt.obj).attr("id", "node_" + r.id);
+					}
+					else {
+						$.jstree.rollback(data.rlbk);
+					}
+					data.inst.refresh();
+				}
+			}
+		);		
+	})
+	.bind("remove.jstree", function (e, data) {		
+		data.rslt.obj.each(function () {
+			$.ajax({
+				async : false,
+				type: 'POST',
+				url: "./tree",
+				data : { 
+					"operation" : "remove_node", 
+					"id" : this.id.replace("node_","")
+				}, 
+				success : function (r) {
+					if(r == 'auth'){
+						alert('권한이 없습니다.');
+						location.reload();
+						return;
+					}else{
+						if(!r.status) {
+							data.inst.refresh();
+						}
+					}
+				}
+			});
+		});				
+	})
+	.bind("rename.jstree", function (e, data) {
+		$.post(
+			"./tree", 
+			{ 
+				"operation" : "rename_node", 
+				"id" : data.rslt.obj.attr("id").replace("node_",""),
+				"title" : data.rslt.new_name
+			}, 
+			function (r) {
+				if(r == 'auth'){
+					alert('권한이 없습니다.');
+					location.reload();
+					return;
+				}else{
+					if(!r.status) {
+						$.jstree.rollback(data.rlbk);
+					}
+				}
+			}
+		);		
+	})
+	.bind("before.jstree",function(e, data){
+		if(data.func == "delete_node" && data.plugin == "core"){
+			var category_name = '';
+			category_name = data.inst.data.ui.selected[1] ? data.inst.data.ui.selected[1].innerText : data.inst.data.ui.selected[0].innerText;
+			if(confirm("삭제된 카테고리는 복구할 수 없습니다.\n카테고리("+$.trim(category_name)+")를 삭제하시겠습니까?")===false){
+				e.stopImmediatePropagation();
+				return false;
+			}
+		}
+
+		if(data.func == "move_node" && data.args[1] == false && data.plugin == "core"){
+			if(confirm("처리하시겠습니까?")===false){
+				e.stopImmediatePropagation();
+				return false;
+			}
+		}
+	})
+	.bind("move_node.jstree", function (e, data) {
+		$.ajax({
+			async : false,
+			type: 'POST',
+			url: "./tree",
+			data : { 
+				"operation" : "move_node", 
+				"id" : data.rslt.o.eq(0).attr("id").replace("node_",""), 
+				"ref" : data.rslt.cr === -1 ? 1 : data.rslt.np.attr("id").replace("node_",""), 
+				"position" : data.rslt.cp + 0,
+				"title" : data.rslt.name,
+				"copy" : data.rslt.cy ? 1 : 0					
+			},
+			success : function (r) {
+				if(r == 'auth'){
+					alert('관리자 권한이 없습니다.');
+					location.reload();
+					return;
+				}else{
+					if(!r.status) {
+						if(r['msg']!=undefined && r['msg'].length){
+							alert(r['msg']);
+						}
+						$.jstree.rollback(data.rlbk);
+					}
+					else {
+						$(data.rslt.oc).attr("id", "node_" + r.id);
+						$(data.rslt.oc).find("ins").attr('category',r.category_code);
+						if(data.rslt.cy && $(data.rslt.oc).children("UL").length) {
+							data.inst.refresh(data.inst._get_parent(data.rslt.oc));							
+						}
+						if(!data.rslt.cy){
+							$('#tree').jstree('refresh',-1);
+							viewCategoryInfo({'mode':'info','categoryCode':r.category_code});
+						}
+					}
+				}				
+			}
+		});
+	})
+	.bind("open_node.jstree", function (e, data) {
+		
+    })
+	.bind("load_node.jstree", function (node) {
+
+		{? config_system.operation_type != 'light'}
+			/* 컨트롤아이콘 영역 추가 */
+			$("li[rel!='drive']",node.target).each(function(){
+				var category = $(this).find('ins').attr('category');
+
+				if($(".categoryItemPannerl",this).length==0)
+				{
+					var pannel = $("<span class='categoryItemPannerl'><img src='../images/common/btn_makeup.gif' align='absmiddle' alt='꾸미기' class='hand' onclick=\"viewCategoryInfo({'mode':'design','categoryCode':'"+category+"'});\" /></span>");
+					$(this).append(pannel);
+				}
+			});
+		{/}
+		
+	
+		if(!treeLoaded && $("#tree>ul>li:eq(0)").length){
+			treeLoaded = true;
+			$.jstree._focused().deselect_all();
+			$.jstree._focused().select_node($("#tree>ul>li:eq(0)")[0]);
+			$("#tree>ul>li:eq(0) a").click();
+			
+		}
+	});
+
+	
+});
+
+$(function () { 
+	$("#mmenu input").click(function () {		
+		switch(this.id) {
+			case "add_folder":
+				$("#tree").jstree("create", null, "last", { "attr" : { "rel" : this.id.toString().replace("add_", "") } });
+				break;			
+			default:
+				$("#tree").jstree(this.id);
+				break;
+		}
+	});
+});
+
+
+</script>

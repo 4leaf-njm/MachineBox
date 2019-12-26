@@ -1,0 +1,180 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+        <div class="row">
+            <div class="col-12 mt-5 pt-5 pb-5">
+                <h1 class="wrap-title txt-center txt-bold mb-2">이용후기를 기입해주세요.</h1>
+                <p class="wrap-title-sub txt-light">이용후기가 저희 서비스에 많은 도움이 됩니다.</p>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+            <div class="row">
+                <form action="/rev/rev_write_process" method="post" id="frm_rev_write" target="actionFrame" enctype="multipart/form-data">
+                    <input type="hidden" name="type" value="{type}" />
+                    <input type="hidden" name="target_userid" value="{target_userid}" />
+                    <input type="hidden" name="grade_01" />
+                    <input type="hidden" name="grade_02" />
+                    <input type="hidden" name="grade_03" />
+                    <input type="hidden" name="grade_04" />
+                    <input type="hidden" name="grade_05" />
+                    <input type="hidden" name="grade" />
+                    
+                    <h2 class="col-12 form-title-type-01 form-title-03 mb-4 mt-5">이용후기</h2>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <div class="form-row-02 align-items-center">
+                                    <label for="profile-add" class="profile-label review-add">+</label>
+                                    <!-- style="background-image:url('../images/custom/product.JPG')" -->
+                                    <input type="file" name="rev_image" class="input-file" id="profile-add">
+                                    <div class="ml-4">
+                                        <p class="form-title-type-01 form-title-03">{userid}</p>
+                                        <span class="date-text">{= date("Y-m-d")}</span>
+                                    </div>
+                            </div>
+                    </div>
+                    <div class="col-12 mb-5">
+                            <p class="review-title mb-3">전체적인 별점을 선택해주세요.</p>
+                            <div class="form-row-01 review-row">
+                                    <div class="review-rate">
+                                        <p class="review-title">{? type == 's'}A/S조건{: type == 'o'}전문성{/}</p>
+                                        <div class="review-info">
+                                            <span id="grade_01">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="review-rate">
+                                        <p class="review-title">{? type == 's'}기계상태{: type == 'o'}만족도{/}</p>
+                                        <div class="review-info">
+                                            <span id="grade_02">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="review-rate">
+                                        <p class="review-title">{? type == 's'}신뢰성{: type == 'o'}의사소통{/}</p>
+                                        <div class="review-info">
+                                            <span id="grade_03">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="review-rate">
+                                            <p class="review-title">{? type == 's'}재구매의사{: type == 'o'}재의뢰의사{/}</p>
+                                            <div class="review-info">
+                                                    <span id="grade_04">
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                    </span>
+                                                </div>
+                                    </div>
+                                    <div class="review-rate">
+                                        <p class="review-title">{? type == 's'}친절성{: type == 'o'}친절성{/}</p>
+                                        <div class="review-info">
+                                            <span id="grade_05">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                            </span>
+                                        </div>
+                                    </div>
+                            </div>
+                    </div>
+                    <div class="col-12 mb-5">
+                        <input id="rev_title" class="input-style input-gray input-border-none input-lg" name="title" placeholder="후기 제목을 작성해주세요." />
+                    </div>
+                    <div class="col-12 mb-5">
+                            <textarea id="rev_content" class="input-style input-gray input-border-none input-lg text-area-style review-text-area" name="content" cols="30" rows="30" placeholder="자세한 이용 후기를 작성해주세요." spellcheck="false"></textarea>
+                    </div>
+                    
+                    <div class="col-12 mb-5 txt-center">
+                            <button type="button" class="btn-type-02 input-border-radius" onclick="go_rev_write()">작성하기</button>
+                    </div>
+                </form>
+            </div>
+    </div>
+<script>
+    $('.review-rate span img').on('click', function(){
+        var index = $(this).index();
+        for(var i=0; i<=index; i++) {
+            $(this).parent('span').find('img').eq(i).attr('src', $(this).parent('span').find('img').eq(i).attr('src').replace('empty', 'fill'));
+        }
+        for(var i=index+1; i<5; i++) {
+            $(this).parent('span').find('img').eq(i).attr('src', $(this).parent('span').find('img').eq(i).attr('src').replace('fill', 'empty'));
+        }
+    });
+    
+    function go_rev_write() {
+        if($('#rev_title').val() == '') {
+            alert('후기 제목을 입력해주세요.');
+            $('#rev_title').focus();
+            return;
+        }
+        if($('#rev_content').val() == '') {
+            alert('후기 내용을 입력해주세요.');
+            $('#rev_content').focus();
+            return;
+        }
+        if(confirm('입력하신 내용으로 후기를 작성하시겠습니까 ?')) {
+            var grade = 0;
+            var tot_grade = 0;
+            $.each($('#grade_01 img'), function(index, value) {
+                if($(this).attr('src').indexOf('fill') != -1)
+                    grade ++;
+            });
+            $('input[name=grade_01]').val(grade);
+            tot_grade += grade;
+            grade = 0;
+    
+             $.each($('#grade_02 img'), function(index, value) {
+                if($(this).attr('src').indexOf('fill') != -1)
+                    grade ++;
+            });
+            $('input[name=grade_02]').val(grade);
+            tot_grade += grade;
+            grade = 0;
+    
+             $.each($('#grade_03 img'), function(index, value) {
+                if($(this).attr('src').indexOf('fill') != -1)
+                    grade ++;
+            });
+            $('input[name=grade_03]').val(grade);
+            tot_grade += grade;
+            grade = 0;
+    
+         $.each($('#grade_04 img'), function(index, value) {
+                if($(this).attr('src').indexOf('fill') != -1)
+                    grade ++;
+            });
+            $('input[name=grade_04]').val(grade);
+            tot_grade += grade;
+            grade = 0;
+    
+             $.each($('#grade_05 img'), function(index, value) {
+                if($(this).attr('src').indexOf('fill') != -1)
+                    grade ++;
+            });
+            $('input[name=grade_05]').val(grade);
+            tot_grade += grade;
+            
+            $('input[name=grade]').val(parseInt(tot_grade/5));
+            
+            $('#frm_rev_write').submit();
+        }
+    }
+</script>

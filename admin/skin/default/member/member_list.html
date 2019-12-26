@@ -1,0 +1,318 @@
+<div class="clearbox">
+	<ul class="left-btns">
+		<li><div class="left-btns-txt">검색 <b>{=number_format(sc.searchcount)}</b> 개 / 총 <b>{=number_format(sc.totalcount)}</b> 개</div></li>
+	</ul>
+	{? pageType != "search"}
+	<ul class="right-btns">
+	<li>
+		{? page == "email"}
+		<span class="btn small"><button type="button" onclick="send_machine_mail()">메일전송</button></span>
+		{/}
+		<select class="custom-select-box-multi" name="excel_type" id="excel_type">
+			<option value="">양식선택</option>
+			<option value="search" selected="selected">검색 다운로드</option>
+			<option value="select" selected="selected">선택 다운로드</option>
+		</select>
+		<span class="btn small"><button type="button" name="download_list">항목설정<span class="arrowright"></span></button></span>
+		<span class="btn small"><button type="button" name="excel_down"><img src="../images/common/btn_img_ex.gif" align="absmiddle" /> 다운로드</button></span>
+	</li>
+
+	<li><select class="custom-select-box-multi" id="orderby_disp" name="orderby_disp">
+		<option value="A.regist_date desc" {?sc.orderby_disp=='A.regist_date desc'}selected{/}>최근가입일</option>
+		<option value="A.emoney asc" {?sc.orderby_disp=='A.emoney asc'}selected{/}>마일리지↑</option>
+		<option value="A.emoney desc" {?sc.orderby_disp=='A.emoney desc'}selected{/}>마일리지↓</option>
+		<option value="member_order_price asc" {?sc.orderby_disp=='member_order_price asc'}selected{/}>구매금액↑</option>
+		<option value="member_order_price desc" {?sc.orderby_disp=='member_order_price desc'}selected{/}>구매금액↓</option>
+		<option value="member_order_cnt asc" {?sc.orderby_disp=='member_order_cnt asc'}selected{/}>주문횟수↑</option>
+		<option value="member_order_cnt desc" {?sc.orderby_disp=='member_order_cnt desc'}selected{/}>주문횟수↓</option>
+		<option value="A.review_cnt asc" {?sc.orderby_disp=='A.review_cnt asc'}selected{/}>리뷰횟수↑</option>
+		<option value="A.review_cnt desc" {?sc.orderby_disp=='A.review_cnt desc'}selected{/}>리뷰횟수↓</option>
+		<option value="A.login_cnt asc" {?sc.orderby_disp=='A.login_cnt asc'}selected{/}>방문횟수↑</option>
+		<option value="A.login_cnt desc" {?sc.orderby_disp=='A.login_cnt desc'}selected{/}>방문횟수↓</option>
+		<option value="member_recommend_cnt asc" {?sc.orderby_disp=='member_recommend_cnt asc'}selected{/}>추천수↑</option>
+		<option value="member_recommend_cnt desc" {?sc.orderby_disp=='member_recommend_cnt desc'}selected{/}>추천수↓</option>
+		<option value="member_invite_cnt asc" {?sc.orderby_disp=='member_invite_cnt asc'}selected{/}>초대수↑</option>
+		<option value="member_invite_cnt desc" {?sc.orderby_disp=='member_invite_cnt desc'}selected{/}>초대수↓</option>
+	</select></li>
+	<li><select  class="custom-select-box-multi" name="perpage" id="display_quantity">
+		<option id="dp_qty10" value="10" {? sc.perpage == 10 } selected{/} >10개씩</option>
+		<option id="dp_qty50" value="50" {? sc.perpage == 50 } selected{/} >50개씩</option>
+		<option id="dp_qty100" value="100" {? sc.perpage == 100 } selected{/} >100개씩</option>
+		<option id="dp_qty200" value="200" {? sc.perpage == 200 } selected{/} >200개씩</option>
+	</select></li>
+	</ul>
+	{/}
+</div>
+
+<!-- 주문리스트 테이블 : 시작 -->
+<table class="list-table-style" cellspacing="0">
+	<!-- 테이블 헤더 : 시작 -->
+	<colgroup>
+		<col width="3%" /><!-- checkbox -->
+		<col width="3%" /><!-- 번호 -->
+		<col width="3%" /><!-- 유입 -->
+		<col width="7%" /><!-- 승인 -->
+		<col width="4%" /><!-- 등급 -->
+		<col width="5%" /><!-- 유형 -->
+		<col width="8%" /><!-- 공식딜러 승인 -->
+		<col width="15%"/><!-- 아이디 -->
+		<col width="10%"/><!-- 이름 -->
+		<col width="12%" /><!-- 이메일 -->
+		<col width="8%" /><!-- 전화번호 -->
+		<col width="11%" /><!-- 가입일 -->
+		<col width="5%" /><!-- 마일리지 -->
+		<col width="5%" /><!-- 포인트 -->
+		<col width="5%" /><!-- 예치금 -->
+		{? pageType != "search"}
+		<col width="5%" /><!-- 관리 -->
+		{/}
+	</colgroup>
+	<thead class="lth">
+	<tr>
+		{? pageType == "search"}
+		<th><input type="checkbox" onclick="chkAll(this,'member_chk'); allMemberClick();" class="all_member_chk"/></th>
+		{:}
+		<th><input type="checkbox" onclick="chkAll(this,'member_chk');"/></th>
+		{/}
+		<th>번호</th>
+		<th>유입</th>
+
+		<th>승인</th>
+		<th>등급</th>
+		<th>유형</th>
+		<th>공식딜러 승인</th>
+		<th>아이디</th>
+		<th>이름(닉네임)</th>
+
+		<th>이메일/핸드폰</th>
+		<th>전화번호</th>
+		<th>가입일<br/>최종방문</th>
+
+		<th>마일리지</th>
+		<th>포인트</th>
+		<th>예치금</th>
+		<!--{? loadType != "layer" }-->
+		<th>관리</th>
+		<!--{ / }-->
+	</tr>
+	</thead>
+	<!-- 테이블 헤더 : 끝 -->
+
+	<!-- 리스트 : 시작 -->
+	<tbody class="ltb otb" >
+{? loop }
+	{@ loop }
+		<!-- 리스트타이틀(주문상태 및 버튼) : 시작 -->
+		{?.status_nm != '휴면'}
+		<tr class="list-row">
+			{? pageType == "search"}
+			<td class="ctd"><input type="checkbox" name="member_chk[]" value="{.member_seq}" class="member_chk" onclick="selectMemberClick(this);" grade="{.group_seq}"  grade_name="{.group_name}" /></td>
+			{:}
+			<td class="ctd"><input type="checkbox" name="member_chk[]" value="{.member_seq}" cellphone="{.cellphone}" email="{.email}" grade="{.group_seq}" grade_name="{.group_name}" class="member_chk"/></td>
+			{/}
+			<td class="ctd">{.number}</td>
+			<td class="ctd" style="cursor:normal;">
+				{ ? .referer }<a href="{.referer}" target="_blank">{ / }
+				<span class="help" title="{.referer_name} {.referer}" style="font-size:11px;font-weight:bold;color:#006666;">{=getstrcut(.referer_name, 1, '')}</span>
+				{ ? .referer }</a>{ / }
+			</td>
+			<td class="ltd" style="position: relative;">{? .bpermit_yn == 'y'}승인{:}미승인{/}
+			{? .bcard_path && .bcard_path != ''}
+				<span class="btn small valign-middle" style="position: absolute; top: 7px; right: 10px;"><input type="button" value="확인" onclick="download_bcard('{.bcard_path}')" /></span>
+			{/}
+			</td>
+			<td class="ltd">{.group_name}</td>
+			<td class="ltd">
+					{?.type=='개인'}<img src="../images/common/icon/icon_personal.gif" />
+					{:.type=='기업'}<img src="../images/common/icon/icon_besiness.gif" />{/}
+					{.gubun}
+			</td>
+			<td class="ltd" style="position: relative;">
+					{?.gubun=='개인'}-
+					{:.gubun=='기업'}-
+					{:.gubun=='딜러'}
+						{? .main_dealer_yn == 'y'}공식딜러
+						{: .main_dealer_yn == 'h'}승인대기<span class="btn small valign-middle" style="position: absolute; top: 7px; right: 10px;"><input type="button" value="승인" onclick="go_dealer_permit('{.member_seq}')" /></span>
+						{:}신청안함
+						{/}
+					{/}
+			</td>
+			<!--{? pageType != "search"}-->
+			<td class="ltd hand" style="font-weight:bold;" onclick="open_crm_summary(this,'{.member_seq}','','right');">
+			<!--{ : }-->
+			<td class="ltd" style="font-weight:bold;">
+			<!--{ / }-->
+			<!--{? .snslist }-->
+				<!--{@ .snslist }-->
+				<!--{?..rute}-->
+				<span class="blue">
+				<!--{? ..rute == 'facebook' && ..sns_f_type == 0}-->
+				<img src="../images/sns/sns_f00.gif" align="absmiddle">
+				<!--{ : ..rute == 'twitter' && ..sns_t_type == 0}-->
+				<img src="../images/sns/sns_t0_gray.gif" align="absmiddle">
+				<!--{ : }-->
+				<img src="../images/sns/sns_{=substr(..rute,0,1)}0.gif" align="absmiddle">
+				<!--{ / }-->
+				</span>
+				<!--{ / }-->
+				<!--{ / }-->
+			<!--{ / }-->
+			{?(.rute && .rute == 'none') || .sns_change == 1}
+				<span class="blue">{.userid}</span>{ ? .mall_t_check == 'Y'}<span style="position:relation;padding:0px 5px 0px 5px;margin-left:7px;color:#FFBB00;border:1px solid;">TEST</span>{/}
+			{/}
+			{?(.rute && .rute == 'naver') && .sns_change != 1}
+				<span class="blue">{.conv_sns_n}</span>{ ? .mall_t_check == 'Y'}<span style="position:relation;padding:0px 5px 0px 5px;margin-left:7px;color:#FFBB00;border:1px solid;">TEST</span>{/}
+			{/}
+			</td>
+			<td class="ltd">{.user_name}{ ? .nickname }({=.nickname}){ / }</td>
+
+			<td class="ltd">
+			<!--{? loadType == "layer" }-->
+				{? (!.email || .email == '--') && (!.bcellphone || .bcellphone == '--') && (!.cellphone || .cellphone == '--') }
+				<p>없음</p>
+				{ : }
+				<p>
+				{ ? .email && .email != '--'}
+				{.email}({=strtoupper(.mailing)})
+				{ : }
+				없음
+				{ / }
+				</p>
+
+				<p>
+				{ ? (.bcellphone && .bcellphone != '--') || (.cellphone  && .cellphone != '--') }
+				{? .bcellphone}{.bcellphone}{:}{.cellphone}{/}({=strtoupper(.sms)})
+				{ : }
+				없음
+				{ / }
+				</p>
+				{ / }
+			<!--{ : }-->
+				{? (!.email || .email == '--') && (!.bcellphone || .bcellphone == '--') && (!.cellphone || .cellphone == '--') }
+				<p>없음</p>
+				{ : }
+				<p>
+				{ ? .email && .email != '--'}
+				<span class="blue hand" {? pageType != "search"}onclick="select_email('{.member_seq}');"{/}>{.email}</span>
+				({=strtoupper(.mailing)})
+				{ : }
+				없음
+				{ / }
+				</p>
+
+				<p>
+				{ ? (.bcellphone && .bcellphone != '--') || (.cellphone  && .cellphone != '--') }
+				<span class="blue hand" {? pageType != "search"}onclick="select_sms('{.member_seq}');"{/}>{? .bcellphone}{.bcellphone}{:}{.cellphone}{/}</span>
+				({=strtoupper(.sms)})
+				{ : }
+				없음
+				{ / }
+				</p>
+				{ / }
+			<!--{ / }-->
+			</td>
+			<!--td align="center"><a href="javascript:select_email('{.member_seq}');">{.email}</a> ({=strtoupper(.mailing)})</td>
+			<td align="center"><a href="javascript:select_sms('{.member_seq}');">{? .bcellphone}{.bcellphone}{:}{.cellphone}{/}</a> ({=strtoupper(.sms)})</td-->
+			<td class="ltd">
+				{?.phone && .phone != '--'}
+				{.phone}
+				{ : }
+				없음
+				{ / }
+			</td>
+			<td class="ltd">{.regist_date}<br/>{.lastlogin_date}</td>
+
+			<!--{? loadType == "layer" }-->
+			<td class="ltd">{=get_currency_price(.emoney)}</td>
+			<td class="ltd">{=get_currency_price(.point)}</td>
+			<td class="ltd">{=get_currency_price(.cash)}</td>
+			<!--{ : }-->
+			<td class="ltd"><span class="blue hand" onclick="emoney_pop('{.member_seq}');">{=get_currency_price(.emoney)}</span></td>
+			<td class="ltd"><span class="blue hand" onclick="point_pop('{.member_seq}');">{=get_currency_price(.point)}</span></td>
+			<td class="ltd"><span class="blue hand" onclick="cash_pop('{.member_seq}');">{=get_currency_price(.cash)}</span></td>
+			<!--{ / }-->
+
+
+			<!--{? loadType != "layer" }-->
+			<td class="ctd"><span class="btn small valign-middle"><input type="button" name="manager_modify_btn" value="상세" {? pageType != "search"}onclick="open_crm_summary(this,'{.member_seq}','','left');"{ / } /></span></td>
+			<!--{ / }-->
+		</tr>
+		{:}
+		<tr class="list-row">
+			<td class="ctd"><input type="checkbox" name="member_chk[]" value="{.member_seq}" cellphone="{.cellphone}" email="{.email}" class="member_chk"/></td>
+			{? pageType != "search"}
+			<td class="ctd">{.number}</td>
+			{ / }
+			<td class="ctd">-</td>
+			<td class="ctd">-</td>
+			<td class="ctd">-</td>
+			<td class="ctd">-</td>
+			<!--{? pageType != "search"}-->
+			<td class="ltd hand" style="font-weight:bold;" onclick="open_crm_summary(this,'{.member_seq}','','right');">
+			<!--{ : }-->
+			<td class="ltd" style="font-weight:bold;">
+			<!--{ / }-->
+				<span class='red'>(휴면)</span>
+				<span class="blue">{.userid}</span>
+			</td>
+			<td class="ctd">-</td>
+			<td class="ctd">-</td>
+			<td class="ctd">-</td>
+			<td class="ctd">-</td>
+			<td class="ctd">-</td>
+			<td class="ctd">-</td>
+			<td class="ctd">-</td>
+
+			<!--{? loadType != "layer" }-->
+			<td class="ctd"><span class="btn small valign-middle"><input type="button" name="manager_modify_btn" value="상세" {? pageType != "search"}onclick="open_crm_summary(this,'{.member_seq}','','left');"{ / } /></span></td>
+			<!--{ / }-->
+		</tr>
+		{/}
+		<!-- 리스트데이터 : 끝 -->
+	{ / }
+{ : } 
+		<!-- 리스트타이틀(주문상태 및 버튼) : 시작 -->
+		<tr class="list-row">
+			<!--{? loadType != "layer" }-->
+			<td align="center" colspan="16">
+			<!--{ : }-->
+			<td align="center" {? pageType != "search"}colspan="15"{:}colspan="14"{/}>
+			<!--{ / }-->
+				<!--{ ? search_text }-->
+					'{search_text}' 검색된 회원이 없습니다.
+				<!--{ : }-->
+					등록된 회원이 없습니다.
+				<!--{ / }-->
+			</td>
+		</tr>
+		<!-- 리스트데이터 : 끝 -->
+{ / }
+	</tbody>
+	<!-- 리스트 : 끝 -->
+
+</table>
+<!-- 주문리스트 테이블 : 끝 -->
+
+<div id="sendPopup" class="hide"></div>
+<div id="emoneyPopup" class="hide"></div>
+<div id="download_list_setting" class="hide"></div>
+
+<script>
+	function go_dealer_permit(member_seq) {
+		if(confirm('해당 딜러회원을 공식딜러로 승인하시겠습니까 ?')) {
+			$.ajax({
+				type: 'post',
+				url: '/admin/com/dealer_permit',
+				data: {'member_seq': member_seq},
+				dataType: 'json',
+				success: function(data) {
+					alert('승인 되었습니다.');
+					location.reload();
+				},
+				error: function() {
+					console.log('error');
+				}
+			});
+		}
+	}
+</script>

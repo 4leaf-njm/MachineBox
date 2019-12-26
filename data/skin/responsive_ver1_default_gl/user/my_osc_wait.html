@@ -1,0 +1,97 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+            
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-2">외주 대기</h1>
+
+                <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">
+					임시저장&nbsp<i class="accent-txt" id="temp-data-count"></i>&nbsp건
+				</h5>
+                
+                <div id="temp-data-div"></div>
+                
+				<h5 class="wrap-title-sub txt-left mt-5 mb-2 spacing-072 txt-bold">
+					승인대기&nbsp<i class="accent-txt">{= count(osc_list)}</i>&nbsp건
+				</h5>
+                <!-- {@ osc_list} -->
+                    <div class="scroll-wrap">
+                        <div class="scroll-div work-div">
+                            <a href="/mch/osc_info/{.osc_seq}">
+                                <i class="work-badge">승인대기</i>
+                                <div class="product-row-01 partner-row">
+                                    <div class="product-row-01 partner-desc work-intro">
+                                        <div class="scroll-desc">
+                                            <h4 class="mr-3 txt-bold">{.osc_name}</h4>
+                                            <span>등록일 : {= date('Y.m.d', strtotime(.reg_date))}</span>
+                                            <span>예상일 : {= date('Y.m.d', strtotime(.start_expect_date))}</span>
+                                            <p>{= nl2br(.osc_content)}</p>
+                                            <div class="product-row-01">
+                                                <p>지역 : {.area_name}</p>
+                                                <p>관련기술 : 
+                                                <!-- {@ tech_list} -->
+                                                <span class="btn-type-01 d-inline-block mb-0">{..value_}</span>
+                                                <!-- {/} -->
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="work-info">
+                                        <p class="work-info-price"><b>{= number_format(.budget)}</b>원</p>
+                                        <div class="work-info-row">
+                                            <p>마감일 <i>{= date('Y.m.d', strtotime(.osc_end_date))}</i></p>
+                                            <p>지원자 <i>{.apply_cnt}명</i></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div> 
+                    </div>
+                    <div class="my-service border">
+                        <ul class="pt-2 pb-2 my-list">
+                            <li class="my-normal-txt spacing-072 list-100 txt-center">
+                                <a href="/mch/osc_reg/{.osc_seq}/wait" class="d-block txt-bold">등록정보 수정</a> 
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mb-5"></div>
+                    <!-- {:} -->
+                    <div class="default-box">
+                        <p class="default-message">외주 승인대기 내역이 없습니다.</p>
+                    </div>
+                    <!-- {/} -->
+                </div>
+            </div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+    var temp_list = JSON.parse(localStorage.getItem('osc_temp_list'));
+    var html = '';
+    var temp_data_count = 0;
+    if(!temp_list || temp_list.length == 0) {
+        html += '<div class="default-box small">';
+        html += '    <p class="default-message">임시 저장된 데이터가 없습니다.</p>';
+        html += '</div>';
+    } else {
+        temp_data_count = temp_list.length;
+        
+        $.each(temp_list, function(index, value) {
+             html += '<div class="my-service border mb-3">';
+             html += '   <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">임시저장 시간 : ' + value.save_time + '</h5>';
+             html += '   <ul class="pt-2 pb-2 my-list">';
+             html += '        <li class="my-normal-txt spacing-072 list-100 txt-center">';
+             html += '            <a href="/mch/osc_reg/' + index + '/temp" class="d-block txt-bold">작성하기</a>';
+             html += '        </li>';
+             html += '    </ul>';
+             html += '</div>';
+        });
+    }
+    $('#temp-data-count').text(temp_data_count);
+    $('#temp-data-div').html(html);
+</script>

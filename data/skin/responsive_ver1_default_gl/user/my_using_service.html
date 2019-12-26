@@ -1,0 +1,264 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-4">이용중인 서비스 <a href="javascript:show_service_layer()" class="btn large ml-3">신청하기</a></h1>
+
+                <form action="/user/update_service_process" method="post" id="frm_update">
+                    <input type="hidden" name="ad_seq" />
+                    <input type="hidden" name="remaining" />
+                </form>
+                
+                 <form action="/user/hotmark_service_process" method="post" id="frm_hotmark">
+                    <input type="hidden" name="ad_seq" />
+                    <input type="hidden" name="hotmark_list" />
+                </form>
+                
+                <!-- {@ list} -->
+                <div class="my-service border mb-3">
+                    <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold"><a href="/sch/mch_detail/{.type}/{.info_seq}">{.index_+1}. {= date('Y.m.d', strtotime(.sales_date))} ({.sales_no})</a> &nbsp;서비스&nbsp;&nbsp;<i class="accent-txt">{= count(.service_list)}</i>건</h5>
+                    <ul class="pt-2 pb-2 border-t my-list">
+                        <!-- {@ .service_list} -->
+                        <li class="my-normal-txt spacing-072 mt-2">{..index_+1}) {..ad_name}</li>
+                        <li class="my-normal-txt spacing-072 border-b list-100 txt-medium txt-center pb-2 mb-2">이용기간</li>
+                        <li class="my-normal-txt spacing-072 list-50 txt-center mt-0">시작일</li>
+                        <li class="my-normal-txt spacing-072 list-50 txt-center mt-0">종료일</li>
+                        <li class="my-normal-txt spacing-072 border-b list-50 txt-center pb-2">{..start_date}</li>
+                        <li class="my-normal-txt spacing-072 border-b list-50 txt-center pb-2">{..end_date}</li>
+                            <!-- {? ..ad_name == '자동 업데이트'} -->
+                            <li class="my-normal-txt spacing-072 border-b list-100 txt-medium txt-center mt-3 pb-2 mb-2">자동업데이트 사용하기</li>
+                            <li class="my-normal-txt spacing-072 list-50 txt-center">남은 횟수</li>
+                            <li class="my-normal-txt spacing-072 list-50 txt-center">{..remaining} 회</li>
+                            <li class="my-normal-txt spacing-072 list-50 txt-center">사용 시간</li>
+                            <li class="my-normal-txt spacing-072 list-50 txt-center">{? ..update_time == null}미사용{:}{..update_time}{/}</li>
+                            <li class="my-normal-txt spacing-072 list-100 border-t txt-left pt-2 mt-2 small-text">
+                                - 자동업데이트는 10회 제공됩니다.<br/>
+                                - 한번 사용하시면 상위로 광고매물이 이동됩니다.
+                            </li>
+                            <li class="my-normal-txt spacing-072 list-100 txt-center pb-1">
+                                <a href="#" class="btn medium btn_use_update" data-seq="{..ad_seq}" data-remaining="{..remaining}" data-start="{..start_date}" data-now="{= date('Y-m-d')}" data-end="{..end_date}">사용하기</a>
+                            </li>
+                            <!-- {/} -->
+                            <!-- {? ..ad_name == '핫마크'} -->
+                            <li class="my-normal-txt spacing-072 border-b list-100 txt-medium txt-center mt-3 pb-2 mb-2 hotmark-list-div" data-seq="{..ad_seq}">
+                                {? empty(..hotmark_list)}핫마크 선택하기{:}핫마크 선택완료{/}
+                            </li>
+                            <!-- {? empty(..hotmark_list)} -->
+                            <li class="my-normal-txt spacing-072 list-30 txt-center">
+                                <label>
+                                    <input type="checkbox" name="chk_hotmark" value="1" />
+                                    <img src="../images/custom/icon/ico_hotmark_01.png" class="ico_hotmark_01 ml-1" />
+                                </label>
+                            </li>
+                            <li class="my-normal-txt spacing-072 list-30 txt-center">
+                                <label>
+                                    <input type="checkbox" name="chk_hotmark" value="2" />
+                                    <img src="../images/custom/icon/ico_hotmark_02.png" class="ico_hotmark_02 ml-1" />
+                                </label>
+                            </li>
+                            <li class="my-normal-txt spacing-072 list-30 txt-center">
+                                <label>
+                                    <input type="checkbox" name="chk_hotmark" value="3" />
+                                    <img src="../images/custom/icon/ico_hotmark_03.png" class="ico_hotmark_03 ml-1" />
+                                </label>
+                            </li>
+                            <li class="my-normal-txt spacing-072 list-30 txt-center">
+                                <label class="pr-3">
+                                    <input type="checkbox" name="chk_hotmark" value="4" />
+                                    <img src="../images/custom/icon/ico_hotmark_04.png" class="ico_hotmark_04 ml-1" />
+                                </label>
+                            </li>
+                            <li class="my-normal-txt spacing-072 list-30 txt-center">
+                                <label>
+                                    <input type="checkbox" name="chk_hotmark" value="5" />
+                                    <img src="../images/custom/icon/ico_hotmark_05.png" class="ico_hotmark_05 ml-1" />
+                                </label>
+                            </li>
+                            <li class="my-normal-txt spacing-072 list-30 txt-center">
+                                <label>
+                                    <input type="checkbox" name="chk_hotmark" value="6" />
+                                    <img src="../images/custom/icon/ico_hotmark_06.png" class="ico_hotmark_06 ml-1" />
+                                </label>
+                            </li>
+                            <!-- {:} -->
+                                <!-- {@ explode(',', ..hotmark_list)} -->
+                                <li class="my-normal-txt spacing-072 list-30 txt-center">
+                                    <img src="../images/custom/icon/ico_hotmark_0{...value_}.png" class="ico_hotmark_0{...value_} ml-1" />
+                                </li>
+                                <!-- {/} -->
+                            <!-- {/} -->
+                            <li class="my-normal-txt spacing-072 list-100 border-t txt-left pt-2 mt-2 small-text">
+                                - 핫마크는 3개만 선택할 수 있습니다.<br/>
+                                - 30일 뒤에는 사용이 중지됩니다.
+                            </li>
+                            <li class="my-normal-txt spacing-072 list-100 txt-center pb-1">
+                                <a href="#" class="btn medium btn_use_hotmark" data-seq="{..ad_seq}" data-start="{..start_date}" data-now="{= date('Y-m-d')}" data-end="{..end_date}">사용하기</a>
+                                <script>
+                                    function load_hotmark(ad_seq, hotmark_list, start, now, end) {
+                                        if(!hotmark_list) return;
+                                        hotmark_list = hotmark_list.split(',');
+                                        if(now < start || now > end) {
+                                            return;
+                                        }
+                                        var target;
+                                        if(hotmark_list.length > 0) {
+                                            $.each($('.hotmark-list-div'), function(index, value) {
+                                                var seq = $(this).data('seq');
+                                                if(ad_seq == seq) {
+                                                    target = $(this);
+                                                    return;
+                                                }
+                                            });
+                                            
+                                            $.each(hotmark_list, function(index, value) {
+                                                target.parent('ul').find('input[name=chk_hotmark]').eq(value-1).prop('checked', true);
+                                            });
+                                        }
+                                    }
+                                    load_hotmark('{..ad_seq}', '{..hotmark_list}', '{..start_date}', '{= date("Y-m-d")}', '{..end_date}');
+                                </script>
+                            </li>
+                            <!-- {/} -->
+                        <!-- {:} -->
+                        <li class="my-normal-txt spacing-072 list-100 txt-medium txt-center pb-4 pt-4">이용중인 서비스가 없습니다.</li>
+                        <!-- {/} -->
+                    </ul>
+                </div>
+                <!-- {:} -->
+                <div class="default-box mb-3">
+					<p class="default-message">판매 기계가 없습니다.</p>
+				</div>
+                <!-- {/} -->
+            </div>
+		</div>
+	</div>
+</div>
+
+<script type="text/template" id="service_layer">
+    <b>신청하실 기계를 선택해주세요.</b><br/>
+    <select name="sel_service" class="mt-2 ml-1"></select>
+</script>
+<script>
+function show_service_layer() {
+    new Dialogify('#service_layer')
+     .title('서비스 신청하기')
+     .buttons([
+         {
+             text: '신청하기',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 var info_seq = this.$content.find('select[name=sel_service] option:selected').data('seq');
+                 var type = this.$content.find('select[name=sel_service] option:selected').data('type');
+                 if(!info_seq) {
+                     alert('신청하실 기계를 선택해주세요.');
+                     return;
+                 }
+                 if(confirm('선택하신 기계에 유료 서비스를 신청하시겠습니까 ?')) {
+                     this.close();
+                     location.href = '/user/service/' + info_seq + '/' + type;
+                 }
+             }
+         },
+         {
+             text: '취소',
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER})
+        .on('show', function(){
+            var $this = this;
+            $.ajax({
+                type: 'post',
+                url: '/user/get_my_sale',
+                dataType: 'json',
+                success: function(data) {
+                    console.log(data);
+                    var html = '';
+                    html += '<option>등록기계 선택</option>';
+                    $.each(data.list, function(index, value) {
+                        html += '<option data-seq="' + value.info_seq + '" data-type="' + value.type + '">[' + value.sales_no + '] ' + value.model_name + '</option>';
+                    });
+                    $this.$content.find('select[name=sel_service]').html(html);
+                },
+                error: function() {
+                    console.log('error');
+                }
+            });
+        }).show();
+}
+
+</script>
+
+<script>
+    $('input[name=chk_hotmark]').on('change', function(){
+        var check_list = $(this).parents('ul').find('input[name=chk_hotmark]:checked');
+        
+        if(check_list.length > 3) {
+            alert('3개 이상 선택할 수 없습니다.');
+            $(this).prop('checked', false);
+        }
+    });
+    
+    $('.btn_use_update').on('click', function(e) {
+        e.preventDefault();
+
+        var $parent = $(this).parents('ul');
+        var start = $(this).data('start');
+        var now = $(this).data('now');
+        var end = $(this).data('end');
+        if($(this).data('remaining') == '0') {
+            alert('남은 횟수가 없습니다.');
+            return;
+        } else if(now < start) {
+            alert(start + '부터 이용하실 수 있습니다.');
+            return;
+        } else if(now > end) {
+            alert('이용기간이 지났습니다.');
+            return;
+        }
+           
+        if(confirm('자동업데이트를 사용하시겠습니까 ?')) {
+            $('#frm_update input[name=ad_seq]').val($(this).data('seq'));
+            $('#frm_update input[name=remaining]').val($(this).data('remaining'));
+            $('#frm_update').submit();
+        }
+    });
+    
+    $('.btn_use_hotmark').on('click', function(e) {
+        e.preventDefault();
+
+        var $parent = $(this).parents('ul');
+        var check_list = $parent.find('input[name=chk_hotmark]:checked');
+        
+        var start = $(this).data('start');
+        var now = $(this).data('now');
+        var end = $(this).data('end');
+        
+        if(now < start) {
+            alert(start + '부터 이용하실 수 있습니다.');
+            return;
+        } else if(now > end) {
+            alert('이용기간이 지났습니다.');
+            return;
+        }
+        
+        if(check_list.length == 0) {
+            alert('한개 이상 선택해주세요.');
+            return;
+        }
+        if(confirm('핫마크를 설정하시겠습니까 ?')) {
+            var hotmark_list = '';
+            $.each(check_list, function(index, value){
+                hotmark_list += hotmark_list == '' ? $(this).val() : ',' + $(this).val();
+            });
+            $('#frm_hotmark input[name=ad_seq]').val($(this).data('seq'));
+            $('#frm_hotmark input[name=hotmark_list]').val(hotmark_list);
+            $('#frm_hotmark').submit();
+        }
+    });
+</script>

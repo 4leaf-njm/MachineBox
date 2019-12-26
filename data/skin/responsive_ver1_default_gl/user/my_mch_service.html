@@ -1,0 +1,319 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-2">배송대행·수리 서비스 신청 / 이용내역</h1>
+                <p class="wrap-title-sub txt-demi-light mb-4 txt-left">머신박스에서 간편하게 배송, 기계수리 서비스를 신청하고, 이용내역을 확인할 수 있습니다.</p>
+                
+                <h2 class="wrap-title-sub-02"><i class="ico_arrow_right"></i>배송·수리 서비스 신청</h2>
+                <form action="/user/my_mch_service_process" method="post" id="frm_delivery" target="actionFrame">
+                    <input type="hidden" name="info_seq" />
+                    <div class="my-form-style">
+                        <div class="form-row">
+                            <h2 class="form-title">서비스 이용</h2>
+                            <div class="form-content">
+                                <input type="hidden" name="service_list" />
+                                <ul class="service-list">
+                                    <li>
+                                        <input type="checkbox" id="service_01" value="상차" />
+                                        <label for="service_01">상차</label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="service_02" value="하차" />
+                                        <label for="service_02">하차</label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="service_03" value="배송" />
+                                        <label for="service_03">배송</label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="service_04" value="해체/설치" />
+                                        <label for="service_04">해체/설치</label>
+                                    </li>
+                                </ul>
+                                <ul class="service-list">
+                                    <li>
+                                        <input type="checkbox" id="service_05" value="보관" />
+                                        <label for="service_05">보관</label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="service_06" value="기계수리" />
+                                        <label for="service_06">기계수리</label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="service_07" value="전기수리" />
+                                        <label for="service_07">전기수리</label>
+                                    </li>
+                                    <li>
+                                        <input type="checkbox" id="service_08" value="기타" />
+                                        <label for="service_08">기타</label>
+                                        <input type="text" id="txt_other" style="position: absolute; width: 50%; right: 0px;" />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <h2 class="form-title">기계 선택</h2>
+                            <div class="form-content">
+                                <div class="form-row mt-0">
+                                    <input type="hidden" name="sales_no" />
+                                    <label>등록번호</label>
+                                    <select name="sel_salesno">
+                                        <option>선택</option>
+                                        <option data-val="등록기계없음">등록기계없음</option>
+                                        <!-- {@ sales_list} -->
+                                        <option data-seq="{.info_seq}" data-val="{.sales_no}">{.sales_no} ({.model_name})</option>
+                                        <!-- {/} -->
+                                    </select>
+                                </div>
+                                <div class="model-info">
+                                    <div class="form-row">
+                                        <img class="img_machine" />
+                                    </div>
+                                    <div class="form-row">
+                                        <label>기계종류</label>
+                                        <input type="text" name="kind_name" />
+                                    </div>
+                                    <div class="form-row">
+                                        <label>모델</label>
+                                        <input type="text" name="model_name" />
+                                    </div>
+                                    <div class="form-row">
+                                        <label>제조사</label>
+                                        <input type="text" name="mnf_name" />
+                                    </div>
+                                    <div class="form-row">
+                                        <input type="hidden" name="size" />
+                                        <label>크기</label>
+                                        <input type="text" name="size_01" style="width: 40px;" /> 
+                                        <span class="unit">x</span>
+                                        <input type="text" name="size_02" style="width: 40px;" />
+                                        <span class="unit">x</span>
+                                        <input type="text" name="size_03" style="width: 40px;" />
+                                        <span class="unit">m</span>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>중량</label>
+                                        <input type="text" name="weight" />
+                                        <span class="unit">kg</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <h2 class="form-title">위치</h2>
+                            <div class="form-content">
+                                <div class="form-row mt-0">
+                                    <label>출발지<br/>(상차)</label>
+                                    <input type="text" name="start_addr" />
+                                    <button type="button" onclick="openDialogZipcode_resp('delivery_start');" class="btn medium pl-3 pr-3 ml-2">주소검색</button>
+                                </div>
+                                <div class="form-row">
+                                    <label>도착지<br/>(하차)</label>
+                                    <input type="text" name="end_addr" />
+                                    <button type="button" onclick="openDialogZipcode_resp('delivery_end');" class="btn medium pl-3 pr-3 ml-2">주소검색</button>
+                                </div>
+                                <div class="form-row">
+                                    <p class="txt_info">※ 출발지가 없는 경우는 도착지만 주소를 입력해주세요.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <h2 class="form-title">작업일시</h2>
+                            <input type="hidden" name="duration" />
+                            <div class="form-content">
+                                <div class="form-row mt-0">
+                                    <label>시작</label>
+                                    <input type="text" name="start_date" class="pickadate" />
+                                </div>
+                                <div class="form-row">
+                                    <label>종료</label>
+                                    <input type="text" name="end_date" class="pickadate" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <h2 class="form-title">작업내용</h2>
+                            <div class="form-content">
+                                <div class="form-row mt-0">
+                                    <label>내용</label>
+                                    <textarea name="deliv_content" class="textarea-style pl-1" style="width: 50%; height: 80px; vertical-align: top;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row txt-center">
+                            <button type="button" class="btn large" onclick="go_mch_service_process()">신 청</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <h2 class="wrap-title-sub-02 mt-5"><i class="ico_arrow_right"></i>서비스 이용내역 : 총 <span>{= count(deliv_list)}</span>건</h2>
+                <table class="my-table-style mb-5">
+                    <tr>
+                        <th>신청일</th>
+                        <th>작업기간</th>
+                        <th>서비스 내용</th>
+                        <th>결제 금액</th>
+                        <th>결제 상태</th>
+                        <th>작업 상태</th>
+                    </tr>
+                    <!-- {@ deliv_list} -->
+                    <tr>
+                        <td>{.reg_date}</td>
+                        <td>{.duration}</td>
+                        <td>{.service_list}</td>
+                        <td>{? .pay_state == '승인대기'}-{:}{= number_format(.pay_price)}{/}</td>
+                        <td>{.pay_state}</td>
+                        <td>{.deliv_state}</td>
+                    </tr>
+                    <!-- {:} -->
+                    <tr>
+                        <td colspan="6">서비스 내역이 없습니다.</td>
+                    </tr>
+                    <!-- {/} -->
+                </table>
+            </div>
+		</div>
+	</div>
+</div>
+
+<script>
+function go_mch_service_process() {
+    var service_list = '';
+    var is_return = false;
+    $.each($('.service-list input[type=checkbox]:checked'), function(index, value) {
+        var service = '';
+        if($(this).val() == '기타') {
+            if($('#txt_other').val() == '') {
+                alert('기타 서비스를 입력해주세요.');
+                $('#txt_other').focus();
+                is_return = true;
+                return;
+            }
+            service = '기타(' + $('#txt_other').val() + ')';
+        } else {
+            service = $(this).val();
+        }
+        service_list += service_list == '' ? service : ', ' + service;
+    });
+    if(is_return) return;
+    
+    if(service_list == '') {
+        alert('서비스를 선택해주세요.');
+        return;
+    } else if(!$('select[name=sel_salesno] option:selected').data('val')) {
+        alert('등록번호를 선택해주세요.');
+        $('select[name=sel_salesno]').focus();
+        return;
+    } else if($('input[name=kind_name]').val() == '') {
+        alert('기계종류를 입력해주세요.');
+        $('input[name=kind_name]').focus();
+        return;
+    } else if($('input[name=model_name]').val() == '') {
+        alert('모델명을 입력해주세요.');
+        $('input[name=model_name]').focus();
+        return;
+    } else if($('input[name=mnf_name]').val() == '') {
+        alert('제조사를 입력해주세요.');
+        $('input[name=mnf_name]').focus();
+        return;
+    } else if($('input[name=size_01]').val() == '') {
+        alert('크기를 입력해주세요.');
+        $('input[name=size_01]').focus();
+        return;
+    } else if(isNaN($('input[name=size_01]').val()) == true) {
+        alert('크기는 숫자만 입력할 수 있습니다.');
+        $('input[name=size_01]').focus();
+        return;
+    } else if($('input[name=size_02]').val() == '') {
+        alert('크기를 입력해주세요.');
+        $('input[name=size_02]').focus();
+        return;
+    } else if(isNaN($('input[name=size_02]').val()) == true) {
+        alert('크기는 숫자만 입력할 수 있습니다.');
+        $('input[name=size_02]').focus();
+        return;
+    } else if($('input[name=size_03]').val() == '') {
+        alert('크기를 입력해주세요.');
+        $('input[name=size_02]').focus();
+        return;
+    } else if(isNaN($('input[name=size_03]').val()) == true) {
+        alert('크기는 숫자만 입력할 수 있습니다.');
+        $('input[name=size_03]').focus();
+        return;
+    } else if($('input[name=weight]').val() == '') {
+        alert('중량을 입력해주세요.');
+        $('input[name=weight]').focus();
+        return;
+    } else if(isNaN($('input[name=weight]').val()) == true) {
+        alert('중량은 숫자만 입력할 수 있습니다.');
+        $('input[name=weight]').focus();
+        return;
+    } else if($('input[name=end_addr').val() == '') {
+        alert('도착지를 입력해주세요.');
+        $('input[name=end_addr').focus();
+        return;
+    } else if($('input[name=start_date').val() == '') {
+        alert('시작일을 선택해주세요.');
+        $('input[name=start_date').focus();
+        return;
+    } else if($('input[name=end_date').val() == '') {
+        alert('종료일을 선택해주세요.');
+        $('input[name=end_date').focus();
+        return;
+    } else if($('textarea[name=deliv_content').val() == '') {
+        alert('작업내용을 입력해주세요.');
+        $('textarea[name=deliv_content').focus();
+        return;
+    } 
+        
+    if(confirm('서비스를 신청하시겠습니까 ?')) {
+        var size = $('input[name=size_01]').val() + ' x ' + $('input[name=size_02]').val() + ' x ' + $('input[name=size_03]').val() + ' m';
+        var weight = $('input[name=weight]').val() + ' kg';
+        var duration = $('input[name=start_date').val() + ' ~ ' + $('input[name=end_date').val();
+        $('input[name=sales_no]').val($('select[name=sel_salesno] option:selected').val().split(' (')[0]);
+        $('input[name=service_list]').val(service_list);
+        $('input[name=size]').val(size);
+        $('input[name=weight]').val(weight);
+        $('input[name=duration]').val(duration);
+        
+        $('#frm_delivery').submit();
+    }
+}
+    
+$('select[name=sel_salesno]').on('change', function(){
+    var info_seq = $(this).find('option:selected').data('seq');
+    if(!info_seq) return;
+    
+    $.ajax({
+         type: 'post',
+         url: '/sch/ajax_get_item',
+         dataType: 'json',
+         data: {info_seq: info_seq},
+         success: function(data) {
+             data = data.result;
+            var size_arr = data.size.replaceAll(' ', '').replaceAll('x', '/').replaceAll('m', '/').split('/');
+            var weight = data.weight.replaceAll(' ', '').replaceAll('kg', '');
+            $('input[name=info_seq]').val(data.info_seq);
+            $('input[name=kind_name]').val(data.kind_name);
+            $('input[name=mnf_name]').val(data.mnf_name);
+            $('input[name=model_name]').val(data.model_name);
+            $('input[name=size_01]').val(size_arr[0]);
+            $('input[name=size_02]').val(size_arr[1]);
+            $('input[name=size_03]').val(size_arr[2]);
+            $('input[name=weight]').val(weight);
+            $.each(data.picture_list, function(index, value) {
+               if(value.sort == '2') 
+                   $('.img_machine').attr('src', value.path);
+            });
+         },
+         error: function() {
+             console.log('error');
+         }
+     });
+});
+</script>

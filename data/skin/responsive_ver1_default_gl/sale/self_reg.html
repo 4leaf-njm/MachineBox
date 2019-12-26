@@ -1,0 +1,1035 @@
+<div class="container-fluid top-pt wrap-bg-gray pb-5">
+    <div class="container pt-5">
+        <form action="/sale/self_process" method="post" enctype="multipart/form-data" id="sale-form" data-type="self">
+            <input type="hidden" name="pay_method" value="무통장 입금" />
+            <input type="hidden" name="info_seq" value="{info_seq}" />
+            <input type="hidden" name="page_type" value="{page_type}" />
+            <input type="hidden" name="prev_price" value="{total_price}" />
+            <input type="hidden" name="wait_yn" value="{wait_yn}" />
+            
+            <div id="step-01" class="step-wrap d-block">
+                <div class="row">
+                    <div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+                        <h1 class="wrap-title txt-center txt-bold mb-1">셀프판매 기계정보를 입력해주세요.</h1>
+                        <p class="wrap-title-sub">무료로 직접 등록해서 신속하게 판매를 할 수 있습니다.</p>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="regi-form">
+                            <p class="form-title-type-02">기계종류</p>
+                            <input type="hidden" name="kind_no" />
+                            <input type="hidden" name="kind_seq" />
+                            <select type="text" name="sel_kind" class="input-style input-lg select-style select-active">
+                                <option>기계종류를 선택해주세요.</option>
+                                <!-- {@ kind_map} -->
+                                <optgroup label="{.kind_type}" data-no="{.kind_no}">
+                                    <!-- {@ .kind_list} -->
+                                    <option data-seq="{..kind_seq}" {? ..kind_seq == kind_seq }selected{/}>{..kind_name}</option>
+                                    <!-- {/} -->
+                                </optgroup>
+                                <!-- {/} -->
+                            </select>
+                        </div>
+                        <div class="regi-form">
+                            <p class="form-title-type-02">제조사</p>
+                            <input type="hidden" name="mnf_seq" />
+                            <select type="text" name="sel_mnf" class="input-style input-lg select-style" data-id="input-mnf">
+                                <option>제조사를 선택해주세요.</option>
+                                <option data-mode="input">직접입력</option>
+                                <!-- {@ mnf_list} -->
+                                <option data-seq="{.mnf_seq}" {? .mnf_seq == mnf_seq }selected{/}>{.mnf_name}</option>
+                                <!-- {/} -->
+                            </select>
+                            <input type="hidden" name="input_mnf" />
+                            <input type="text" name="txt_mnf" class="input-style input-border-none input-lg d-none mt-2" placeholder="제조사 입력" id="input-mnf" />
+                        </div>
+                        <div class="regi-form">
+                            <p class="form-title-type-02">모델</p>
+                            <input type="hidden" name="model_seq" />
+                            <select type="text" name="sel_model" class="input-style input-lg select-style" data-id="input-model">
+                                <option>모델을 선택해주세요.</option>
+                                <option data-mode="input">직접입력</option>
+                            </select>
+                            <input type="hidden" name="input_model" />
+                            <input type="text" name="txt_model" class="input-style input-border-none input-lg d-none mt-2" placeholder="모델 입력" id="input-model" />
+                        </div>
+                        <div class="regi-form">
+                            <p class="form-title-type-02">판매지역</p>
+                            <input type="hidden" name="area_seq" />
+                            <select type="text" name="sel_area" class="input-style input-lg select-style">
+                                <option>판매지역을 선택해주세요.</option>
+                                <!-- {@ area_list} -->
+                                <option data-seq="{.area_seq}" {? .area_seq == area_seq }selected{/}>{.area_name}</option>
+                                <!-- {/} -->
+                            </select>
+                        </div>
+                        <div class="form-row-01 form-row-mobile">
+                            <div class="regi-form">
+                                <p class="form-title-type-02">연식</p>
+                                <select name="sel_year" class="input-style input-lg select-style">
+                                    <option>연식을 선택해주세요.</option>
+                                    <option data-val="0">직접입력</option>
+                                </select>
+                            </div>
+                            <div class="regi-form">
+                                <p class="form-title-type-02">시리얼 넘버</p>
+                                <input type="text" name="serial_num" class="input-style input-border-none input-lg" placeholder="시리얼 넘버를 입력해주세요." value="{serial_num}" />
+                            </div>
+                        </div>
+                        <div class="regi-form d-none" id="year-div">
+                            <input type="text" name="model_year" class="input-style input-border-none input-lg" placeholder="연식을 입력해주세요." value="{model_year}"/>
+                        </div>
+                        <div class="form-row-01 form-row-mobile">
+                            <div class="regi-form">
+                                <p class="form-title-type-02">기계크기 <i>(단위: m)</i></p>
+                                <input type="hidden" name="size" />
+                                <input type="text" name="size_01" class="input-style input-border-none input-sm" placeholder="가로" value="{=str_split_arr(size,' x ',0)}"/>
+                                <span class="txt-unit">x</span>
+                                <input type="text" name="size_02" class="input-style input-border-none input-sm" placeholder="세로" value="{=str_split_arr(size,' x ',1)}"/> 
+                                <span class="txt-unit">x</span>
+                                <input type="text" name="size_03" class="input-style input-border-none input-sm" placeholder="높이" value="{=str_split_arr(str_split_arr(size, ' x ', 2),' m',0)}"/>
+                            </div>
+                            <div class="regi-form">
+                                <p class="form-title-type-02">기계중량 <i>(단위: kg)</i></p>
+                                <input type="text" name="weight" class="input-style input-border-none input-md" placeholder="단위:kg" value="{=trim(str_split_arr(weight,'kg', 0))}"/>
+                            </div>
+                        </div>
+                        <div class="regi-form">
+                            <p class="form-title-type-02">기계사진 등록</p>
+                            <div class="file-box input-style input-border-none input-lg pre-style mb-3">
+                                <span class="place-holder">사진을 올려주세요.</span>
+                                <label class="input-file-label btn-picture-add">추가</label>
+                            </div>
+                            <div class="form-row-02">
+                                <div class="preview-div">
+                                    <label class="btn-picture-add">
+                                        <!-- {@ picture_list} -->
+                                            <!-- {? .part == '명판'} -->
+                                            <?php $result1 = true; ?>
+                                            <div class="preview-back" style="background-image: url('{.path}')">
+                                                <i class="preview-delete-btn preview-delete-btn-active"></i>
+                                            </div>
+                                            <!-- {/} -->
+                                        <!-- {/} -->
+                                        <?php 
+                                        if($result1 != true) {
+                                        ?>
+                                        <div class="preview-back">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                         <?php } ?>
+                                        
+                                        <p class="preview-txt">명판<span>(필수)</span></p>
+                                        <p class="upload_yn d-none"></p>
+                                        <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-1">
+                                        <input type="hidden" name="part[]" value="명판">
+                                        <input type="hidden" name="sort[]" value="1">
+                                    </label>
+                                </div>
+                                <div class="preview-div">
+                                    <label class="btn-picture-add">
+                                        <!-- {@ picture_list} -->
+                                            <!-- {? .part == '정면 전체'} -->
+                                            <?php $result2 = true; ?>
+                                            <div class="preview-back" style="background-image: url('{.path}')">
+                                                <i class="preview-delete-btn preview-delete-btn-active"></i>
+                                            </div>
+                                            <!-- {/} -->
+                                        <!-- {/} -->
+                                        <?php 
+                                        if($result2 != true) {
+                                        ?>
+                                        <div class="preview-back">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                         <?php } ?>
+                                        <p class="preview-txt">정면 전체<span>(필수)</span></p>
+                                        <p class="upload_yn d-none"></p>
+                                        <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-2">
+                                        <input type="hidden" name="part[]" value="정면 전체">
+                                        <input type="hidden" name="sort[]" value="2">
+                                    </label>
+                                </div>
+                                <div class="preview-div">
+                                    <label class="btn-picture-add">
+                                        <!-- {@ picture_list} -->
+                                            <!-- {? .part == '좌측'} -->
+                                            <?php $result3 = true; ?>
+                                            <div class="preview-back" style="background-image: url('{.path}')">
+                                                <i class="preview-delete-btn preview-delete-btn-active"></i>
+                                            </div>
+                                            <!-- {/} -->
+                                        <!-- {/} -->
+                                        <?php 
+                                        if($result3 != true) {
+                                        ?>
+                                        <div class="preview-back">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                         <?php } ?>
+                                        <p class="preview-txt">좌측<span>(필수)</span></p>
+                                        <p class="upload_yn d-none"></p>
+                                        <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-3">
+                                        <input type="hidden" name="part[]" value="좌측">
+                                        <input type="hidden" name="sort[]" value="3">
+                                    </label>
+                                </div>
+                                <div class="preview-div">
+                                    <label class="btn-picture-add">
+                                        <!-- {@ picture_list} -->
+                                            <!-- {? .part == '우측'} -->
+                                            <?php $result4 = true; ?>
+                                            <div class="preview-back" style="background-image: url('{.path}')">
+                                                <i class="preview-delete-btn preview-delete-btn-active"></i>
+                                            </div>
+                                            <!-- {/} -->
+                                        <!-- {/} -->
+                                        <?php 
+                                        if($result4 != true) {
+                                        ?>
+                                        <div class="preview-back">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                         <?php } ?>
+                                        <p class="preview-txt">우측<span>(필수)</span></p>
+                                        <p class="upload_yn d-none"></p>
+                                        <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-4">
+                                        <input type="hidden" name="part[]" value="우측">
+                                        <input type="hidden" name="sort[]" value="4">
+                                    </label>
+                                </div>
+                                <div class="preview-div">
+                                    <label class="btn-picture-add">
+                                        <!-- {@ picture_list} -->
+                                            <!-- {? .part == '후면'} -->
+                                            <?php $result5 = true; ?>
+                                            <div class="preview-back" style="background-image: url('{.path}')">
+                                                <i class="preview-delete-btn preview-delete-btn-active"></i>
+                                            </div>
+                                            <!-- {/} -->
+                                        <!-- {/} -->
+                                        <?php 
+                                        if($result5 != true) {
+                                        ?>
+                                        <div class="preview-back">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                         <?php } ?>
+                                        <p class="preview-txt">후면<span>(필수)</span></p>
+                                        <p class="upload_yn d-none"></p>
+                                        <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-5">
+                                        <input type="hidden" name="part[]" value="후면">
+                                        <input type="hidden" name="sort[]" value="5">
+                                    </label>
+                                </div>
+                                <div class="preview-div">
+                                    <label class="btn-picture-add">
+                                        <!-- {@ picture_list} -->
+                                            <!-- {? .part == '내부'} -->
+                                            <?php $result6 = true; ?>
+                                            <div class="preview-back" style="background-image: url('{.path}')">
+                                                <i class="preview-delete-btn preview-delete-btn-active"></i>
+                                            </div>
+                                            <!-- {/} -->
+                                        <!-- {/} -->
+                                        <?php 
+                                        if($result6 != true) {
+                                        ?>
+                                        <div class="preview-back">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                         <?php } ?>
+                                        <p class="preview-txt">내부<span>(필수)</span></p>
+                                        <p class="upload_yn d-none"></p>
+                                        <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-6">
+                                        <input type="hidden" name="part[]" value="내부">
+                                        <input type="hidden" name="sort[]" value="6">
+                                    </label>
+                                </div>
+                                <div class="preview-div">
+                                    <label class="btn-picture-add">
+                                        <!-- {@ picture_list} -->
+                                            <!-- {? .part == '컨트롤러'} -->
+                                            <?php $result7 = true; ?>
+                                            <div class="preview-back" style="background-image: url('{.path}')">
+                                                <i class="preview-delete-btn preview-delete-btn-active"></i>
+                                            </div>
+                                            <!-- {/} -->
+                                        <!-- {/} -->
+                                        <?php 
+                                        if($result7 != true) {
+                                        ?>
+                                        <div class="preview-back">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                         <?php } ?>
+                                        <p class="preview-txt">컨트롤러<span>(필수)</span></p>
+                                        <p class="upload_yn d-none"></p>
+                                        <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-7">
+                                        <input type="hidden" name="part[]" value="컨트롤러">
+                                        <input type="hidden" name="sort[]" value="7">
+                                    </label>
+                                </div>
+                                <div class="preview-div">
+                                    <label class="btn-picture-add">
+                                        <!-- {@ picture_list} -->
+                                            <!-- {? .part == '옵션'} -->
+                                            <?php $result8 = true; ?>
+                                            <div class="preview-back" style="background-image: url('{.path}')">
+                                                <i class="preview-delete-btn preview-delete-btn-active"></i>
+                                            </div>
+                                            <!-- {/} -->
+                                        <!-- {/} -->
+                                        <?php 
+                                        if($result8 != true) {
+                                        ?>
+                                        <div class="preview-back">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                         <?php } ?>
+                                        <p class="preview-txt">옵션</p>
+                                        <p class="upload_yn d-none"></p>
+                                        <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-8">
+                                        <input type="hidden" name="part[]" value="옵션">
+                                        <input type="hidden" name="sort[]" value="8">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="regi-form">
+                            <p class="form-title-type-02">컨트롤러</p>
+                            <input type="text" name="controller" class="input-style input-border-none input-lg" placeholder="컨트롤러를 입력하세요." value="{controller}">
+                        </div>
+                        <div class="regi-form">
+                                <p class="form-title-type-02">옵션</p>
+                                <input type="text" id="option" class="input-style input-border-none input-lg" placeholder="엔터를 눌러 옵션을 추가해주세요.">
+                                <div class="form-row-02 mt-3" id="option-append">
+                                <!-- {@ option_list} -->
+                                <div class="options-div mr-2 mb-1">
+                                    <input type="hidden" name="option_name_arr[]" data-prefix="#1_" value="{.option_name}" class="machine_option machine_1"/>
+                                    <pre class="options-txt">{.option_name}</pre>
+                                    <i class="options-delete-btn"></i>
+                                </div>
+                                <!-- {/} -->
+                                </div>
+                        </div>
+                        <div class="regi-form">
+                                <p class="form-title-type-02">판매 방법을 선택해주세요.</p>
+                                <div class="form-row-01" id="method-div">
+                                    <input type="hidden" name="method" value="{method}" />
+                                    <button type="button" class="input-style input-md pre-style {? method == '고정가격판매'}btn-type-02-active{/}">고정가격판매</button>
+                                    <button type="button" class="input-style input-md pre-style {? method == '입찰'}btn-type-02-active{/}">입찰</button>
+                                </div>
+                        </div>
+                        <div class="regi-form mb-5 txt-right">
+                            {? !info_seq || wait_yn == 'y'}
+                            <button type="button" class="btn-type-01 btn-sm" onclick="sale_temp_save()">임시저장</button>
+                            <button type="button" class="btn-type-02 btn-sm" onclick="next_step_02()">다음</button>
+                            {:}
+                            <button type="button" id="btn-complete" class="btn-type-02 btn-sm" data-type="x">변경</button>
+                            {/}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 product-img-div">
+                        <div id="lowest-model">
+                            <h2 class="lowest-title">※ 동일 모델의 최저가 판매 이력을 참고 하세요.</h2>
+                            <img src="../images/custom/common/no-image.png" class="product-img-lg">
+                            <div class="low-price-div">
+                                <div class="low-price-desc">
+                                    <div class="desc-row">
+                                         <h3 class="desc-message">해당 모델은 판매자님이 현재 처음 판매자입니다.</h3>
+                                    </div>
+                                     <div class="desc-row">
+                                         <p>기계종류</p>
+                                         <span class="desc-kind">없음</span>
+                                    </div>
+                                    <div class="desc-row">
+                                         <p>제조사</p>
+                                         <span class="desc-mnf">없음</span>
+                                    </div>
+                                    <div class="desc-row">
+                                         <p>모델</p>
+                                         <span class="desc-model">없음</span>
+                                    </div>
+                                    <div class="desc-row">
+                                         <p>연식</p>
+                                         <span class="desc-year">없음</span>
+                                    </div>
+                                    <div class="desc-row">
+                                         <p>가격</p>
+                                         <span class="desc-price">0 원</span>
+                                    </div>
+                                </div>
+                                <p class="low-price-text">동일모델의 최저가 등록 기계는 빠른 판매 지원을 위해 최상위 위치에서 광고가 됩니다 !</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="step-02-1" class="step-wrap">
+                <div class="row">
+                    <div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+                        <h1 class="wrap-title txt-center txt-bold mb-1">기계정보를 입력해주세요.</h1>
+                        <p class="wrap-title-sub">무료로 직접 등록해서 신속하게 판매를 할 수 있습니다.</p>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <div class="regi-form mb-5">
+                                <p class="form-title-type-02">고정가격 판매 금액 <i>(VAT 별도, 단위:만원)</i></p>
+                                <p class="form-sub-title-01">기간:30일(29일 매각 확인 및 재등록 공지 문자 보내드립니다)</p>
+                            <input type="text" name="fixed_price" class="input-style input-border-none input-lg" placeholder="가격을 입력하세요." value="{= substr(fixed_price, 0, -4)}">
+                        </div>
+                        <div class="regi-form mb-5">
+                                <p class="form-title-type-02">구매자 가격제안 받기 선택</p>
+                                <p class="form-sub-title-01">구매자가 가격을 제안하게 하세요. 기계를 더 빨리 팔 수 있습니다.</p>
+                                <div class="form-row-01 price-proposal-div">
+                                    <input type="hidden" name="price_proposal" value="{price_proposal}" />
+                                    <button type="button" class="input-style input-sm-3 pre-style txt-medium {? price_proposal == '5'}btn-type-02-active{/}" data-value="5">5% 이내</button>
+                                    <button type="button" class="input-style input-sm-3 pre-style txt-medium {? price_proposal == '10'}btn-type-02-active{/}" data-value="10">10% 이내</button>
+                                    <button type="button" class="input-style input-sm-3 pre-style txt-medium {? price_proposal == '0'}btn-type-02-active{/}" data-value="0">받지않음</button>
+                                </div>
+                        </div>
+                        <div class="regi-form mb-5 txt-right clear-font">
+                            {? !info_seq || wait_yn == 'y'}
+                            <button type="button" class="btn-type-01 btn-sm" onclick="prev_step_01()">이전</button>
+                            <button type="button" class="btn-type-02 btn-sm" onclick="next_step_03()">다음</button>
+                            {:}
+                            <button type="button" id="btn-complete" class="btn-type-02 btn-sm" data-type="x">변경</button>
+                            {/}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 product-img-div">
+                        <h2 class="lowest-title">※ 동일 모델의 최저가 판매 이력을 참고 하세요.</h2>
+                        <img src="../images/custom/common/no-image.png" class="product-img-lg">
+                        <div class="low-price-div">
+                            <div class="low-price-desc">
+                                <div class="desc-row">
+                                     <h3 class="desc-message">해당 모델은 판매자님이 현재 처음 판매자입니다.</h3>
+                                </div>
+                                 <div class="desc-row">
+                                     <p>기계종류</p>
+                                     <span class="desc-kind">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>제조사</p>
+                                     <span class="desc-mnf">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>모델</p>
+                                     <span class="desc-model">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>연식</p>
+                                     <span class="desc-year">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>가격</p>
+                                     <span class="desc-price">0 원</span>
+                                </div>
+                            </div>
+                            <p class="low-price-text">동일모델의 최저가 등록 기계 빠른 판매 지원 : 메인페이지 머신박스 존에 노출</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="step-02-2" class="step-wrap">
+                <div class="row">
+                    <div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+                        <h1 class="wrap-title txt-center txt-bold mb-1">기계정보를 입력해주세요.</h1>
+                        <p class="wrap-title-sub">무료로 직접 등록해서 신속하게 판매를 할 수 있습니다.</p>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                            <div class="regi-form mb-5">
+                                <p class="form-title-type-02">입찰판매</p>
+                                    <div class="form-row-01 bid-duration-div">
+                                        <input type="hidden" name="bid_duration" value="{bid_duration}" />
+                                        <button type="button" class="input-style input-sm-4 pre-style {? bid_duration == '3'}btn-type-02-active{/}" data-value="3">3일</button>
+                                        <button type="button" class="input-style input-sm-4 pre-style {? bid_duration == '5'}btn-type-02-active{/}" data-value="5">5일</button>
+                                        <button type="button" class="input-style input-sm-4 pre-style {? bid_duration == '7'}btn-type-02-active{/}" data-value="7">7일</button>
+                                        <button type="button" class="input-style input-sm-4 pre-style {? bid_duration == '10'}btn-type-02-active{/}" data-value="10">10일</button>
+                                    </div>
+                            </div>
+                        <div class="regi-form mb-5">
+                            <p class="form-title-type-02 mb-3">입찰 금액 설정</p>
+                            <p class="form-title-type-02">시작가 <i>(단위: 만원)</i></p>
+                            <input type="text" name="bid_start_price" class="input-style input-border-none input-lg" placeholder="입찰 시작가를 입력하세요." value="{= substr(bid_start_price, 0, -4)}">
+                        </div>
+                        <div class="regi-form mb-5">
+                            <p class="form-title-type-02">즉시판매 <i>(단위: 만원)</i></p>
+                            <input type="text" name="bid_price" class="input-style input-border-none input-lg" placeholder="즉시 판매가를 입력하세요." value="{= substr(bid_price, 0, -4)}" > 
+                        </div>
+                        <div class="regi-form mb-5">
+                                <p class="form-title-type-02">재입찰 가격 인하율</p>
+                                <div class="form-row-01 reduction-rate-div">
+                                    <input type="hidden" name="reduction_rate" value="{reduction_rate}" />
+                                    <button type="button" class="input-style input-sm-4 pre-style {? reduction_rate == '10'}btn-type-02-active{/}" data-value="10">10%</button>
+                                    <button type="button" class="input-style input-sm-4 pre-style {? reduction_rate == '20'}btn-type-02-active{/}" data-value="20">20%</button>
+                                    <button type="button" class="input-style input-sm-4 pre-style {? reduction_rate != '10' && reduction_rate != '20' && reduction_rate != '0'}btn-type-02-active{/}" data-value="-1">임의설정</button>
+                                    <button type="button" class="input-style input-sm-4 pre-style {? reduction_rate == '0'}btn-type-02-active{/}" data-value="0">없음</button>
+                                </div>
+                        </div>
+                        <div class="regi-form mb-5 {? !reduction_rate || reduction_rate == '10' || reduction_rate == '20' || reduction_rate == '0'}d-none{/}" id="setReductionRate">
+                            <p class="form-title-type-02">재입찰 가격 인하율 설정</p>
+                            <input type="text" class="input-style input-border-none input-lg" placeholder="50% 이내로 입력">
+                        </div>
+                        <div class="regi-form mb-5">
+                                <p class="form-title-type-02">재입찰 반복 횟수</p>
+                                <div class="form-row-01 repeat-no-div">
+                                    <input type="hidden" name="repeat_no" value="{repeat_no}" />
+                                    <button type="button" class="input-style input-md pre-style {? repeat_no != '0'}btn-type-02-active{/}" data-value="-1">1~10 임의설정</button>
+                                    <button type="button" class="input-style input-md pre-style {? repeat_no == '0'}btn-type-02-active{/}" data-value="0">없음</button>
+                                </div>
+                        </div>
+                        <div class="regi-form mb-5 {? !repeat_no || repeat_no == '0'}d-none{/}" id="setRepeatNo">
+                            <p class="form-title-type-02">재입찰 반복 횟수 설정</p>
+                            <input type="text" class="input-style input-border-none input-lg" placeholder="1~10 사이로 입력해주세요." value="{repeat_no}" >
+                        </div>
+                        <div class="regi-form mb-5 txt-right clear-font">
+                            {? !info_seq || wait_yn == 'y'}
+                            <button type="button" class="btn-type-01 btn-sm" onclick="prev_step_01()">이전</button>
+                            <button type="button" class="btn-type-02 btn-sm" onclick="next_step_03()">다음</button>
+                            {:}
+                            <button type="button" id="btn-complete" class="btn-type-02 btn-sm" data-type="x">변경</button>
+                            {/}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 product-img-div">
+                        <h2 class="lowest-title">※ 동일 모델의 최저가 판매 이력을 참고 하세요.</h2>
+                        <img src="../images/custom/common/no-image.png" class="product-img-lg">
+                        <div class="low-price-div">
+                            <div class="low-price-desc">
+                                <div class="desc-row">
+                                     <h3 class="desc-message">해당 모델은 판매자님이 현재 처음 판매자입니다.</h3>
+                                </div>
+                                 <div class="desc-row">
+                                     <p>기계종류</p>
+                                     <span class="desc-kind">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>제조사</p>
+                                     <span class="desc-mnf">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>모델</p>
+                                     <span class="desc-model">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>연식</p>
+                                     <span class="desc-year">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>가격</p>
+                                     <span class="desc-price">0 원</span>
+                                </div>
+                            </div>
+                            <p class="low-price-text">동일모델의 최저가 등록 기계 빠른 판매 지원 : 메인페이지 머신박스 존에 노출</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="step-03" class="step-wrap">
+                <div class="row">
+                    <div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+                        <h1 class="wrap-title txt-center txt-bold mb-1">배송정보를 입력해주세요.</h1>
+                        <p class="wrap-title-sub">무료로 직접 등록해서 신속하게 판매를 할 수 있습니다.</p>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                            <div class="regi-form mb-5">
+                                <p class="form-title-type-02">판매자 인도 조건{self_deliver_condition}</p>
+                                <div class="form-row-01 self-deliver-condition-div">
+                                    <input type="hidden" name="self_deliver_condition" />
+                                    <button type="button" class="input-style input-sm-5 pre-style">상차</button>
+                                    <button type="button" class="input-style input-sm-5 pre-style">하차</button>
+                                    <button type="button" class="input-style input-sm-5 pre-style">배송</button>
+                                    <button type="button" class="input-style input-sm-5 pre-style">해체/설치</button>
+                                    <button type="button" class="input-style input-sm-5 pre-style">없음</button>
+                                </div>
+                            </div>
+                        <div class="regi-form mb-5">
+                                <p class="form-title-type-02">머신박스 배송 대행서비스 신청</p>
+                                <div class="form-row-01 deliver-service-div">
+                                    <input type="hidden" name="deliver_service" />
+                                    <button type="button" class="input-style input-sm-5 pre-style">상차</button>
+                                    <button type="button" class="input-style input-sm-5 pre-style">하차</button>
+                                    <button type="button" class="input-style input-sm-5 pre-style">배송</button>
+                                    <button type="button" class="input-style input-sm-5 pre-style">해체/설치</button>
+                                    <button type="button" class="input-style input-sm-5 pre-style">신청안함</button>
+                                </div>
+                                <p class="form-sub-title-01 mt-2 txt-light">지게차, 트럭 등 신청, 스케쥴 결정 번거로운 배송 관련 고민은 이제 끝! 상식적인 가격으로 머신박스가 대행해 드리겠습니다.</p>
+                        </div>
+                        <div class="regi-form mb-5 txt-right clear-font">
+                            {? !info_seq || wait_yn == 'y'}
+                            <button type="button" class="btn-type-01 btn-sm" onclick="prev_step_02()">이전</button>
+                                <button type="button" class="btn-type-02 btn-sm" onclick="next_step_04()">다음</button>
+                            {:}
+                            <button type="button" id="btn-complete" class="btn-type-02 btn-sm" data-type="x">변경</button>
+                            {/}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 product-img-div">
+                        <h2 class="lowest-title">※ 동일 모델의 최저가 판매 이력을 참고 하세요.</h2>
+                        <img src="../images/custom/common/no-image.png" class="product-img-lg">
+                        <div class="low-price-div">
+                            <div class="low-price-desc">
+                                <div class="desc-row">
+                                     <h3 class="desc-message">해당 모델은 판매자님이 현재 처음 판매자입니다.</h3>
+                                </div>
+                                 <div class="desc-row">
+                                     <p>기계종류</p>
+                                     <span class="desc-kind">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>제조사</p>
+                                     <span class="desc-mnf">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>모델</p>
+                                     <span class="desc-model">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>연식</p>
+                                     <span class="desc-year">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>가격</p>
+                                     <span class="desc-price">0 원</span>
+                                </div>
+                            </div>
+                            <p class="low-price-text">동일모델의 최저가 등록 기계 빠른 판매 지원 : 메인페이지 머신박스 존에 노출</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="step-04" class="step-wrap">
+                <div class="row">
+                    <div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+                        <h1 class="wrap-title txt-center txt-bold mb-1">판매기계의 소유권, 상태에 대한 질문입니다.</h1>
+                        <p class="wrap-title-sub">해당부분에 예, 아니요로 답해주세요. </p>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                            <div class="regi-form mb-5">
+                                <p class="form-title-type-02">본체 외에 출품기계에 포함된 부분 부속품이 있나요?</p>
+                                    <div class="form-row-01 mb-3 check-div" id="check-01-div">
+                                        <input type="hidden" name="check_01_res" value="{check_list.check_01_res}" />
+                                        <button type="button" class="input-style input-md pre-style {? check_list.check_01_res == '있음'}btn-type-02-active{/}">있음</button>
+                                        <button type="button" class="input-style input-md pre-style {? check_list.check_01_res == '없음'}btn-type-02-active{/}">없음</button>
+                                    </div>
+                                <input type="text" name="check_01_det" class="input-style input-border-none input-lg" placeholder="해당부분 자세하게 기입해주세요." value="{check_list.check_01_det}">
+                            </div>
+                            <div class="regi-form mb-5">
+                                    <p class="form-title-type-02">화재, 침수, 전손이력, 주요부품 이상, 구조변경 등의 사항이 있나요?</p>
+                                    <div class="form-row-01 mb-3 check-div" id="check-02-div">
+                                        <input type="hidden" name="check_02_res" value="{check_list.check_02_res}" />
+                                        <button type="button" class="input-style input-md pre-style {? check_list.check_02_res == '있음'}btn-type-02-active{/}">있음</button>
+                                        <button type="button" class="input-style input-md pre-style {? check_list.check_02_res == '없음'}btn-type-02-active{/}">없음</button>
+                                    </div>
+                                <input type="text" name="check_02_det" class="input-style input-border-none input-lg" placeholder="해당부분 자세하게 기입해주세요." value="{check_list.check_02_det}">
+                            </div>
+                            <div class="regi-form mb-5">
+                                    <p class="form-title-type-02">출품기계가 본인 소유 또는 소유자로부터 적법하게 양도(처분)권한을 위임받은 기계입니까?</p>
+                                    <div class="form-row-01 check-div" id="check-03-div">
+                                            <input type="hidden" name="check_03_res" value="{check_list.check_03_res}" />
+                                            <button type="button" class="input-style input-md pre-style {? check_list.check_03_res == '네'}btn-type-02-active{/}">네</button>
+                                            <button type="button" class="input-style input-md pre-style {? check_list.check_03_res == '아니요'}btn-type-02-active{/}">아니요</button>
+                                    </div>
+                            </div>
+                            <div class="regi-form mb-5">
+                                    <p class="form-title-type-02">담보제공, 압류, 저당 설정 등의 하자가 없으며, 계약 후 즉시 소유권이전 등의 조치가 가능한 기계입니까?</p>
+                                    <div class="form-row-01 check-div" id="check-04-div">
+                                            <input type="hidden" name="check_04_res" value="{check_list.check_04_res}" />
+                                            <button type="button" class="input-style input-md pre-style {? check_list.check_04_res == '네'}btn-type-02-active{/}">네</button>
+                                            <button type="button" class="input-style input-md pre-style {? check_list.check_04_res == '아니요'}btn-type-02-active{/}">아니요</button>
+                                    </div>
+                            </div>
+                        <div class="regi-form mb-5 txt-right clear-font">
+                            {? !info_seq || wait_yn == 'y'}
+                            <button type="button" class="btn-type-01 btn-sm" onclick="prev_step_03()">이전</button>
+                            <button type="button" class="btn-type-02 btn-sm" onclick="next_step_05()">완료</button>
+                            {:}
+                            <button type="button" id="btn-complete" class="btn-type-02 btn-sm" data-type="x">변경</button>
+                            {/}
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 product-img-div">
+                        <h2 class="lowest-title">※ 동일 모델의 최저가 판매 이력을 참고 하세요.</h2>
+                        <img src="../images/custom/common/no-image.png" class="product-img-lg">
+                        <div class="low-price-div">
+                            <div class="low-price-desc">
+                                <div class="desc-row">
+                                     <h3 class="desc-message">해당 모델은 판매자님이 현재 처음 판매자입니다.</h3>
+                                </div>
+                                 <div class="desc-row">
+                                     <p>기계종류</p>
+                                     <span class="desc-kind">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>제조사</p>
+                                     <span class="desc-mnf">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>모델</p>
+                                     <span class="desc-model">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>연식</p>
+                                     <span class="desc-year">없음</span>
+                                </div>
+                                <div class="desc-row">
+                                     <p>가격</p>
+                                     <span class="desc-price">0 원</span>
+                                </div>
+                            </div>
+                            <p class="low-price-text">동일모델의 최저가 등록 기계 빠른 판매 지원 : 메인페이지 머신박스 존에 노출</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="step-05" class="step-wrap">
+                <div class="row">
+                    <div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+                        <h1 class="wrap-title txt-center txt-bold mb-1">광고상품 선택</h1>
+                        <p class="wrap-title-sub">유료 서비스를 통해 판매기계를 더 돋보이게 하시면, 더 빨리 판매할 수 있습니다.</p>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                            <div class="regi-form mb-5">
+                                <p class="form-title-type-02 txt-black txt-bold ad-title mb-3">광고 상품 선택
+                                    </p>
+                                    <div class="form-row-01 ad-checkbox-row">
+                                            <div>
+                                                    <span>없음</span>
+                                                    <span>0원</span>
+                                            </div>
+                                            <input type="checkbox" name="chk_ad" data-name="없음" checked>
+                                    </div>
+                                    <div class="form-row-01 ad-checkbox-row">
+                                            <div>
+                                                    <span>핫마크</span>
+                                                    <span>10,000원</span>
+                                            </div>
+                                            <input type="hidden" name="ad_name[]" value="핫마크" />
+                                            <input type="hidden" name="ad_price[]" value="10000" />
+                                            <input type="checkbox" name="chk_ad" data-name="핫마크" data-price="10000">
+                                    </div>
+                                    <div class="form-row-01 ad-checkbox-row">
+                                            <div>
+                                                    <span>자동 업데이트</span>
+                                                    <span>30,000원</span>
+                                            </div>
+                                            <input type="hidden" name="ad_name[]" value="자동 업데이트" />
+                                            <input type="hidden" name="ad_price[]" value="30000" />
+                                            <input type="checkbox" name="chk_ad" data-name="자동 업데이트" data-price="30000"> 
+                                    </div>
+                                    <div class="form-row-01 ad-checkbox-row">
+                                            <div>
+                                                    <span>하이라이트</span>
+                                                    <span>100,000원</span>
+                                            </div>
+                                            <input type="hidden" name="ad_name[]" value="하이라이트" />
+                                            <input type="hidden" name="ad_price[]" value="100000" />
+                                            <input type="checkbox" name="chk_ad" data-name="하이라이트" data-price="100000">
+                                    </div>
+                                    <div class="form-row-01 ad-checkbox-row">
+                                            <div>
+                                                    <span>딜러존</span>
+                                                    <span>100,000원</span>
+                                            </div>
+                                            <input type="hidden" name="ad_name[]" value="딜러존" />
+                                            <input type="hidden" name="ad_price[]" value="100000" />
+                                            <input type="checkbox" name="chk_ad" data-name="딜러존" data-price="100000">
+                                    </div>
+                            </div>
+                        
+                        <!-- {? ad_list} -->
+                            <script>
+                                $('input[name=chk_ad]').eq(0).prop('checked', false);
+                            </script>
+                            <!-- {@ ad_list} -->
+                            <script>
+                                if(!'{.ad_seq}') {
+                                    $('input[name=chk_ad]').eq(0).prop('checked', true);
+                                } else if('{.ad_name}' == '핫마크') {
+                                    $('input[name=chk_ad]').eq(1).prop('checked', true);
+                                } else if('{.ad_name}' == '자동 업데이트') {
+                                    $('input[name=chk_ad]').eq(2).prop('checked', true);
+                                } else if('{.ad_name}' == '하이라이트') {
+                                    $('input[name=chk_ad]').eq(3).prop('checked', true);
+                                } else if('{.ad_name}' == '딜러존') {
+                                    $('input[name=chk_ad]').eq(4).prop('checked', true);
+                                }
+                            </script> 
+                            <!-- {/} -->
+                        <!-- {/} -->
+                      
+                            <div class="regi-form mb-3">
+                                    <p class="form-title-type-02 txt-black mb-3">기계성능평가</p>
+                                    <div class="form-row-01">
+                                        <input type="hidden" name="perform_check_yn" value="{? perform.perform_seq}y{:}n{/}" />
+                                        <div class="input-lg txt-left checkbox-div">
+                                            <input type="checkbox" name="chk_offLine" id="offLine" {? perform.perform_seq}checked{/}>
+                                            <label for="offLine">오프라인 성능검사 <i>요금 : 150,000원 (공작기계 기준)</i></label>
+                                        </div>
+                                            <!--
+                                            <div class="input-md txt-left checkbox-div">
+                                                    <input type="radio" name="rd_offLine" id="offLineN" value="n" checked>
+                                                    <label for="offLineN">신청안함</label>
+                                            </div>
+                                            -->
+                                    </div>
+                                    <p class="form-sub-title-02">기계 전문가가 현장에 방문하여 성능검사를 진행, 기계상태에 대해 검증 및 성능검사 보고서 등록하여 구매예정자들이 기계상태를 확인하고 구입할 수 있어 빠른 판매가 가능합니다.</p>
+                            </div>
+                            <div class="regi-form mb-5">
+                                    <!--<p class="form-title-type-02 txt-black">온라인 기계 평가 옵션</p>-->
+                                <input type="hidden" name="online_eval_yn" value="{? eval.eval_seq}y{:}n{/}" />
+                                <input type="hidden" name="online_eval_option" value="{? eval.eval_seq}{eval.eval_name}{/}" />
+                                
+                                    <!--
+                                    <div class="form-row-01">
+                                            <div class="input-md txt-left checkbox-div">
+                                                <input type="radio" name="rd_onLine" id="onLineY" value="n">
+                                                <label for="onLineY">오프라인 성능검사 요금 : 150,000원(공작기계 기준)</label>
+                                            </div>
+                                        
+                                            <div class="input-md txt-left checkbox-div">
+                                                    <input type="radio" name="rd_onLine" id="onLineN" value="n" checked>
+                                                    <label for="onLineN">신청안함</label>
+                                            </div>
+                                        
+                                    </div>
+                                    -->
+                                    <div>
+                                        <div class="input-lg txt-left mb-2 mt-2 checkbox-div" style="justify-content: normal;">
+                                                <input type="checkbox" name="chk_option" id="onLine3" value="온라인 기계평가 3" data-price="30000" {? eval.eval_name == '온라인 기계평가 3'}checked{/}>
+                                                <label for="onLine3">온라인 기계평가 3 <i>(기계평가자에게 포인트 3배 지급) 요금 : 30,000원</i></label>
+                                        </div>
+                                        <div class="input-lg txt-left checkbox-div" style="justify-content: normal;">
+                                                <input type="checkbox" name="chk_option" id="onLine5" value="온라인 기계평가 5" data-price="50000" {? eval.eval_name == '온라인 기계평가 5'}checked{/}>
+                                                <label for="onLine5">온라인 기계평가 5 <i>(기계평가자에게 포인트 5배 지급) 요금 : 50,000원</i></label>
+                                        </div>
+                                    </div>
+                                <p class="form-sub-title-02">이용자들이 대상기계 평가 참여로 많은 이용자들에게 광고를 할 수 있게 합니다.<br/>
+온라인 기계평가란? 판매기계의 기본 성능을 기계평가 앱으로 측정, 촬영하여 페이지에 등록하며, 이용자들이 대상기계를 평가하며, 높은 광고효과를 볼 수 있습니다.</p>
+                            </div>
+                            <div class="regi-form mb-5 price-wrap">
+                                    <p class="form-title-type-02 txt-black txt-bold ad-title mb-3">총 결제 금액</p>
+                                    <div class="form-row-02">
+                                            <div class="price-div" id="price-list">
+                                                    <div class="form-row-01 price-row">
+                                                        <span class="txt-left">광고상품 없음</span>
+                                                        <span class="txt-right">0원</span>
+                                                    </div>
+                                            </div>
+                                            <div class="price-div" id="price-total">
+                                                    <input type="hidden" name="total_price" value="0" />
+                                                    <p class="price-text">총 금액:</p>
+                                                    <p class="price-number accent-txt">0원</p>
+                                            </div>
+                                    </div>
+                                    <div class="ad-pay-div pt-4 txt-center">
+                                        {? !info_seq}
+                                        <button type="button" class="btn-type-02" onclick="next_step_06()" id="btn-step-05">등록하기</button> 
+                                        {: wait_yn == 'y'}
+                                        <button type="button" id="btn-complete" class="btn-type-02" data-type="y">재등록하기</button> 
+                                        {:}
+                                        <button type="button" id="btn-complete" class="btn-type-02" data-type="y">변경</button>
+                                        {/}
+                                    </div>
+                            </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 ad-img-div">
+                        <p class="ad-img-text">광고 상품 미리보기</p>
+                        <div style="height: 500px; border: 1px solid #dedede;">
+                            <img intrinsicsize="468 x 634" src="" class="ad-img-lg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            
+            <div id="step-06" class="step-wrap">
+                <div class="row">
+                    <div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+                        <h1 class="wrap-title txt-center txt-bold mb-1">결제정보 확인</h1>
+                        <p class="wrap-title-sub">무료로 직접 등록해서 신속하게 판매를 할 수 있습니다.</p>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="regi-form">
+                            <p class="form-title-type-02">구매상품 정보</p>
+                            <table class="tbl_style_01">
+                                <tr>
+                                    <th>기계 정보</th>
+                                    <td>
+                                        <div class="list-row">
+                                            <div class="list-col">
+                                                <div id="desc-img"></div>
+                                            </div>
+                                            <div class="list-col">
+                                                <p class="list-row desc" id="desc-01"></p>
+                                                <p class="list-row desc" id="desc-02"></p>
+                                                <p class="list-row desc" id="desc-03"></p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>광고상품 내역</th>
+                                    <td>
+                                        <div id="list-ad">
+                                            <p class="list-row"><span class="name">핫마크</span><span class="price">10,000원</span></p>
+                                            <p class="list-row"><span class="name">하이라이트</span><span class="price">100,000원</span></p>
+                                            <p class="list-row"><span class="name">하이라이트</span><span class="price">100,000원</span></p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>기계성능평가</th>
+                                    <td id="list-perform">
+                                        <p class="list-row"><span class="name">오프라인 성능검사</span><span class="price">150,000원</span></p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="border-right: none;">최종 결제금액</th>
+                                    <td>
+                                        <p class="list-row"><span class="invisible large">.</span><span class="price large" id="total-price"></span></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="regi-form">
+                            <p class="form-title-type-02">결제수단 선택</p>
+                            <table class="tbl_style_01">
+                                <tr>
+                                    <th>결제수단</th>
+                                    <td>
+                                        <div class="list-method">
+                                            <p class="list-row">
+                                                <div class="list-col pb-2">
+                                                    <input type="radio" name="" value="무통장 입금" id="method-01" checked>
+                                                    <label for="method-01">무통장 입금</label>
+                                                </div>
+                                            </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="ad-pay-div pt-4 mb-5 txt-center">
+                            <button type="button" class="btn-type-02 btn-self-complete">결제하기</button>      
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            {? !info_seq || wait_yn == 'y'}
+            <div class="row tab-step">
+                <div class="col-12 col-lg-6 step-div">
+                    <div class="step-list d-block">01. 기계 정보<i class="step-check-icon"></i></div>
+                    <div class="step-list size-up">02. 고정가격판매<i class="step-check-icon"></i></div>
+                    <div class="step-list size-up">02. 입찰설정<i class="step-check-icon"></i></div>
+                    <div class="step-list">03. 배송<i class="step-check-icon"></i></div>
+                </div>
+                <div class="col-12 col-lg-6 step-div">
+                    <div class="step-list">04. QnA<i class="step-check-icon"></i></div>
+                    <div class="step-list size-up">05. 광고/성능검사<i class="step-check-icon"></i></div>
+                    <div class="step-list">06. 결제<i class="step-check-icon"></i></div>
+                </div>
+            </div>
+            {:}
+            <div class="row tab-step">
+                <div class="col-12 col-lg-6 step-div">
+                    <div class="step-list d-block cursor" data-target="step-01">01. 기계 정보<i class="step-check-icon"></i></div>
+                    <div class="step-list size-up cursor {? method == '고정가격판매'}d-block{/}" data-target="step-02-1">02. 고정가격판매<i class="step-check-icon"></i></div>
+                    <div class="step-list size-up cursor {? method == '입찰'}d-block{/}" data-target="step-02-2">02. 입찰설정<i class="step-check-icon"></i></div>
+                    <div class="step-list d-block cursor" data-target="step-03">03. 배송<i class="step-check-icon"></i></div>
+                </div>
+                <div class="col-12 col-lg-6 step-div">
+                    <div class="step-list d-block cursor" data-target="step-04">04. QnA<i class="step-check-icon"></i></div>
+                    <div class="step-list d-block size-up cursor" data-target="step-05">05. 광고/성능검사<i class="step-check-icon"></i></div>
+                    <div class="step-list" data-target="step-06">06. 결제<i class="step-check-icon"></i></div>
+                </div>
+            </div>
+            <script>
+                $('.tab-step .step-list').on('click', function(){
+                    $('.step-wrap').removeClass('d-block');
+                    var target = $(this).data('target');
+                    $('#' + target).addClass('d-block');
+                });
+            </script>
+            {/}
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        if('{page_type}' == 'temp') {
+            sale_load_data('{temp_seq}');
+        }
+        else {
+            var reg_mode = '';
+            if('{info_seq}') 
+                reg_mode = 'modify';
+            else 
+                reg_mode = 'insert';
+               
+            default_sale_load_data('{model_year}', '{mnf_seq}', '{model_seq}', '{picture_list[1].path}', reg_mode);
+        }
+        
+        var self_deliver_condition = '{self_deliver_condition}';
+        var deliver_service = '{deliver_service}';
+
+        if(self_deliver_condition) {
+            var arr = self_deliver_condition.split(',');
+            $.each(arr, function(index, value) {
+                $.each($('.self-deliver-condition-div button'), function(idx, val) {
+                    if($(this).text() == value) {
+                        $(this).addClass('btn-type-02-active');
+                        return false;
+                    }
+                });
+            });
+        }
+        if(deliver_service) {
+            var arr = deliver_service.split(',');
+            $.each(arr, function(index, value) {
+                $.each($('.deliver-service-div button'), function(idx, val) {
+                    if($(this).text() == value) {
+                        $(this).addClass('btn-type-02-active');
+                        return false;
+                    }
+                });
+            });
+        }
+        
+        setTimeout(function(){
+            update_price();
+        }, 100);
+    });
+    
+    history.pushState(null, null, location.href);
+    window.onpopstate = function() {
+        history.go(1);
+    }
+</script>
+
+<script type="text/template" id="alertModal">
+    <p style="font-size: 13.5px; font-weight: 600; font-family: '나눔고딕'; line-height: 180%; letter-spacing: -0.1px;">셀프판매 서비스 이용료 2.2% → <b style="font-size: 14.5px;">1.1% 할인 이벤트를 진행합니다. 많은 이용 해주세요.</b></p>
+</script>
+<script>
+function show_alert_modal() {
+    new Dialogify('#alertModal')
+     .title('론칭 이벤트 안내')
+     .buttons([
+         {
+             text: '확인',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER}).showModal();
+}
+show_alert_modal();
+</script>

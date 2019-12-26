@@ -1,0 +1,67 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+        <div class="container">
+        <div class="row mt-5">
+                        <div class="col-12 pb-5 txt-center">
+                                <h1 class="wrap-title txt-bold mb-1">내 외주 업무</h1>
+                                <p class="wrap-title-sub mb-3 txt-light">등록된 외주업무에서 해당 업무를 선택하세요. 지원요청할 외주 업무가 없으신가요?<br/>해당 파트너에게 지원을 요청할 외주업무를 등록해주세요</p>
+                                <a href="/mch/osc_reg" class="accent-txt txt-medium">신규등록 하러가기 ></a>
+                        </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12 mb-4">
+            <h4 class="wrap-title-03">총  <span class="accent-txt pr-1">{= count(osc_list)}</span>건</h4>
+        </div>
+        <div class="col-12">
+            <!-- {@ osc_list} -->    
+            <div class="form-row-01 mb-3">
+                <div class="my-work-check-box">
+                    <input type="radio" name="my-work" id="work{.index_+1}">
+                </div>
+            <!-- 모바일 버전에선 label 클릭시 아래 work-div 에 my-work-selected 클래스 추가 -->
+                <label for="work{.index_+1}" class="scroll-wrap my-work-wrap" data-seq="{.osc_seq}">
+                    <div class="scroll-div work-div">
+                        <i class="work-badge"><!-- {? .state == 1} -->모집중<!-- {: .state == 2} -->모집완료<!-- {/} --></i>
+                        <div class="product-row-01 partner-row">
+                            <div class="product-row-01 partner-desc work-intro">
+                                <div class="scroll-desc">
+                                    <h4 class="mr-3 txt-bold">{.osc_name}{? .is_new == true}<i>NEW</i>{/}</h4>
+                                    <span>등록일 : {= date('Y.m.d', strtotime(.reg_date))}</span>
+                                    <span>예상일 : {= date('Y.m.d', strtotime(.start_expect_date))}</span>
+                                    <p>{= nl2br(.osc_content)}</p>
+                                    <div class="product-row-01">
+                                        <p>지역 : {.area_name}</p>
+                                        <!-- {@ tech_list} -->
+                                        <span class="btn-type-01">{..value_}</span>
+                                        <!-- {/} -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="work-info">
+                                <p class="work-info-price"><b>{= number_format(.budget)}</b>원</p>
+                                <div class="work-info-row">
+                                    <p>마감일 <i>{= date('Y.m.d', strtotime(.osc_end_date))}</i></p>
+                                    <p>지원자 <i>{.apply_cnt}명</i></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </label>
+            </div>
+            <!-- {:} -->
+            <div class="default-box">
+                <p class="default-message">모집중인 외주 업무가 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+        <div class="col-12 mb-5 pt-5 txt-center">
+            <button type="button" class="btn-type-02 input-border-radius" onclick="go_osc_req()">지원 요청하기</button>
+        </div>
+        <form action="/mch/osc_req_process" method="post" id="frm_osc_req">
+            <input type="hidden" name="partner_seq" value="{partner_seq}" />
+            <input type="hidden" name="osc_seq" />
+        </form>
+    </div>
+</div>

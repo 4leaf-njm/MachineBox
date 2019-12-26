@@ -1,0 +1,31 @@
+<div class="container-fluid top-pt calc-wrap">
+    <!-- {? page == '01'} -->
+    <div class="container pt-5">
+        <div class="row pb-4 mb-5" style="border: 1px solid #eeeeee; border-radius: 10px;">
+            <div class="col-12 mb-3 mt-4">
+                <h1 class="wrap-title txt-center txt-medium mb-2" style="font-size: 1.2rem;">현장미팅 이용수수료 결제</h1>
+                <p class="wrap-title-sub">이용 수수료 1.1%(부가세 포함) : {= number_format(fee)}원</p>
+            </div>
+            
+            <div class="col-12 txt-center mt-2 pl-4 pr-4">
+                <hr style="display: block; border: none; border-bottom: 1px solid #dcdcdc;" />
+            </div>
+            
+            <div class="col-12 txt-center mt-3">
+                <p class="wrap-title-sub txt-demi-light pb-2">결제수단 : 무통장입금</p>
+                <p class="wrap-title-sub txt-demi-light pb-2">입금계좌 : 농협은행 302-1371-4082-81 (예금주: 에스디네트웍스(신동훈))</p>
+                <p class="wrap-title-sub txt-demi-light pb-2">입금금액 : {= number_format(fee)}원</p>
+            </div>
+        </div>
+    </div>
+    <!-- {: page == '02'} -->
+    <div class="container pt-5">
+        <div class="row pb-4 mb-5" style="border: 1px solid #eeeeee; border-radius: 10px;">
+            <div class="col-12 mb-3 mt-4">
+                <h1 class="wrap-title txt-center txt-medium mb-2" style="font-size: 1.2rem;">미팅일 선택 완료</h1>
+                <p class="wrap-title-sub">{full_date}으로 미팅일을 선택하였습니다.</p>
+            </div>
+        </div>
+    </div>
+    <!-- {/} -->
+</div>

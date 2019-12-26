@@ -1,0 +1,96 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+    <div class="container">
+        <div class="row mt-5 pt-3 pb-5">
+            <div class="col-12 mb-4">
+                <h1 class="wrap-title txt-center found-detail-title txt-bold"><span class="status-badge">{? info.state == '1'}상담중{: info.state == '2'}상담완료{: info.state == '3'}상담종료{/}</span> {info.kind_name} {? info.model_name == '상관없음'}찾아요{:}{info.model_name}{/}</h1>
+            </div>
+            <div class="col-12 mb-4">
+                <h1 class="wrap-title wrap-title-03 mb-3">신청 내용</h1>
+                <div class="found-list-02">
+                    <div>
+                        <p>기계종류</p>
+                        <p>{info.kind_name}</p>
+                    </div>
+                    <div>
+                        <p>연식</p>
+                        <p>{info.model_year}</p>
+                    </div>
+                    <div>
+                        <p>희망가격대</p>
+                        <p>{info.hope_price}</p>
+                    </div>
+                    <div>
+                        <p>제조사</p>
+                        <p>{info.mnf_name}</p>
+                    </div>
+                    <div>
+                        <p>희망지역</p>
+                        <p>{info.area_list}</p>
+                    </div>
+                    <div>
+                        <p>구입예정일</p>
+                        <p>{= date('Y.m.d', strtotime(info.buy_expect_date))}</p>
+                    </div>
+                    <div>
+                        <p>모델명</p>
+                        <p>{info.model_name}</p>
+                    </div>
+                    <div>
+                        <p>옵션</p>
+                        <p>{info.option}</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-12 txt-center">
+                <button type="button" class="btn-type-02 input-border-radius" onclick="location.href='/sch/find_my_mch/{find_seq}/{info.state}'">내 기계 추천하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12 mb-5">
+            <h1 class="wrap-title wrap-title-03 mb-3">추천 기계</h1>
+            
+            <!-- {@ rec_list } -->
+            <div class="scroll-wrap ad-sale-wrap mb-3">
+                <div class="scroll-div">
+                    <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                        <div class="product-row-01 normal-machine-row">
+                            <div class="product-machine-desc product-row-01">
+                                <img class="product-machine-img" src="../images/custom/product.JPG" />
+                                <div class="scroll-desc">
+                                    <div class="product-row-01">
+                                        <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                    </div>
+                                    <span>{= str_replace('년', '', .model_year)}년형</span>
+                                    <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                    <span>{.area_name}</span>
+                                    <!--<span>기타사항</span>-->
+                                    <p><span class="accent-txt">{= number_format(.price)}</span>원</p>
+                                    <div class="ad-sale-icon-row">
+                                        <div>
+                                            <img src="../images/custom/icon/ico-heart.png" alt="">
+                                            <span>{.like_cnt}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-machine-info">
+                                <img class="product-profile-img" src='{.partner_profile_path}'/>
+                                <p>{.userid}</p>
+                                <span>{= date('Y.m.d', strtotime(.partner_reg_date))}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <!-- {:} -->
+            <div class="default-box">
+                <p class="default-message">추천 받은 기계가 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+    </div>
+</div>

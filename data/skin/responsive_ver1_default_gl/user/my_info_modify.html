@@ -1,0 +1,31 @@
+<style>
+    .container input[type="checkbox"]:before {
+        content: '';
+    }
+</style>
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-2">{? change == 'change'}기업회원 전환{:}회원정보 수정{/}</h1>
+
+				<form name="registFrm" id="registFrm" target="actionFrame" method="post" action="{=sslAction('/member_process/myinfo_modify')}" enctype="multipart/form-data" novalidate>
+                    <input type="hidden" name="seq" value="{member_seq}"/>
+                    <input type="hidden" name="rute" value="{rute}"/>
+                    <input type="hidden" name="mtype" value="{mtype}"/>
+                    <input type="hidden" name="change" value="{change}"/>
+                    
+                    {# form_member}
+                    <div class="btn_area_c">
+                        <button type="submit" class="btn_resp size_c color2">확인</button>
+                        <button type="button" class="btn_resp size_c" onclick="document.registFrm.reset();">취소</button>
+                    </div>
+                </form>
+            </div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,198 @@
+<?php
+error_reporting(0);
+?>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>파일 첨부</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no, charset=utf-8"  />
+<link rel="stylesheet" href="../../css/goods_image_popup.css" type="text/css"  charset="utf-8"/>
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/jquploadify/uploadify.css" />
+<style>
+body, p, h1, h2, h3, h4, h5, h6, ul, ol, li, dl, dt, dd, form, fieldset, legend, input, textarea, button, select {margin:0; padding:0;}
+img {max-width:100%; vertical-align:middle;}
+form {clear:both}
+legend {visibility:hidden; overflow:hidden; position:absolute; top:0; left:0; width:0; height:0; padding:0; font-size:0; line-height:0}
+body,th,td,input,select,textarea,button{font-family:'나눔고딕',NanumGothic,'맑은 고딕',Malgun Gothic,'돋움',Dotum,'굴림',Gulim,HelveticaNeue-Light,AppleSDGothicNeo-Light,sans-serif; font-size:14px; line-height:1.4; color:#555;}
+input[type=text],
+input[type=number],
+input[type=tel],
+input[type=date],
+input[type=password] {border:1px solid #ccc; background:#fff; height:30px;}
+input[type=button],
+input[type=image],
+input[type=submit],
+button {border-radius:0; -webkit-appearance:none;}
+textarea {border:1px solid #ccc; background:#fff; padding:5px;}
+img, fieldset {border:0}
+dl,ul,ol,menu,li{list-style:none}
+em, address {font-style:normal}
+a {text-decoration:none}
+label {cursor:pointer}
+
+.btn_resp { border:1px #ccc solid; background:#fff; box-sizing:border-box; text-align:center; color:#333; cursor:pointer; vertical-align:middle; border-radius:2px; transition:border-color 0.2s, background-color 0.2s; }
+a.btn_resp, span.btn_resp { display:inline-block; }
+.btn_resp.size_c { height:42px; font-size:16px; line-height:40px; min-width:100px; padding:0 14px; }
+.btn_resp.color2 { border-color:#357bc3; background-color:#357bc3; color:#fff; }
+
+.header { padding-left:10px; }
+.alert { margin:0; padding:10px 10px 60px; }
+#img_viewer { padding:10px 0 0; }
+#img_viewer>div { padding-top:10px; }
+#img_viewer>div font { font-size:15px; color:#357bc3; font-weight:bold; font-family:verdana; }
+.header { height:40px; padding:0; }
+.header h1 { height:40px; margin:0; padding:0 0 0 10px; line-height:40px; }
+.header a.close { display:block; position:absolute; right:0; top:0; margin:0; padding:0; width:40px; height:40px; text-align:center; font-size:16px; line-height:40px; color:#fff; text-decoration:none; }
+</style>
+
+
+<!--script type="text/javascript" src="/app/javascript/jquery/jquery.min.js"></script-->
+<script type="text/javascript" src="../../js/popup.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquploadify/swfobject.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!--script type="text/javascript" src="/app/javascript/plugin/jquploadify/jquery.uploadify.v2.1.4.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script-->
+
+<script type="text/javascript">
+//<![CDATA[
+//한글도메인체크@2015-07-24
+var fdomain = document.domain;
+var krdomain = 'http://<?echo str_replace("http://","",$_GET[fsubdomain])?>';
+var kordomainck = false;
+for(i=0; i<fdomain.length; i++){
+ if (((fdomain.charCodeAt(i) > 0x3130 && fdomain.charCodeAt(i) < 0x318F) || (fdomain.charCodeAt(i) >= 0xAC00 && fdomain.charCodeAt(i) <= 0xD7A3)))
+{
+	kordomainck = true;
+	break;
+}
+}
+if( !kordomainck ){
+krdomain = '';
+}
+
+var korea_domain = "<?echo $_GET['redomain']?>";
+<? if($_GET['redomain']) { ?>
+//var filemullti = false;//한글도메인 한개만 파일업로드가능
+var iskorea_domain = true;//한글도메인 한개만 파일업로드가능
+<?}else{?>
+//var filemullti = true;//그외 다중파일업로드가능
+var iskorea_domain = false; //그외 다중파일업로드가능
+
+//#########################################################################
+// byuncs 2018-05-31 parent에 리턴 할 객체 구성
+var realfilename	= [];
+var incimage		= [];
+
+
+//-->######################################################################
+<?}?>
+//]]>
+</script>
+
+<!--  html5 -->
+<script type="text/javascript" src="/app/javascript/jquery/jquery.ajax.form.js"></script>
+<script type="text/javascript" src="/app/javascript/js/ajaxFileUpload.js"></script>
+<script type="text/javascript" src="/app/javascript/js/image.uploader_new.js?v={=date('YmdHis')}"></script>
+
+<script type="text/javascript">
+var _mockdata;
+var board_id		= "<?=$_GET['board_id']?>";
+var insert_image	= "<?=$_GET['insert_image']?>";
+var url				= krdomain+'/board_process/mobile_upload?board_id=' + board_id +"&insert_image=" + insert_image;
+$(function(){
+	'use strict';
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	// image uploader
+	$('#progress').hide();
+	
+	//html5uploader만 사용
+	var upload			= html5uploader;
+	upload.shopname		= "mobileEditor";
+	upload.url	 		= url;
+
+	// 파일 ajax 업로드
+	var opt			= {"action": upload.url, "file_param" : "file_info[]"};
+	var callback	= function(res){
+		upload.done(res);
+	};
+	$('#uploader').createAjaxFileUpload(opt, callback);
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+
+	$("#saveGoodsImg").bind('click',function(){
+		var _opener = PopupUtil.getOpener();
+
+		_opener.addAttachImage(realfilename, incimage);
+		window.self.close();
+	});
+
+	
+});
+</script>
+
+<script type="text/javascript">
+// <![CDATA[
+
+
+// ]]>
+</script>
+</head>
+<!-- body onload="<? if( !$_GET['redomain'] || ($_GET['redomain'] && ( $_GET['is_image'] || $_GET['is_files'])) ){ ?>initUploader();<?}?>"-->
+<body>
+<div class="wrapper">
+	<div class="header">
+		<h1>파일 첨부</h1>
+		<a href="javascript:void(0);" onclick="closeWindow();" title="닫기" class="close">X</a>
+	</div>
+	<div class="body">
+		<ul class="alert">
+			<li>- 여러 개의 파일을 한꺼번에 등록 가능합니다. (멀티업로드)</li>
+			<li>- 최대 20MB 까지 가능</li>
+			<!--{ ? !service_limit && config_watermark.watermark_setting_status }-->
+			<!-- li  class="watermark" style="padding-bottom:15px;text-align:left;">
+				<label style="cursor:pointer"><input type="checkbox" name="watermark_apply" value="y" />이미지 파일에 워터마크 적용 (원본 680*3000 이하 가능)</label>
+			</li-->
+			<!--{ / }-->
+			
+		    <li style="padding-top:10px;">
+		    	
+				<div style="float:left;">
+					<!-- input type="file" id="uploader" /-->
+					<label for="uploader" id="file_image">
+						<!--img style="width:84px;height:27px" src="/app/javascript/plugin/jquploadify/uploadify-search.gif"/-->								
+						<!--button class="btn_important_large" style="width:200px;height:30px;" type="button" id="loadimage" onclick="document.getElementById('uploader').click();" ><font size="+1">찾아보기..</font></button-->				
+					</label>
+					
+					<?
+						if( $_GET['redomain'] ) {
+      						echo  '<input type="file" id="uploader" name="file_info[]" accept="image/*" />';
+						}else {
+							echo  '<input type="file" id="uploader" name="file_info[]" style="color:transparent;" accept="image/*" multiple>';
+						}
+   					?>
+					
+				    <!--  html5 uploader progress -->
+					<div id="progress" class="progress" style="margin-top: 10px;">
+						<div class="progress-bar progress-bar-success"></div>
+		 	        </div> 
+		 			
+		 			<p>
+					<div id="imgtb" class="hide">
+							<!--  B><font size="+1">미리보기 :</font></B-->
+							<div id="img_viewer"></div>
+					</div>
+				</div>				
+
+			</li>
+		
+		</ul>
+
+		<!-- div class="center" style="left:50%;bottom:20px;margin-left:-50px;position:fixed;"-->
+		<div style="position:fixed; bottom:0; left:0; right:0; text-align:center; padding:10px; background:#fff;">
+			<span class="btn large cyanblue"><button type="button" id="saveGoodsImg" class="btn_resp size_c color2">저장</button></span>
+		</div>
+	</div>
+</div>
+</body>
+</html>

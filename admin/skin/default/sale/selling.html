@@ -1,0 +1,100 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsRegist.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../css/layer_stock.css" />
+<style>
+	.goodsOptionTable {display:none; position:absolute; border-collapse:collapse; top:-10px; left:60px; border:1px solid #f5f5f5;}
+	.goodsOptionTable table {width:220px;}
+	.goodsOptionTable th {padding:5px; border:1px solid #ddd; background-color:#f5f5f5}
+	.goodsOptionTable td {height:25px !important; border:1px solid #ddd; background-color:#ffffff; text-align:center;}
+
+	div.sub-choose-lay div.choose-form-lay {top:27px;right:0;width:200px;}
+	div.sub-choose-lay div.choose-down-lay {top:27px;right:140px;width:150px;}
+	div.list-string-price-lay {position:relative;}
+	div.list-string-price-lay img {cursor:pointer;}
+	div.view-string-price-lay {position:absolute;top:20px;left:41px;width:300px;z-index:100;background-color:#fff;}
+	.t_tot_stock {text-align:center; border-collapse:collapse; width:570px;}
+	.t_tot_stock td {border:1px solid #666; padding:5px;}
+	.gr_col {color:#666;}
+</style>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>기계매매</h2>
+		</div>
+
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(selling_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+	
+	<ul class="right-btns"></ul>
+</div>
+
+<!-- 신청리스트 테이블 : 시작 -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<table class="list-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="60" /><!--번호-->
+			<col width="180" /><!--등록번호-->
+			<col width="120" /><!--이용자-->
+			<col width="*" /><!--진행내역-->
+			<col width="300" /><!--진행상태-->	
+			<col width="160" /><!--계약 배송대행서비스-->
+			<col width="160" /><!--판매자 인도조건-->	
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th>번호</th>
+			<th>등록번호</th>
+			<th>이용자</th>
+			<th>진행내역</th>
+			<th>진행상태</th>
+			<th>계약 배송대행서비스</th>
+			<th>판매자 인도조건</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+	<!--{? selling_list }-->
+		<!--{@ selling_list }-->
+			<tr class="list-row" style="height: 60px;">
+				<td align="center" class="page_no">{.index_+1}</td>
+				<td align="center">{.sales_no}</td>
+				<td align="center">{.userid}</td>
+				<td align="center">{.status_log}</td>
+				<td align="center"><span {? .state == '계약' }style="color: #fd5b5b;"{/}>계약</span> → <span {? .state == '입금' }style="color: #fd5b5b;"{/}>입금</span> → <span {? .state == '배송' }style="color: #fd5b5b;"{/}>배송</span> → <span {? .state == '매매완료' }style="color: #fd5b5b;"{/}>매매완료</span></td>
+				<td align="center">{.deliver_service}</td>
+				<td align="center">{.deliver_condition}</td>
+			</tr>
+		<!--{ / }-->
+	<!--{ : }-->
+		<tr class="list-row">
+			<td align="center" colspan="7">기계매매 진행내역이 없습니다.</td>
+		</tr>
+	<!--{ / }-->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+</div>
+<!-- 신청리스트 테이블 : 끝 -->
+{ #layout_footer }

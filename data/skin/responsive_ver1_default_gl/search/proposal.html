@@ -1,0 +1,88 @@
+<div class="container-fluid top-pt calc-wrap wrap-bg-gray">
+    <div class="container pt-2">
+        <div class="row">
+            <div class="col-12 mb-5 mt-5">
+                    <h1 class="wrap-title txt-center txt-bold mb-1">가격제안 페이지, 가격제안을 먼저 해주시면 편리합니다.</h1>
+                    <p class="wrap-title-sub">{? mode == 'counter'}카운터딜 할 금액을 설정해주세요.{:}가격 제안을 하시고, 판매자님의 답변을 기다려 주세요.{/}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid pb-3">
+    <div class="container mb-5 pt-5">
+        <!-- {? mode == 'counter'} -->
+        <form action="/sch/proposal_res_process" method="post" id="frm_proposal_res">
+            <input type="hidden" name="res_type" value="seller" />
+            <input type="hidden" name="userid" value="{prop_info.buy_userid}" />
+            <input type="hidden" name="sale_userid" value="{prop_info.sale_userid}" />
+            <input type="hidden" name="prop_seq" value="{prop_info.prop_seq}" /> 
+            <input type="hidden" name="permit_yn" value="c" />
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">판매자가격</p>
+                        <input type="text" class="input-style input-lg input-gray" value="{= price_format(fixed_price)}원 ({price_proposal}% 이내)" readonly>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">구매자 제안금액</p>
+                        <input type="text" class="input-style input-lg input-gray" value="{= price_format(prop_info.prop_price)}원" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">카운터딜 금액 <i>(단위 : 만원)</i></p> 
+                        <input type="text" name="counter_price" class="input-style input-lg input-gray">
+                    </div>
+                </div>
+                 <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">메시지 답변기한</p>
+                        <input type="text" name="counter_date" class="input-style input-lg input-gray pickadate">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 txt-center mt-3">
+                    <button type="button" class="btn-type-02 download-btn" onclick="go_proposal('{fixed_price}', '{price_proposal}', 'counter')">카운터딜 하기</button>
+                </div>
+            </div>
+        </form>
+        <!-- {:} -->
+        <form action="/sch/proposal_process" method="post" id="frm_proposal">
+            <input type="hidden" name="type" value="{type}" />
+            <input type="hidden" name="info_seq" value="{info_seq}" />
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">판매자가격</p>
+                        <input type="text" class="input-style input-lg input-gray" value="{= price_format(fixed_price)}원 ({price_proposal}% 이내)" readonly>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">가격 제안 <i>(단위 : 만원)</i></p> 
+                        <input type="text" name="prop_price" class="input-style input-lg input-gray">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                 <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">메시지 답변기한</p>
+                        <input type="text" name="prop_date" class="input-style input-lg input-gray pickadate">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 txt-center mt-3">
+                    <button type="button" class="btn-type-02 download-btn" onclick="go_proposal('{fixed_price}', '{price_proposal}')">제안하기</button>
+                </div>
+            </div>
+        </form>
+        <!-- {/} -->
+    </div>
+</div>

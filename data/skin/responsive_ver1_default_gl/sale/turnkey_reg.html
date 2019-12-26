@@ -1,0 +1,278 @@
+<form action="/sale/turnkey_process" method="post" id="sale-form" data-type="turnkey">
+	<div class="step-wrap d-block">
+		<div class="container-fluid top-pt turnkey-wrap">
+			<div class="container pt-5">
+				<div class="row pb-2">
+					<div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+						<h1 class="wrap-title txt-center txt-bold mb-1">턴키매각 기계정보를
+							입력해주세요.</h1>
+						<p class="wrap-title-sub">자세히 입력할수록 더 정확하고 빠른 서비스를 이용할 수 있습니다.</p>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">공장명</p>
+							<input type="text" name="factory"
+								class="input-style input-border-none input-lg input-gray">
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">생산내용</p>
+							<input type="text" name="production"
+								class="input-style input-border-none input-lg input-gray">
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">지역</p>
+							<input type="hidden" name="area_seq" /> <select type="text"
+								name="sel_area"
+								class="input-style input-lg input-gray select-style">
+								<option>지역을 선택해주세요.</option>
+								<!-- {@ area_list} -->
+								<option data-seq="{.area_seq}">{.area_name}</option>
+								<!-- {/} -->
+							</select>
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">총기계 수량</p>
+							<input type="text" name="quantity"
+								class="input-style input-border-none input-lg input-gray">
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">마지막 기계 가동일</p>
+							<input type="text" name="last_date"
+								class="input-style input-border-none input-lg input-gray pickadate_default">
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">채권자 내역</p>
+							<input type="text" name="creditor"
+								class="input-style input-border-none input-lg input-gray">
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">매각 예정일</p>
+							<input type="text" name="expect_date"
+								class="input-style input-border-none input-lg input-gray pickadate">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid wrap-bg-gray pt-3 pb-3">
+			<div class="container pt-5 pb-5">
+				<div class="row">
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<h2 class="wrap-title txt-medium mb-1">기계정보</h2>
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form txt-right">
+							<button type="button" class="btn-type-01 btn-sm btn-turnkey-add"
+								onclick="turnkey_add()">추가하기</button>
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">기계종류</p>
+							<select type="text" name="sel_kind"
+								class="input-style input-lg select-style select-active">
+								<option>기계종류를 선택해주세요.</option>
+								<!-- {@ kind_map} -->
+								<optgroup label="{.kind_type}" data-no="{.kind_no}">
+									<!-- {@ .kind_list} -->
+									<option data-seq="{..kind_seq}">{..kind_name}</option>
+									<!-- {/} -->
+								</optgroup>
+								<!-- {/} -->
+							</select>
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">제조사</p>
+							<select type="text" name="sel_mnf" class="input-style input-lg select-style" data-id="input-mnf">
+                                <option>제조사를 선택해주세요.</option>
+                                <option data-mode="input">직접입력</option>
+                                <!-- {@ mnf_list} -->
+                                <option data-seq="{.mnf_seq}" {? .mnf_seq == mnf_seq }selected{/}>{.mnf_name}</option>
+                                <!-- {/} -->
+                            </select>
+                            <input type="hidden" name="input_mnf" />
+                            <input type="text" name="txt_mnf" class="input-style input-border-none input-lg d-none mt-2" placeholder="제조사 입력" id="input-mnf" />
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">모델</p>
+							<select type="text" name="sel_model" class="input-style input-lg select-style" data-id="input-model">
+                                <option>모델을 선택해주세요.</option>
+                                <option data-mode="input">직접입력</option>
+                                <!-- {@ model_list} -->
+                                <option data-seq="{.model_seq}" {? .model_seq == model_seq }selected{/}>{.model_name}</option>
+                                <!-- {/} -->
+                            </select>
+                            <input type="hidden" name="input_model" />
+                            <input type="text" name="txt_model" class="input-style input-border-none input-lg d-none mt-2" placeholder="모델 입력" id="input-model" />
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">연식</p>
+							<select name="sel_year" class="input-style input-lg select-style">
+								<option>연식을 선택해주세요.</option>
+								<option data-val="0">직접입력</option>
+							</select>
+						</div>
+						<div class="regi-form d-none" id="year-div">
+							<input type="text" name="model_year"
+								class="input-style input-border-none input-lg"
+								placeholder="연식을 입력해주세요." />
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">매입가 (단위:만원)</p>
+							<input type="text" name="pur_price"
+								class="input-style input-border-none input-lg">
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">옵션</p>
+							<input type="text" id="option"
+								class="input-style input-border-none input-lg mb-2"
+								placeholder="엔터를 입력하여 옵션을 추가하세요.">
+							<div class="form-row-02" id="option-append"></div>
+						</div>
+					</div>
+					<div class="col-12">
+						<div class="regi-form">
+							<p class="form-title-type-02">특이 사항</p>
+							<textarea type="text" name="remark"
+								class="input-style input-border-none input-lg textarea-style"
+								placeholder="특이사항을 적어주세요."></textarea>
+						</div>
+					</div>
+                    <div class="col-12 mb-3 pt-2 txt-right">
+                        <button type="button" class="btn-type-01 btn-sm" onclick="sale_temp_save()">임시저장</button>
+                    </div> 
+					<div class="col-12 txt-center mt-3">
+						<button type="button" class="btn-type-02 btn-radius" onclick="turnkey_complete()">턴키매각 신청하기</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container-fluid pt-5 pb-5">
+			<div class="container">
+				<div class="row">
+					<div class="col-12 mb-5 form-row-02">
+                        <div class="scroll-wrap direct-wrap scroll-x" id="machine-add-list"></div>
+                        <script>
+                            /*
+                        $(document).ready(function(){
+                            add_scrollbar();
+                        });
+                        function add_scrollbar() {
+                            $(".scroll-wrap.scroll-x").mCustomScrollbar({
+                                axis:"x",
+                                theme:"rounded-dark",
+                                scrollbarPosition: "outside",
+                                advanced:{
+                                    autoExpandHorizontalScroll:false,
+                                    updateOnContentResize: true
+                                }
+                            });
+                        }
+                            */
+                        </script>
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="owner-check" class="step-wrap">
+        <div class="container-fluid top-pt">
+            <div class="container pt-5">
+                <div class="row">
+                    <div class="col-12 mb-5 mt-0 mt-md-3 title-div">
+                        <h1 class="wrap-title txt-center txt-bold mb-1">질문에 답해주세요.</h1>
+                        <p class="wrap-title-sub">해당부분에 예 아니요로 답해주세요. 솔직한 답변이 저희에게 많은
+                            도움이 됩니다.</p>
+                    </div>
+                    <div class="col-12">
+                        <div class="regi-form mb-5">
+                            <p class="form-title-type-02">본체 외에 출품기계에 포함된 부분 부속품이 있나요?</p>
+                            <div class="form-row-01 mb-3 check-div" id="check-01-div">
+                                <input type="hidden" name="check_01_res" value="없음" />
+                                <button type="button" class="input-style input-md pre-style">있음</button>
+                                <button type="button"
+                                    class="input-style input-md pre-style">없음</button>
+                            </div>
+                            <input type="text" name="check_01_det"
+                                class="input-style input-border-none input-gray input-lg"
+                                placeholder="해당부분 자세하게 기입해주세요.">
+                        </div>
+                        <div class="regi-form mb-5">
+                            <p class="form-title-type-02">화재, 침수, 전손이력, 주요부품 이상, 구조변경 등의
+                                사항이 있나요?</p>
+                            <div class="form-row-01 mb-3 check-div" id="check-02-div">
+                                <input type="hidden" name="check_02_res" value="없음" />
+                                <button type="button" class="input-style input-md pre-style">있음</button>
+                                <button type="button"
+                                    class="input-style input-md pre-style">없음</button>
+                            </div>
+                            <input type="text" name="check_02_det"
+                                class="input-style input-border-none input-gray input-lg"
+                                placeholder="해당부분 자세하게 기입해주세요.">
+                        </div>
+                        <div class="regi-form mb-5">
+                            <p class="form-title-type-02">출품기계가 본인 소유 또는 소유자로부터 적법하게
+                                양도(처분)권한을 위임받은 기계입니까?</p>
+                            <div class="form-row-01 check-div" id="check-03-div">
+                                <input type="hidden" name="check_03_res" value="네" />
+                                <button type="button"
+                                    class="input-style input-md pre-style">네</button>
+                                <button type="button" class="input-style input-md pre-style">아니요</button>
+                            </div>
+                        </div>
+                        <div class="regi-form mb-5">
+                            <p class="form-title-type-02">담보제공, 압류, 저당 설정 등의 하자가 없으며, 계약 후
+                                즉시 소유권이전 등의 조치가 가능한 기계입니까?</p>
+                            <div class="form-row-01 check-div" id="check-04-div">
+                                <input type="hidden" name="check_04_res" value="네" />
+                                <button type="button"
+                                    class="input-style input-md pre-style">네</button>
+                                <button type="button" class="input-style input-md pre-style">아니요</button>
+                            </div>
+                        </div>
+                        <div class="regi-form mb-5 txt-right clear-font">
+                            <button type="button" class="btn-type-01 btn-sm" onclick="sale_temp_save()">임시저장</button>
+                            <button type="button" class="btn-type-02 btn-sm" onclick="turnkey_check_complete()">완료</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+</form>
+
+<script>
+    $(document).ready(function(){
+        if('{page_type}' == 'temp')
+            sale_load_data('{temp_seq}');
+    });
+    history.pushState(null, null, location.href);
+    window.onpopstate = function() {
+        history.go(1);
+    }
+</script>

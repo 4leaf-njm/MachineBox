@@ -1,0 +1,746 @@
+/* container 폭 재지정 */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1000px !important;
+    }
+}
+
+/* 화면별 기본 폰트크기 지정 */
+@media (min-width: 0px) {
+    html, body { font-size: 15px; }
+}
+@media (min-width: 576px) {
+    html, body { font-size: 16px; }
+}
+@media (min-width: 768px) {
+    html, body { font-size: 17px; }
+}
+@media (min-width: 992px) {
+    html, body { font-size: 18px; }
+}
+
+/* Labtop Size 미만 */
+@media (max-width: 992px) {
+    .regi-desc {
+        left: 0 !important;
+    }
+    .regi-desc h3,
+    .regi-desc p {
+        text-align: center;
+    } 
+    .regi-wrap .row .line { 
+        height: 0;
+    }
+}
+
+/* Tablet Size 미만 (Mobile) */
+@media (max-width: 767px) {
+    /* 헤더 영역 */
+    .layout_header {
+        box-shadow: none;
+    }
+    .header-bg-change{
+        background: rgba(31, 31, 31, 0);
+    }
+    
+    /* 메인 */
+    .banner-flow{
+        flex-flow: wrap-reverse;
+    }
+    .banner01-txt{
+        font-size: 0.7778rem;
+        margin-top: 50px;
+    }
+    .banner01-title{
+        font-size: 1.5rem;
+    }
+    .banner-col{
+        align-items: center;
+    }
+    .banner01-row{
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 237px;
+    }
+    .banner01-circle{
+        margin-right: 0;
+    }
+    .banner01-img{
+        max-width: 215px;
+    }
+    .banner02-img{
+        max-width: 300px;
+        margin-top: 30px;
+        padding-bottom: 30px;
+    }
+    .banner02-title{
+        font-size: 1.889rem;
+        padding-bottom: 50px;
+        text-align: center;
+    }
+    
+    .banner02-bg{
+        background: #f5d9d9;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 86px;
+        z-index: 1;
+    }
+    
+    .count-divide {
+        text-align: center;
+    }
+    .count-divide .count-line {
+        right: 0;
+    }
+    .count-col:first-child .count-row {
+        border-right: none;
+    }
+    .count-wrap .wrap-title {
+        padding-left: 2.6rem;
+    }
+    
+    .box-filter span {
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 5px;
+        margin-right: 10px;
+        font-size: 13px;
+    }
+    .free-wrap .row > div {
+        margin: 0 15px 10px;
+    }
+    .service-div {
+        padding-left:0.1rem !important;
+        padding-right: 0.1rem !important;
+        padding-top: 0.9rem !important;
+    }
+    .review-wrap .review-user {
+        text-align: center;
+    }
+    .review-wrap .review-info {
+        text-align: center;
+    }
+    .review-wrap .review-desc p {
+        margin: 0 auto;
+        height: 3.5em;
+        -webkit-line-clamp: 3;
+    }
+    .title-div {
+        order: -2;
+    }
+    .product-img-div{
+        order: -1;
+    }
+    .form-row-mobile {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        margin-bottom: 0!important;
+    }
+    .form-row-mobile > .regi-form {
+        width: 100%;
+        margin-bottom: 3rem;
+    }
+    .preview-div {
+        width: 31%;
+    }
+    .product-img-lg {
+        max-height: 250px;
+    }
+    .preview-back{
+        height: 8em;
+    }
+    .tab-step .step-div .step-list { 
+        font-size: 0.7889rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        width: 31%;
+    }
+    .tab-step .step-div .step-list.size-up {
+        width: 38%;
+    }
+    .tab-step .step-div .step-list .step-check-icon {
+        right: 0.3rem;
+        margin-top: -5px;
+        width: 10px;
+        height: 10px;
+    }
+    .my-machine-wrap .row{
+        margin: 0;
+    }
+    .my-machine-div{
+        margin-bottom: 0.5556rem;
+        min-height: 260px;
+    }
+    .my-machine-01,.my-machine-02{
+        border-right: 1px solid #dcdcdc!important;
+    }
+    .price-wrap .form-row-02{
+        flex-direction: column;
+    }
+    .price-div{
+        width:100%;
+    }
+    .price-div:first-of-type{
+        width: 100%;
+        border-bottom:none;
+        border-right: 1px solid #dcdcdc;
+    }
+    .ad-content-row {
+        width: 85%;
+    }
+    .ad-img-div{
+        margin-bottom:2.222rem;
+    }
+    .lg-img-div{
+        height: 16.67rem;
+    }
+    .detail-wrap{
+        margin-top:20px;
+    }
+    .detail-shop-row .review-info span{
+        display: unset;
+    }
+    .detail-div-50{
+        width:100%;
+        margin-bottom: 0.8333rem!important;
+    }
+    .detail-row-lg .detail-title-01{
+        width:30%
+    }
+     .calc-wrap{
+        height:calc(100% - 161.8px);
+    }
+    .col-filter{
+        display:none;
+        max-width: 100%;
+        flex: 0 0 100%;
+        position: fixed !important;
+        top: 86px;
+        left: 0;
+        z-index: 100;
+        background: #fff;
+    }
+    .filter-wrap {
+        width: 100%;
+        margin-bottom: 0px;
+    }
+    .filter-icon-div {
+        padding: 1rem;
+    }
+    .filter-icon-div > img {
+        max-width: 25px;
+        max-height: initial;
+    }
+    .filter-icon-div > span {
+        font-size: 0.87rem;
+    }
+    .filter-text-wrap {
+        width: 70%; 
+        margin: 0 auto;
+        text-align: center;
+    }
+    .filter-text-wrap > ul {
+        width: 100%;
+    }
+    .filter-text-wrap li {
+        width: 100%;
+        font-size: 1rem;
+    }
+    .filter-text-wrap .cate-input {
+        width: 100%;
+    }
+    .filter-text-wrap .cate-input-unit {
+        font-size: 14px;
+    }
+    .filter-text-wrap .cate-input-msg {
+        font-size: 15px;
+    }
+    .filter-text-wrap .cate-input-tit {
+        margin-bottom: 15px;
+        font-size: 18px;
+    }
+    .filter-text-wrap .cate-button {
+        font-size: 16px;
+    }
+    .filter-text-wrap .mCSB_scrollTools {
+        display: none !important;
+    }
+    .ad-sale-filter .more-btn-mob{
+        display: block;
+    }
+    .ad-sale-filter .more-btn-web{
+        display:none;
+    }
+    .normal-machine-filter,.normal-machine-row{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .ad-sale-filter > .box-filter {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 0.5556rem;
+    }
+    .product-machine-info{
+        flex-direction: row;
+        width: 100%;
+        height: unset!important;
+        padding-top: 0.2778rem;
+        padding-bottom: 0.2778rem;
+        border-left: none;
+        border-top: 1px solid #dcdcdc;   
+    }
+    .product-machine-desc{
+        width:100%;
+    }
+    .product-profile-img{
+        width:30px;
+        height:30px;
+    }
+    .product-machine-info p{
+        margin:0;
+        margin-left: 0.2778rem;
+        margin-right: 0.2778rem;
+    }
+    .mob-filter-text{
+        display: block;
+    }
+    .ad-sale-filter span{
+        padding-top:0.2222rem!important;
+        padding-bottom: 0.2222rem!important;
+        margin-right: 0.5556rem!important;
+    }
+    options-delete-btn{
+        top:8px;
+    }
+    .mob-display-none{
+        display:none;
+    }
+    .mob-center {
+        text-align: center;
+    }
+    .filter-wrap-02{
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin-bottom:2.778rem;
+    }
+    .filter-wrap-02 .filter-text-wrap li {
+        margin-right: 0.8333rem;
+        float: left;
+    }
+    .box-filter span::after{
+        top:3px;   
+    }
+    .partner-row{
+        flex-direction: column!important;
+        align-items: flex-start!important;
+    }
+    .partner-desc {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+    }
+    .partner-badge {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    .partner-filter{
+        align-items: center!important;
+    }
+    .partner-detail{
+        width:50%
+    }
+    .partner-detail:last-of-type,.partner-detail:nth-of-type(5){
+        width:100%;
+    }
+    .my-work-check-box{
+        display: none;
+    }
+    .my-work-wrap{
+        width:100%;
+    }
+    .my-work-selected{
+        border-color:#d78323;
+    }
+    .work-info {
+        width: auto;
+    }
+    .work-detail-title {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .work-detail-desc div span:first-child {
+        margin-left: 0px;
+    }
+    .work-detail-title h1 {
+        margin-right: 0;
+        margin-bottom: 0.5556rem;
+    }
+    .found-filter .form-row-01{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .found-filter .form-row-01 h4{
+        margin-bottom:1.111rem;
+    }
+    .found-filter-row{
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+    .found-filter-row > div{
+        width:100%;
+        margin-bottom:0.5556rem;
+    }
+    .found-filter-row span{
+        margin-left: 0px;
+        width: 20%;
+        display: inline-block;
+    }
+    .found-filter-row select{
+        width:70%;
+    }
+    .found-list-01{
+        justify-content: flex-end;
+        flex-wrap: wrap;
+    }
+    .found-list-01 p{
+        order: 6;
+        width:70px;
+    }
+    .found-list-01 span{
+        width:50%!important;
+        margin-bottom: 5px;
+    }
+    .status-badge{
+        width:70px;
+    }
+    .found-detail-title,.found-list-02{
+        flex-direction: column;
+    }
+    .found-detail-title span{
+        margin-right:0;
+        margin-bottom:0.8333rem;
+    }
+    .found-list-02 div{
+        width:100% !important;
+    }
+    .found-list-02 div p{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .found-list-02 div:last-of-type p:first-of-type{
+        width: 30%;
+    }
+    .found-list-02 div:last-of-type p:last-of-type{
+        width:70%;
+    }
+    .found-price-row-01{
+        flex-direction:column;
+    }
+    .found-price-row-01 div{
+        width:100%!important;
+        justify-content: space-between;
+    }
+    .found-price-row-01 div:first-of-type{
+        justify-content: flex-start;
+    }
+    .found-price-wrap input[type="number"]{
+        width: 120px;
+    }
+    .review-info-wrap {
+        flex-direction: column;
+    }
+    .review-info-wrap > img {
+        width: 100%;
+    }
+    .rev-info {
+        width: 100%;
+    }
+    .txt-sm-center {
+        text-align: center;
+    }
+    .review-row{
+        flex-wrap: wrap;
+    }
+    .review-rate{
+        width:48%;
+    }
+    .found-count,.intro-row-01{
+        flex-direction: column;
+    }
+    .found-count div {
+        width: 100%;
+    }
+    .found-count div:last-of-type {
+        text-align: center;
+    }
+    .found-count div:first-of-type {
+        border-right: none;
+        margin-bottom: 2.222rem;
+        position: relative;
+        text-align: center;
+    }
+    .found-count div:first-of-type::after{
+        content: "";
+        width: 170px;
+        height: 1px;
+        background: #dcdcdc;
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        margin-left: -85px;
+    }
+    .intro-row-01 div{
+        width:100%;
+    }
+    .intro-txt-div {
+        align-items: center;
+        order: -1;
+        margin-bottom: 2.778rem;
+    }
+    .intro-txt-div span{
+        text-align: center!important;
+    }
+    .intro-img-div img{
+        max-width: 200px;
+    }
+    .self-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50px;
+        margin-bottom: 0.8333rem;
+    }
+    .intro-row-02 .my-machine-div {
+        width: 100%;
+        min-height: 145px;
+    }
+    .intro-row-02 .my-machine-div:first-of-type {
+        border-right: 1px solid #dcdcdc;
+    }
+    .chart-div-01:first-of-type{
+        display:none;
+    }
+    .chart-div-01{
+        width:50%;
+    }
+    .chart-div-01:nth-of-type(3){
+        border-right: 1px solid #dcdcdc;
+    }
+    .self-circle-row {
+        width: 70%; 
+        margin: 0 auto;
+    }
+    .emer-wrap .intro-txt-div {
+        padding-left: 0;
+    }
+    .intro-img-div {
+        align-items: center;
+        padding-left: 0;
+    }
+    .service-div .service-text {
+        margin-top: 2.8rem;
+    }
+    .my-info-row{
+        flex-direction: column;
+    }
+    .my-info-row p {
+        width: 100%;
+        margin-bottom: 0.4444rem;
+    }
+    .tab-btn {
+        width: 50%;
+        border-bottom:1px solid #979797;
+    }
+    .tab-btn-row{
+        border: none;
+    }
+    .tab-div {
+        width: 100%;
+        margin-bottom: 0.8333rem;
+    }
+    .my-page-machine, .my-div-3 {
+        width: 49%;
+        margin-right: 1%;
+        margin-bottom: 1%;
+    }
+    .my-list > li.list-30 {
+        width: 100%;
+        text-align: center;
+    }
+    .my-list > li.list-50 {
+        width: 100%;
+        text-align: center;
+    }
+    .my-list > li.list-100 {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Mobile Medium Size 미만 */
+@media (max-width: 375px) {
+    .review-wrap .review-desc p {
+        line-height: 1.3;
+        height: 2.6em;
+        -webkit-line-clamp: 2;
+    }
+    .review-info span {
+        display: block;
+        margin-right: 0;
+    }
+    .ad-content-row {
+        width: 100%;
+    }
+    .certifi-row > p:nth-of-type(2) {
+        width: 40%;
+    }
+    .certifi-row > p:last-of-type {
+        width: 30%;
+    }
+    .service-div .service-text {
+        margin-top: 2.2rem;
+    }
+}
+
+/* Mobile Small Size 이상 */
+@media (min-width: 320px) {
+    .banner02 .container {
+        min-height: 490px;
+    }
+    .banner02 .container .row {
+        height: 490px;
+    }
+    .banner-flow {
+        padding-right: 70px;
+    }
+    .box-filter span {
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-left: 5px;
+        margin-right: 10px;
+        font-size: 13px;
+    }
+    .service-div {
+        padding-left: 0.5rem;
+        padding-right: 0.2rem;
+    }
+    .mob-filter-wrap .box-filter {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+    }
+    .mob-filter-wrap .box-filter {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        border-bottom: 1px solid #afafaf;
+        border-top: 1px solid #afafaf;
+    }
+    .mob-filter-wrap .mob-box-filter {
+        display: flex;
+        justify-content: space-between;
+    }
+    .mob-filter-wrap .mob-box-filter span::after {
+        content: '';
+    }
+}
+
+/* Mobile Medium Size 이상 */
+@media (min-width: 375px) {
+    .box-filter span {
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-left: 5px;
+        margin-right: 10px;
+        font-size: 14px;
+    }
+    .service-div {
+        padding-left: 1.0rem;
+        padding-right: 1.0rem;
+    }
+}
+
+/* Mobile Large Size 이상 */
+@media (min-width: 425px) {
+    .box-filter span {
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-left: 5px;
+        margin-right: 10px;
+        font-size: 14px;
+    }
+}
+
+/* Tablet Size 이상 */
+@media (min-width: 768px) {
+    .page-link {
+        font-size: 0.7778rem;
+    }
+    .banner01-circle {
+        margin-right: 1.2rem;
+    }
+    .banner02 .container {
+        min-height: 360px;
+    }
+    .banner02 .container .row {
+        height: 360px;
+    }
+    .banner-flow {
+        padding-right: 0;
+    }
+
+    .filter-wrap {
+        left: -50px;
+    }
+    .mob-filter-wrap .box-filter {
+        border: none;
+    }
+}
+
+/* Labtop Size 이상 */
+@media (min-width: 1024px) {
+    .page-link {
+        font-size: 0.8889rem;
+    }
+    .banner01-circle {
+        margin-right: 3rem;
+    }
+    .banner02 .container {
+        min-height: 355px;
+    }
+    .banner02 .container .row {
+        height: 355px;
+    }
+    .detail-shop-row .review-info span {
+        display: inline-block;
+    }
+    .filter-wrap {
+        left: 10px;
+    }
+    .mob-filter-wrap .box-filter {
+        display: inline-block;
+    }
+    .mob-filter-wrap .mob-box-filter {
+        display: inline-block;
+    }
+    .mob-filter-wrap .mob-box-filter span::after {
+        content: '|';
+    }
+    .mob-filter-wrap .mob-box-filter:last-child span:last-child::after {
+        content: '';
+    }
+}
+
+/* Labtop Large Size 이상 */
+@media (min-width: 1440px) {
+ 
+}

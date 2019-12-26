@@ -1,0 +1,211 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsRegist.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../css/layer_stock.css" />
+<style>
+	.goodsOptionTable {display:none; position:absolute; border-collapse:collapse; top:-10px; left:60px; border:1px solid #f5f5f5;}
+	.goodsOptionTable table {width:220px;}
+	.goodsOptionTable th {padding:5px; border:1px solid #ddd; background-color:#f5f5f5}
+	.goodsOptionTable td {height:25px !important; border:1px solid #ddd; background-color:#ffffff; text-align:center;}
+
+	div.sub-choose-lay div.choose-form-lay {top:27px;right:0;width:200px;}
+	div.sub-choose-lay div.choose-down-lay {top:27px;right:140px;width:150px;}
+	div.list-string-price-lay {position:relative;}
+	div.list-string-price-lay img {cursor:pointer;}
+	div.view-string-price-lay {position:absolute;top:20px;left:41px;width:300px;z-index:100;background-color:#fff;}
+	.t_tot_stock {text-align:center; border-collapse:collapse; width:570px;}
+	.t_tot_stock td {border:1px solid #666; padding:5px;}
+	.gr_col {color:#666;}
+</style>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>즉시구매</h2>
+		</div>
+
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(buy.status_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+	
+	<ul class="right-btns">
+		<li>
+			<span class="btn large deepblue">
+				<button onclick="">계약서 작성</button>
+			</span>
+		</li>
+	</ul>
+</div>
+
+<!-- 신청리스트 테이블 : 시작 -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<table class="list-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="180" /><!--등록번호-->
+			<col width="60" /><!--선택-->
+			<col width="60" /><!--번호-->
+			<col width="*" /><!--내용-->
+			<col width="100" /><!--승인-->	
+			<col width="200" /><!--중개수수료-->
+			<col width="100" /><!--결제-->	
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th>등록번호</th>
+			<th>선택</th>
+			<th>번호</th>
+			<th>내용</th>
+			<th>승인</th>
+			<th>중개수수료</th>
+			<th>결제</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+			<tr class="list-row" style="height: 40px;">
+				<td align="center" rowspan="{? count(buy.status_list) == 0}1{:}{= count(buy.status_list)}{/}">{buy.sales_no}</td>
+				<td align="center" ><input type="checkbox" class="chk chk_one" name="chk_buy_seq" value="{buy.status_list[0].buy_seq}" /></td>
+				<td align="center" class="page_no">1</td>
+				<!-- {? count(buy.status_list) == 0} -->
+					<td align="center">즉시구매 신청 내역이 없습니다.</td>
+				<!-- {:} -->
+					<td align="center">{buy.status_list[0].status_log}</td>
+				<!-- {/} -->
+				<td align="center"">
+					<!-- {? buy.status_list[0].permit_yn == 'y'} -->
+					승인
+					<!-- {:} -->
+					<div><span class="btn small valign-middle"><a href="javascript:go_imdbuy_permit('{buy.status_list[0].buy_seq}')">승인</a></span></div>
+					<!-- {/} -->
+				</td>
+				<td align="center" rowspan="{? count(buy.status_list) == 0}1{:}{= count(buy.status_list)}{/}">{? buy.visit_pay_yn == 'y'}결제{:}미결제{/}</td>
+				<td align="center" rowspan="{? count(buy.status_list) == 0}1{:}{= count(buy.status_list)}{/}">
+					<div><span class="btn small valign-middle"><a href="javascript:show_pay_modal('{buy.info_seq}')">결제확인</a></span></div>
+				</td>
+			</tr>
+			<!-- {? count(buy.status_list) > 1} -->
+				<!-- {@ range(1, count(buy.status_list)-1)} -->
+				<tr class="list-row" style="height: 40px;">
+					<td align="center" ><input type="checkbox" class="chk chk_one" name="chk_buy_seq" value="{buy.status_list[.value_].buy_seq}" /></td>
+					<td align="center" class="page_no">{.index_+2}</td>	
+					<td align="center">{buy.status_list[.value_].status_log}</td>
+					<td align="center"">
+					<!-- {? buy.status_list[.value_].permit_yn == 'y'} -->
+					승인
+					<!-- {:} -->
+					<div><span class="btn small valign-middle"><a href="javascript:go_imdbuy_permit('{buy.status_list[.value_].buy_seq}')">승인</a></span></div>
+					<!-- {/} -->
+					</td>
+				</tr>
+				<!-- {/} -->
+			<!-- {/} -->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+</div>
+<!-- 신청리스트 테이블 : 끝 -->
+
+<form action="imdbuy_permit_process" method="post" id="frm_imdbuy" target="actionFrame">
+	<input type="hidden" name="buy_seq" />
+</form>
+
+<form action="visit_pay_check" method="post" id="frm_visit_pay" target="actionFrame">
+	<input type="hidden" name="info_seq" />
+</form>
+
+<script type="text/template" id="payModal">
+    <b>결제내역 확인</b>
+	<div style="margin-top: 15px;">
+		<b>- 결제수단 : </b>
+		<span>무통장입금</span>
+	</div>	
+	<div style="margin-top: 15px;">
+		<b>- 입금계좌 : </b>
+		<span>농협은행 302-1371-4082-81 (예금주: 에스디네트웍스(신동훈))</span>
+	</div>
+	<div style="margin-top: 15px;">
+		<b>- 입금금액 : </b>
+		<span id="txt_fee"></span>
+	</div>
+	<div style="margin-top: 15px;">
+		<b>- 결제여부 : </b>
+		<span id="txt_pay_yn"></span>
+	</div>
+	<div style="margin-top: 15px;">
+		<b>- 결제일자 : </b>
+		<span id="txt_pay_date"></span>
+	</div>
+</script>
+<script>
+function show_pay_modal(info_seq) {
+	var $this;
+    new Dialogify('#payModal')
+     .title('결제확인')
+     .buttons([
+         {
+             text: '입금확인',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+            	 var pay_yn = this.$content.find('#txt_pay_yn').data('yn');
+            	 if(pay_yn == 'y') {
+            		 alert('이미 입금 확인되었습니다.'); 
+            		 return;
+            	 }
+            	 if(confirm('입금 확인이 되었습니까 ?')) {
+					 $('#frm_visit_pay input[name=info_seq]').val(info_seq);
+					 $('#frm_visit_pay').submit();
+					 this.close();
+            	 }
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER})
+     .on('show', function(){
+    	 $this = this;
+    	 $.ajax({
+    		 type: 'post',
+    		 url: '/admin/sale/ajax_get_item',
+    		 dataType: 'json',
+    		 data: {'info_seq': info_seq},
+    		 success: function(data) {
+    			 var fee = comma(parseInt(parseInt(data.sort_price) * 1.1 / 100)) + ' 원';
+    			 var pay_yn = data.visit_pay_yn == 'y' ? '결제' : '미결제'; 
+    			 var pay_date = data.visit_pay_yn == 'y' ? data.visit_pay_date : '-';
+		    	 $this.$content.find('#txt_fee').text(fee);
+		    	 $this.$content.find('#txt_pay_yn').text(pay_yn);
+		    	 $this.$content.find('#txt_pay_yn').data('yn', data.visit_pay_yn);
+		    	 $this.$content.find('#txt_pay_date').text(pay_date);
+    		 },
+    		 error: function() {
+    			 console.log('error');
+    		 }
+    	 });
+     }).showModal();
+}
+
+function go_imdbuy_permit(buy_seq) {
+	if(confirm('승인하시겠습니까 ?')) {
+		$('#frm_imdbuy input[name=buy_seq]').val(buy_seq);
+		$('#frm_imdbuy').submit();
+	}
+}
+</script>
+{ #layout_footer }

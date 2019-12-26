@@ -1,0 +1,61 @@
+<div class="container-fluid top-pt">
+    <div class="container pt-5">
+        <div class="row">
+                <div class="col-md-2 col-sm-12">
+                    {# mypage_menu}
+                </div>
+
+                <div class="col-md-10 col-sm-12">
+
+                    <h1 class="wrap-title wrap-title-02 txt-bold mb-2">가격제안</h1>
+    
+                    <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">가격제안&nbsp<i class="accent-txt">{prop_cnt}</i>&nbsp건</h5>
+                    <form action="/sch/proposal_res_process" method="post" id="frm_proposal" target="actionFrame">
+                        <input type="hidden" name="res_type" value="seller" />
+                        <input type="hidden" name="userid" />
+                        <input type="hidden" name="sale_userid" />
+                        <input type="hidden" name="prop_seq" /> 
+                        <input type="hidden" name="permit_yn" />
+                    </form>
+                    <!-- {@ prop_list} -->
+                    <div class="my-service border">
+                        <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">등록번호 : <a href="/sch/mch_detail/{.type}/{.info_seq}">{.sales_no}</a></h5>
+                    </div>
+                         <!-- {@ .list} -->
+                        <div class="my-service border">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-medium">{..index_+1}. 제안자 : {..buy_userid}</h5>
+                            <ul class="pt-2 pb-2 my-list">
+                                <li class="my-normal-txt spacing-072 list-50">제안 신청일 : {..reg_date}</li>
+                                <li class="my-normal-txt spacing-072 list-50">제안 금액 : {= price_format(..prop_price)}원</li>
+                                <li class="my-normal-txt spacing-072 list-50">메시지 답변기한 : {..prop_date}</li>
+                            </ul>
+                        </div>
+                        <div class="my-service border">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">답변하기</h5>
+                            <ul class="pt-2 pb-2 my-list">
+                                <li class="my-normal-txt spacing-072 list-50">내 답변 : 
+                                    {? ..permit_yn == 'h'}답변 대기{: ..permit_yn == 'y'}제안 승인{: ..permit_yn == 'n'}제안 거절{: ..permit_yn == 'c'}카운터딜 제안{: ..permit_yn == 'x'}답변기한 초과{/}
+                                    {? ..permit_yn == 'h'}
+                                    <a href="javascript:go_proposal_process('y', '{..prop_seq}', '{..buy_userid}', '{..sale_userid}')" class="btn_style_01 ml-3">승인</a>
+                                    <a href="javascript:go_proposal_process('n', '{..prop_seq}', '{..buy_userid}', '{..sale_userid}')" class="btn_style_01">거절</a>
+                                    <a href="/sch/proposal/{..type}/{..info_seq}/counter/{..prop_seq}" class="btn_style_01">카운터딜</a>
+                                    {/}
+                                </li>
+                                <!-- {? ..permit_yn == 'c'} -->
+                                <li class="my-normal-txt spacing-072 list-50">구매자 답변 : {? ..counter_permit_yn == 'h'}답변 대기{: ..counter_permit_yn == 'y'}제안 승인{: ..counter_permit_yn == 'n'}제안 거절{: ..counter_permit_yn == 'x'}답변기한 초과{/}</li>
+                                <li class="my-normal-txt spacing-072 list-50">카운터딜 금액 : {= price_format(..counter_price)}원</li>
+                                <li class="my-normal-txt spacing-072 list-50">메시지 답변기한 : {..counter_date}</li>
+                                <!-- {/} -->
+                            </ul>
+                        </div>
+                         <!-- {/} -->
+                    <div class="mb-4"></div>
+                    <!-- {:} -->
+                    <div class="default-box small mb-4">
+                        <p class="default-message">가격제안 요청 내역이 없습니다.</p>
+                    </div>
+                    <!-- {/} -->
+            </div>
+        </div>
+    </div>
+</div>

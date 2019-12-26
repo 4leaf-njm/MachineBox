@@ -1,0 +1,62 @@
+<div class="container-fluid top-pt calc-wrap">
+    <!-- {? page == '01'} -->
+    <div class="container pt-5">
+        <form action="/sch/pay_process" method="post" id="frm_pay">
+            <input type="hidden" name="page" value="{page}"/>
+            <input type="hidden" name="pay_type" value="{pay_type}"/>
+            
+            <!-- {? pay_type == 'buy'} -->
+            <input type="hidden" name="info_seq" value="{info_seq}" />
+            <div class="row pb-4" style="border: 1px solid #eeeeee; border-radius: 10px;">
+                <div class="col-12 mt-4">
+                    <h1 class="wrap-title txt-center txt-medium mb-3" style="font-size: 1.2rem;">셀프판매 이용수수료 안내</h1>
+                    <h1 class="wrap-title txt-center txt-medium mt-2 mb-3" style="font-size: 1.2rem; color: #d78323">안녕하세요. {sale_userid} 판매자님!</h1>
+                    <p class="wrap-title-sub txt-light">구매 예정자로부터 등록하신 {model_name} ({sales_no})의 매입<br/>현장방문 신청이 들어왔습니다. 미팅 진행을 하시겠습니까 ?</p>
+                </div>
+                
+                <div class="col-12 txt-center mt-3 pl-4 pr-4">
+                    <hr style="display: block; border: none; border-bottom: 1px solid #dcdcdc;" />
+                </div>
+                
+                <div class="col-12 txt-center mt-3">
+                    <p class="wrap-title-sub txt-light">기계 판매 현장미팅 전에 <b><u>셀프판매 이용수수료의 결제</u></b>를 하셔야 합니다.<br/><b>이용수수료는 기계 판매 금액의 2.2%(부가세포함)</b>입니다.<br/>단, 이용수수료는 최초 1회만(60일이내) 청구되며, 결제가 완료된 해당 기계는>별도의 추가 비용이 발생되지 않습니다.<br />론칭 이벤트 이용수수료 할인&nbsp;&nbsp;&nbsp;<b><big><strike>2.2%</strike> → 1.1%</big></b></p>
+                </div>
+            </div>
+            <!-- {/} -->
+            
+            <div class="row mb-5">
+                <div class="col-12 txt-center mt-4 mb-4">
+                    <button type="button" class="btn-type-02 download-btn txt-medium" onclick="go_pay_process()">결제하기</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- {: page == '02'} -->
+    <div class="container pt-5">
+        <div class="row pb-4 mb-5" style="border: 1px solid #eeeeee; border-radius: 10px;">
+            <div class="col-12 mb-3 mt-4">
+                <h1 class="wrap-title txt-center txt-medium mb-2" style="font-size: 1.2rem;">현장미팅 이용수수료 결제</h1>
+                <p class="wrap-title-sub">이용 수수료 1.1%(부가세 포함) : {= number_format(fee)}원</p>
+            </div>
+            
+            <div class="col-12 txt-center mt-2 pl-4 pr-4">
+                <hr style="display: block; border: none; border-bottom: 1px solid #dcdcdc;" />
+            </div>
+            
+            <div class="col-12 txt-center mt-3 mb-4">
+                <p class="wrap-title-sub txt-demi-light pb-2">결제수단 : 무통장입금</p>
+                <p class="wrap-title-sub txt-demi-light pb-2">입금계좌 : 농협은행 302-1371-4082-81 (예금주: 에스디네트웍스(신동훈))</p>
+                <p class="wrap-title-sub txt-demi-light pb-2">입금금액 : {= number_format(fee)}원</p>
+            </div>
+        </div>
+    </div>
+    <!-- {/} -->
+</div>
+
+<script>
+function go_pay_process() {
+    if(confirm('결제를 진행하시겠습니까 ?')) {
+        $('#frm_pay').submit();
+    }
+}
+</script>

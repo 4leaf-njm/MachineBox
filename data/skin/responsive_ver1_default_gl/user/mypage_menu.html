@@ -1,0 +1,84 @@
+<div class="filter-wrap-02 pl-1 pt-1 pb-3">
+    <div class="filter-text-wrap my-page-menu">
+        <ul class="d-block" style="height: auto;">
+            <li><b>내 기계 구매</b>
+                <ul class="mt-2">
+                    <li><a href="/user/my_buy_recent">최근에 본 기계</a></li>
+                    <li><a href="/user/my_buy_ing">구매중 기계{? new_buy_ing == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                    <li><a href="/user/my_buy_finish">구매완료 기계{? new_buy_finish == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                    <li><a href="/user/my_sale_estimate">견적제품{? new_sale_estimate == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="filter-text-wrap my-page-menu">
+        <ul class="d-block" style="height: auto;">
+            <li><b>내 기계 판매</b>
+                <ul class="mt-2">
+                    <li><a href="/user/my_using_service">이용중인 서비스</a></li>
+                    <li><a href="/user/my_sale_reply">가격제안{? new_sale_reply == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                    <li><a href="/user/my_sale_wait">판매대기 기계</a></li>
+                    <li><a href="/user/my_sale_ing">판매중 기계{? new_sale_ing == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                    <li><a href="/user/my_sale_finish">판매완료 기계</a></li>
+                    <li><a href="/user/my_sale_emergency">긴급판매 신청{? new_sale_emergency == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="filter-text-wrap my-page-menu">
+        <ul class="d-block" style="height: auto;">
+            <li><b>외주</b>
+                <ul class="mt-2">
+                    <li><a href="/user/my_osc_wait">외주 대기{? new_osc_wait == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                    <li><a href="/user/my_osc_ing">외주 의뢰중{? new_osc_ing == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                    <li><a href="/user/my_osc_end">외주 진행중{? new_osc_end == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                    <li><a href="/user/my_osc_finish">외주 완료{? new_osc_finish == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="filter-text-wrap my-page-menu">
+        <ul class="d-block" style="height: auto;">
+            <li><b>수주</b>
+                <ul class="mt-2">
+                    <li><a href="/user/my_ptn_recent">최근에 본 수주</a></li>
+                    <li><a href="/user/my_ptn_wait">수주 지원중{? new_ptn_wait == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                    <li><a href="/user/my_ptn_ing">수주 진행중{? new_ptn_ing == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                    <li><a href="/user/my_ptn_finish">수주 완료{? new_ptn_finish == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="filter-text-wrap my-page-menu">
+        <ul class="d-block" style="height: auto;">
+            <li><b>결제관리</b>
+                <ul class="mt-2">
+                    <li><a href="/user/my_pay_list">결제 내역</a></li>
+
+                </ul></li>
+        </ul>
+    </div>
+    <div class="filter-text-wrap my-page-menu">
+        <ul class="d-block" style="height: auto;">
+            <li><b>회원정보 관리</b>
+                <ul class="mt-2">
+                    <li><a href="/mch/partner_reg">기업 등록/수정</a></li>
+                <!-- <li><a href="/user/my_info_modify">기업 수정</a></li> -->
+                    <li><a href="/user/my_info_modify">회원정보 수정</a></li>
+                    <li><a href="/user/my_qna_write">관리자문의</a></li>
+                    <li><a href="/user/my_qna_list">문의사항{? new_qna_list == 'true'}<span class="txt_new">new</span>{/}</a></li>
+                </ul></li>
+        </ul>
+    </div>
+    <style>
+        .filter-text-wrap li {position: relative; width: 125px;}
+        .filter-text-wrap li .txt_new {
+            position: absolute;
+            font-size: 9px;
+            bottom: 3px;
+            color: #f73a3a;
+            font-weight: bold;
+            margin-left: 4px;
+        }
+    </style>
+</div>

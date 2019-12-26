@@ -1,0 +1,17 @@
+<div class="layout_footer Mt0">
+	<div class="footer_c">
+		<div class="resp_wrap">
+			<ul class="menu3">
+				<li><span designElement="text">회사명 :</span> <span class="pcolor">{config_basic.companyName}</span></li>
+				<li><span designElement="text">대표자 :</span> <span class="pcolor">{config_basic.ceo} </span></li>
+				<li><span designElement="text">주소 :</span> <span class="pcolor">{? config_basic.companyAddress_type == "street"}{config_basic.companyAddress_street}{:}{config_basic.companyAddress}{/} {config_basic.companyAddressDetail}</span></li>
+				<li><span designElement="text">전화 :</span> <a href="tel:{config_basic.companyPhone}" class="pcolor">{config_basic.companyPhone}</a></li>
+				<!--{ ? config_basic.companyFax }-->
+				<li>팩스 : <span class="pcolor">{config_basic.companyFax}</span></li>
+				<!--{ / }-->
+				<li>호스팅 제공자 : <span class="pcolor">(주)가비아씨엔에스</span></li>
+			</ul>
+			<p class="copyright"><span designElement="text">COPYRIGHT (c)</span> <span class="pcolor">{config_basic.companyName}</span> <span designElement="text">ALL RIGHTS RESERVED.</span></p>
+		</div>
+	</div>
+</div>

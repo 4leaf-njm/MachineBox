@@ -1,0 +1,154 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsRegist.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../css/layer_stock.css" />
+<style>
+	.goodsOptionTable {display:none; position:absolute; border-collapse:collapse; top:-10px; left:60px; border:1px solid #f5f5f5;}
+	.goodsOptionTable table {width:220px;}
+	.goodsOptionTable th {padding:5px; border:1px solid #ddd; background-color:#f5f5f5}
+	.goodsOptionTable td {height:25px !important; border:1px solid #ddd; background-color:#ffffff; text-align:center;}
+
+	div.sub-choose-lay div.choose-form-lay {top:27px;right:0;width:200px;}
+	div.sub-choose-lay div.choose-down-lay {top:27px;right:140px;width:150px;}
+	div.list-string-price-lay {position:relative;}
+	div.list-string-price-lay img {cursor:pointer;}
+	div.view-string-price-lay {position:absolute;top:20px;left:41px;width:300px;z-index:100;background-color:#fff;}
+	.t_tot_stock {text-align:center; border-collapse:collapse; width:570px;}
+	.t_tot_stock td {border:1px solid #666; padding:5px;}
+	.gr_col {color:#666;}
+</style>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>기계찾아줘</h2>
+		</div>
+
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(find_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+	
+	<ul class="right-btns">
+		<li>
+			<span class="btn small black">
+				<button onclick="go_insert_find()">신청</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn small deepblue">
+				<button onclick="go_modify_find()">수정</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn small red">
+				<button onclick="go_delete_find_process()">삭제</button>
+			</span>
+		</li>
+	</ul>
+</div>
+
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<!-- 신청리스트 테이블 : 시작 -->
+	<table class="list-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="40" /><!--선택-->
+			<col width="40" /><!--번호-->
+			<col width="150" /><!--신청일-->	
+			<col width="100" /><!--신청자-->
+			<col width="100" /><!--기계분류-->
+			<col width="100" /><!--기계종류-->
+			<col width="100" /><!--제조사-->
+			<col width="100" /><!--모델명-->
+			<col width="120" /><!--연식-->
+			<col width="120" /><!--가격대-->
+			<col width="140" /><!--지역-->
+			<col width="240" /><!--요청사항-->
+			<col width="100" /><!--구입예정일-->
+			<col width="180" /><!--배송대행 서비스신청-->
+			<col width="80" /><!--상태-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th>선택</th>
+			<th>번호</th>
+			<th>신청일</th>
+			<th>신청자</th>
+			<th>기계분류</th>
+			<th>기계종류</th>
+			<th>제조사</th>
+			<th>모델명</th>
+			<th>연식</th>
+			<th>가격대</th>
+			<th>지역</th>
+			<th>요청사항</th>
+			<th>구입예정일</th>
+			<th>배송대행 서비스신청</th>
+			<th>상태</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+	<!--{? find_list }-->
+		<!--{@ find_list }-->
+			<tr class="list-row" style="height: 100px;">
+				<td align="center" ><input type="checkbox" class="chk chk_one" name="chk_find_seq" value="{.find_seq}" /></td>
+				<td align="center" class="page_no">{.index_+1}</td>
+				<td align="center">{.reg_date}</td>
+				<td align="center">{.userid}</td>
+				<td align="center">{.kind_type}</td>
+				<td align="center">{.kind_name}</td>
+				<td align="center">{.mnf_name}</td>
+				<td align="center">{.model_name}</td>
+				<td align="center">{.model_year}</td>
+				<td align="center">{.hope_price}</td>
+				<td align="center">{.area_list}</td>
+				<td align="center">{.option}</td>
+				<td align="center">{.buy_expect_date}</td>
+				<td align="center">{.deliver_service}</td>
+				<td align="center">
+					<!-- {? .state == '1'} -->
+					상담중
+					<!-- {: .state == '2'} -->
+					상담완료
+					<!-- {: .state == '3'} -->
+					상담종료
+					<!-- {/} -->
+				</td>
+			</tr>
+		<!--{ / }-->
+	<!--{ : }-->
+		<tr class="list-row">
+			<td align="center" colspan="14">
+					신청한 기계가 없습니다.
+			</td>
+		</tr>
+	<!--{ / }-->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+	<!-- 신청리스트 테이블 : 끝 -->
+</div>
+
+<form action="find_delete_process" method="post" id="frm_delete" target="actionFrame">
+	<input type="hidden" name="find_seq" />
+</form>
+
+{ #layout_footer }

@@ -1,0 +1,96 @@
+<div class="container-fluid top-pt calc-wrap wrap-bg-gray">
+    <div class="container pt-2 pb-3">
+        <form action="/sch/imd_buy_process" method="post" id="frm_imdbuy">
+            <input type="hidden" name="type" value="{type}" />
+            <input type="hidden" name="info_seq" value="{info_seq}" />
+            <div class="row">
+                <div class="col-12 mb-4 mt-5">
+                    <h1 class="wrap-title txt-center txt-bold mb-1">즉시구매</h1>
+                    <p class="wrap-title-sub">자세히 입력할수록 더 정확하고 빠른 서비스를 이용할 수 있습니다.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">희망 배송일 설정</p>
+                        <input type="text" name="hope_date" class="input-style input-lg pickadate" readonly>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">도착시간</p>
+                        <input type="text" name="hope_time" class="input-style input-lg pickatime" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <p class="form-title-type-02">머신박스 배송 대행서비스 신청</p>
+                    <div class="form-row-01 deliver-service-div">
+                        <input type="hidden" name="deliver_service" value="상차" />
+                        <button type="button" class="input-style input-sm-5 pre-style btn-type-02-active">상차</button>
+                        <button type="button" class="input-style input-sm-5 pre-style">하차</button>
+                        <button type="button" class="input-style input-sm-5 pre-style">배송</button>
+                        <button type="button" class="input-style input-sm-5 pre-style">해체/설치</button>
+                        <button type="button" class="input-style input-sm-5 pre-style">신청안함</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 txt-center mt-5 mb-5">
+                    <button type="button" class="btn-type-02 download-btn" onclick="go_imdbuy()">신청하기</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="container-fluid pb-3">
+    <div class="container mb-5 pt-5">
+        <div class="row service-box">
+            <div class="col-12 col-md-6">
+                <div class="row">
+                    <div class="col-12 col-sm-7">
+                        <h2>스마트 안전계약</h2>
+                        <p>머신박스의 스마트안전계약은 계약서 작성, 날인을 온라인으로 진행하는 편리한 방법이며, 머신박스가 중개사로 참여하는 3자계약으로 전자서명법 상 날인 즉시 계약의 효력이 발생합니다.</p>
+                    </div>
+                    <div class="col-12 col-sm-5 txt-center">
+                        <img src="../images/custom/main/main-6.png" >
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="row pt-3 pt-md-0">
+                    <div class="col-12 col-sm-7">
+                        <h2>대금보호 시스템</h2>
+                        <p>거래를 시작할 때 계약 대금을 지급받아 보호하고, 거래 완료가 확인되면 대금을 입금해주는 머신박스 에스크로 서비스로 거래 당사자 모두 안전하게 거래보호를 받을 수 있습니다.</p>
+                    </div>
+                    <div class="col-12 col-sm-5 txt-center">
+                        <img src="../images/custom/main/main-7.png" >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/template" id="alertModal">
+    <p style="font-size: 13.5px; font-weight: 600; font-family: '나눔고딕'; line-height: 180%; letter-spacing: -0.1px;"><big>"주의"</big> 현장미팅을 하지 않을 경우 판매기계의 품명, 품질, 규격, 부속기계, 수량이 다를 수 있는 경우가 있어 현장미팅을 통해 최종적으로 구매자가 확인하셔야 만족스러운 거래를 할 수 있습니다.</p>
+</script>
+<script>
+function show_alert_modal() {
+    new Dialogify('#alertModal')
+     .title('주의')
+     .buttons([
+         {
+             text: '확인',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER}).showModal();
+}
+if('{popup}' == 'y') {
+    show_alert_modal();
+}
+</script>

@@ -1,0 +1,248 @@
+{ #layout_header }
+
+<style style="text/css">
+	.btnhelp {display:inline-block; width:14px; height:14px; cursor:pointer; background:url('../images/common/bg_icon.png'); vertical-align:middle;margin-bottom:2px}
+</style>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.fmdomsaver.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.colorpicker.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+<script type="text/javascript" src="/app/javascript/js/scm.common.js"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsQuickRegist.js"></script>
+<script type="text/javascript" src="/app/javascript/js/batch.js"></script>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>외주 {? reg_mode == 'insert'}신규{: reg_mode == 'modify'}수정{/}</h2>
+		</div>
+
+		<!-- 좌측 버튼 -->
+		<ul class="page-buttons-left"></ul>
+
+		<!-- 우측 버튼 -->
+		<ul class="page-buttons-right"></ul>
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+<br style="line-height:30px;" />
+
+<form action="../osc/osc_regist_process" method="post" id="frm_regist" target="actionFrame">
+<input type="hidden" name="mode" value="" />
+<input type="hidden" name="serialize" id="serialize" value=""/>
+<input type="hidden" name="mcount" value="0">
+<input type="hidden" name="member" value="search">
+<input type="hidden" name="searchSelect" value="search">
+<input type="hidden" name="selectMember" value="">
+<input type="hidden" name="wheres" value=""/>
+
+<input type="hidden" name="osc_seq" value="{osc_seq}" />
+<input type="hidden" name="reg_mode" value="{reg_mode}" />
+<input type="hidden" name="userid" />
+
+<div class="clearbox">
+	<ul class="left-btns clearbox">
+		<li>
+			<span class="btn small black"><button type="button" onclick="go_osc_regist_process()">{? reg_mode == 'insert'}등록{: reg_mode == 'modify'}수정{/}</button></span>
+		</li>
+		<li>
+			<span class="btn small"><button type="button" id="searchMemberBtn" callpage="sale">선택</button></span>
+			(외주사 : <span class="txt_userid"></span>)
+		</li>
+	</ul>
+</div>
+<table class="info-table-style quick-goods-regist-table" width="100%" style="margin-bottom: 40px;">
+<thead>
+<tr>
+<!-- 	<th class="its-th-align center" width="165">관련자료</th> -->
+	<th class="its-th-align center" width="110">카테고리</th>
+	<th class="its-th-align center" width="110">세부 카테고리</th>
+	<th class="its-th-align center" width="140">외주명</th>
+	<th class="its-th-align center" width="60">예상기간</th>
+	<th class="its-th-align center" width="110">지출예산</th>
+	<th class="its-th-align center" width="80">외주업무 지역</th>
+	<th class="its-th-align center" width="200">외주업무 내용</th>
+	<th class="its-th-align center" width="110">관련 기술</th>
+	<th class="its-th-align center" width="110">모집 마감일</th>
+	<th class="its-th-align center" width="110">업무시작 예상일</th>
+</tr>
+</thead>
+<tbody class="quick-goods-regist-tbody">
+<tr class="option-rows" style="height: 50px;">
+	<!-- <td class="its-td-align left pdr5 seller-box" style="vertical-align:top;" id="picture_list"></td> -->
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="cate_seq" />
+        <select name="sel_cate" class="simple" style="width: 100%;" onchange="change_cate_sub()">
+             <option>카테고리</option>
+             <!-- {@ cate_list} -->
+             <option data-seq="{.cate_seq}">{.cate_name}</option>
+             <!-- {/} -->
+         </select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="cate_sub" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="osc_name" style="width: 85%;" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="8" name="expect_date" style="width: 85%;" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="12" name="budget" style="width: 58%;" /> 만원
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="area_seq" />
+		<select name="sel_area" class="simple" style="width:100%;">
+			<!-- {@ area_list} -->
+            <option data-seq="{.area_seq}">{.area_name}</option>
+            <!-- {/} -->
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<textarea name="osc_content" class="simple" style="width: 90%; height: 65px;"></textarea>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<div id="tech_list">
+			<input type="text" size="9" name="osc_tech_arr[]" style="margin-bottom: 3px; width: 85%;"/>
+		</div>
+		<span class="btn small valign-middle" style="margin-top: 2px;"><input type="button" value="추가" class="btn_tech_add"/></span>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="osc_end_date" class="datepicker" style="width: 70%;" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="start_expect_date" class="datepicker" style="width: 70%;" />
+	</td>
+</tr>
+</tbody>
+</table>
+</form>
+<script>
+function change_cate_sub() {
+    var cate_seq = $('select[name=sel_cate] option:selected').data('seq');
+    var isChange = false;
+    $.each($('select[name=sel_cate_sub]'), function(index, value) {
+        var target = $(this).data('target');
+        if(target == 'sub-' + cate_seq) {
+            $('select[name=sel_cate_sub]').addClass('hide');
+            $('select[name=sel_cate_sub]').removeClass('active');
+            $(this).removeClass('hide');
+            $(this).addClass('active');
+            isChange = true;
+        }
+    });
+    if(isChange == false) {
+        $('select[name=sel_cate_sub]').addClass('hide');
+        $('select[name=sel_cate_sub]').eq(0).removeClass('hide');
+        $('select[name=sel_cate_sub]').removeClass('active');
+        $('select[name=sel_cate_sub]').eq(0).addClass('active');
+    }
+}
+
+$('.btn_tech_add').on('click', function(index, value) {
+	var html = '<input type="text" size="9" name="osc_tech_arr[]" style="margin-bottom: 3px; width: 85%;"/>';
+	$('#tech_list').append(html);
+});
+
+var osc_seq = '{osc_seq}';
+
+if(osc_seq != '') {
+	$.ajax({
+		type: 'post',
+		url: 'ajax_get_osc',
+		dataType: 'json',
+		data: {'osc_seq': osc_seq},
+		success: function(data) {
+			$.each($('select[name=sel_cate] option'), function(index, value) {
+				if($(this).data('seq') == data.cate_seq)
+					$(this).prop('selected', true);
+			});
+			
+			/*
+			$('select[name=sel_cate_sub]').addClass('hide');
+			$('select[name=sel_cate_sub]').removeClass('active');
+			var is_cate_sub = false;
+			$.each($('select[name=sel_cate_sub]'), function(index, value) {
+				if($(this).data('target') == 'sub-' + data.cate_seq) {
+					$(this).removeClass('hide');
+					$(this).addClass('active');
+					is_cate_sub = true;
+					
+					$.each($(this).find('option'), function(index, value) {
+						if($(this).data('seq') == data.cate_sub_seq) {
+							$(this).prop('selected', true);
+						}
+					});
+					return;
+				}
+			});
+			if(is_cate_sub == false) {
+				$('select[name=sel_cate_sub]').eq(0).removeClass('hide');
+			}
+			*/
+			$.each($('select[name=sel_area] option'), function(index, value) {
+				if($(this).data('seq') == data.area_seq)
+					$(this).prop('selected', true);
+			});
+			$('input[name=cate_sub]').val(data.cate_sub);
+			$('input[name=osc_name]').val(data.osc_name);
+			$('input[name=expect_date]').val(data.expect_date);
+			$('input[name=budget]').val(data.budget.replace('0000', ''));
+			$('textarea[name=osc_content]').val(data.osc_content);
+			$('input[name=start_expect_date]').val(data.start_expect_date);
+			$('input[name=osc_end_date]').val(data.osc_end_date);
+			
+			$('input[name=userid]').val(data.userid);
+			$('.txt_userid').text(data.userid);
+			
+			var html = '';
+			$.each(data.picture_list, function(index, value) {
+				html += '<img src="' + value.path + '" width="40" height="50" style="margin-right:1.5px;" /">';
+			});
+			$('#picture_list').html(html);
+			
+			$('#tech_list input').remove();
+			var tech_list = data.osc_tech.split(',');
+			if(tech_list.length == 0) {
+				var html = '<input type="text" size="9" name="osc_tech_arr[]" style="margin-bottom: 3px; width: 85%;"/>';
+				$('#tech_list').append(html);
+			} else {
+				$.each(tech_list, function(index, value) {
+					var html = '<input type="text" size="9" name="osc_tech_arr[]" value="' + value.trim() + '" style="margin-bottom: 3px; width: 85%;"/>';
+					$('#tech_list').append(html);
+				});
+			}
+		},
+		error: function(request,status,error) {
+			console.log('error');
+		}
+	});
+} else {
+	$('.txt_userid').text('선택안함');
+}
+
+function go_osc_regist_process() {
+	var reg_mode = '{reg_mode}';
+	var mode_nm = reg_mode == 'insert' ? '등록' : '수정';
+	
+	if($('input[name=userid]').val() == '') {
+		alert('외주사를 선택해주세요.');
+		return;
+	}
+	if(confirm('입력하신 내용으로 ' + mode_nm + ' 하시겠습니까 ?')) {
+		$.each($('#tech_list input'), function(index, value) {
+			if($(this).val() == '') {
+				$(this).remove();
+			}
+		});
+    $('input[name=cate_seq]').val($('select[name=sel_cate] option:selected').data('seq')); 
+    $('input[name=area_seq]').val($('select[name=sel_area] option:selected').data('seq'));
+    $('input[name=budget]').val($('input[name=budget]').val() + '0000');
+		$('#frm_regist').submit();
+	}
+}
+</script>
+
+{ #layout_footer }

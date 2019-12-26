@@ -1,0 +1,57 @@
+<div class="container-fluid top-pt calc-wrap">
+    <div class="container mb-5 pt-5">
+        <div class="row">
+            <div class="col-12 mb-5 mt-4">
+                    <h1 class="wrap-title txt-center txt-bold mb-1">
+                        {? pay_method == '무통장 입금'}셀프판매 결제안내
+                        {: type == 'self'}셀프판매 등록완료
+                        {: type == 'emergency'}긴급판매 신청완료
+                        {: type == 'direct'}머박다이렉트 신청완료
+                        {: type == 'turnkey'}턴키매각 신청완료
+                        {/}
+                    </h1>
+                    <p class="wrap-title-sub">
+                        {? pay_method == '무통장 입금'}무통장 입금을 진행하시면 30분 이내 광고가 등록됩니다.
+                        {: type == 'self'}감사합니다. 정상적으로 기계등록이 완료되었습니다. 빠른 판매가 되길 바랍니다.
+                        {: type == 'emergency' || type == 'direct' || type == 'turnkey'}등록 신청이 되었습니다. 성공적인 판매를 지원합니다. 
+                        {/}
+                    </p>
+            </div>
+            <div class="col-12 ad-content-wrap pt-4 pb-4">
+                <p class="form-title-type-02 txt-black mt-3 mb-3 txt-center" style="font-size: 0.8888rem;">
+                    {? pay_method == '무통장 입금'}- 무통장 입금안내 -<br/>입금계좌 : 농협은행 302-1371-4082-81 (예금주: 에스디네트웍스(신동훈))&nbsp;&nbsp;/&nbsp;&nbsp;결제금액 : {= number_format(total_price)} 원<br/>자세한 등록내역은 마이페이지에서 확인하실 수 있습니다.
+                    {: type == 'self'}자세한 등록내역은 마이페이지에서 확인하실 수 있습니다.
+                    {: type == 'emergency' || type == 'direct' || type == 'turnkey'}관리자가 승인 중 입니다. 자세한 등록내역은 마이페이지에서 확인하실 수 있습니다.
+                    {/}
+                </p>
+            </div>
+            <div class="col-12 txt-center mt-5">
+                <button class="btn-type-02 download-btn" onclick="location.href='/'">메인으로</button>
+                {? sales_seq && pay_method != '무통장 입금'}
+                    <button class="btn-type-02 download-btn" onclick="location.href='/sch/mch_detail/{type}/{info_seq}'">등록한 기계보기</button>
+                {/}
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/template" id="alertModal">
+    <p style="font-size: 13.5px; font-weight: 600; font-family: '나눔고딕'; line-height: 180%; letter-spacing: -0.1px;">감사합니다. 무통장 입금을 진행하시면 30분 이내 광고가 등록됩니다.<br/><b>* 무통장입금 안내<br/>농협은행, 에스디네트웍스(신동훈), 계좌번호 302-1371-4082-81</b></p>
+</script>
+<script>
+function show_alert_modal() {
+    new Dialogify('#alertModal')
+     .title('결제 안내')
+     .buttons([
+         {
+             text: '확인',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER}).showModal();
+}
+if('{pay_method}' == '무통장 입금') {
+    show_alert_modal();
+}
+</script>

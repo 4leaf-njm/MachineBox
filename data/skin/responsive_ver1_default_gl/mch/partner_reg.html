@@ -1,0 +1,251 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+        <div class="row">
+                <div class="col-12 mt-5 pt-2 pb-5">
+                        <h1 class="wrap-title txt-center txt-bold mb-2">파트너님의 정보를 기입해주세요.</h1>
+                        <p class="wrap-title-sub">기업홍보를 위한 공간입니다. 실적, 자격증 등 데이터가 있는 자료를 등록하시면 공신력있는 홍보가 가능합니다.</p>
+                </div>
+        </div>
+    </div>
+    <div class="container">
+        <form action="/mch/partner_process" method="post" id="frm_partner" enctype="multipart/form-data">
+            <input type="hidden" name="pofol_cnt" />
+            <input type="hidden" name="partner_seq" value="{info.partner_seq}"/>
+            
+            <div class="row">
+                    <h2 class="col-12 form-title-type-01 form-title-03 mb-4 mt-5">기본정보</h2>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <div class="form-row-02 align-items-center">
+                                <label for="profile-add" class="profile-label" {? info.partner_seq}style="background-image:url('{info.profile_path}'); font-size: 0;"{/}>+</label>
+                                    <!-- style="background-image:url('../images/custom/product.JPG')" -->
+                                    <input type="file" name="profile_file" class="input-file" id="profile-add">
+                                    <div class="ml-4">
+                                            <p class="form-title-type-01 form-title-03">{userInfo.userid}</p>
+                                            <div class="review-info">
+                                                <!-- {? info.partner_seq} -->
+                                                    <!-- {? info.grade == 0} -->
+                                                        <!-- {@ range(0, 4)} -->
+                                                            <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                        <!-- {/} -->
+                                                    <!-- {: info.grade == 5} -->
+                                                        <!-- {@ range(0, 4)} -->
+                                                            <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                        <!-- {/} -->
+                                                    <!-- {:} -->
+                                                        <!-- {@ range(0, info.grade-1)} -->
+                                                            <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                        <!-- {/} -->
+                                                        <!-- {@ range(info.grade, 4)} -->
+                                                            <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                        <!-- {/} -->
+                                                    <!-- {/} -->
+                                                <!-- {:} -->
+                                                    <!-- {@ range(0, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {/} -->
+                                            </div>
+                                    </div>
+                            </div>
+                            
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                        <p class="form-title-type-02">업력</p>
+                        <input type="text" name="career_year" class="input-style input-gray input-border-none input-lg" placeholder="ex) 10~15년" value="{info.career_year}">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">지역</p>
+                            <input type="hidden" name="area_seq" />
+                            <select type="text" name="sel_area" class="input-style input-gray input-lg select-style">
+                                <option>지역을 선택해주세요.</option>
+                                <!-- {@ area_list} -->
+                                <option data-seq="{.area_seq}" {? info.area_seq == .area_seq }selected{/}>{.area_name}</option>
+                                <!-- {/} -->
+                            </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">업종</p>
+                            <input type="text" name="career_type" class="input-style input-gray input-border-none input-lg" value="{info.career_type}" />
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">주서비스</p>
+                        <input type="text" name="main_service" class="input-style input-gray input-border-none input-lg" placeholder="주서비스를 입력하세요." value="{info.main_service}">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">카테고리</p>
+                            <input type="hidden" name="cate_seq" />
+                            <select type="text" name="sel_cate" class="input-style input-gray input-lg select-style">
+                                <option>카테고리를 선택해주세요.</option>
+                                <!-- {@ cate_list} -->
+                                <option data-seq="{.cate_seq}" {? info.cate_seq == .cate_seq }selected{/}>{.cate_name}</option>
+                                <!-- {/} -->
+                            </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5" id="option-02-div">
+                            <p class="form-title-type-02">보유 기술</p>
+                            <input type="hidden" name="tech_list" />
+                            <div class="file-box mb-3">
+                                <button type="button" class="input-inline-label">추가하기</button>
+                                <input type="text" id="option-02" class="input-inline input-style input-gray input-border-none input-lg" placeholder="보유기술명을 입력해주세요.">
+                            </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                        <p class="form-title-type-02 invisible">.</p>
+                        <div class="form-row-02" id="option-02-append">
+                            <!-- {? info.tech_list} -->
+                                <!-- {@ explode(', ', info.tech_list)} -->
+                                <div class="options-div mr-2 mb-1">
+                                    <input type="hidden" name="option_02_arr" value="{.value_}" class="machine_option" />
+                                    <pre class="options-txt">{.value_}</pre>
+                                    <i class="options-delete-btn"></i>
+                                </div>
+                                <!-- {/} -->
+                            <!-- {/} --> 
+                        </div>
+                    </div>
+                <div class="col-12 mb-5">
+                            <p class="form-title-type-02">회사소개</p>
+                    <textarea name="introduce" class="input-style input-gray input-border-none input-lg textarea-style" cols="30" rows="10" placeholder="회사소개를 적어주세요.">{info.introduce}</textarea>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-4 mt-5"> 
+                            <h2 class="col-12 form-title-type-01 form-title-03 pl-0">자격증</h2>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-4 mt-5 txt-right">
+                            <button type="button" class="btn-type-01 btn-sm btn-turnkey-add" onclick="certificate_add()">추가하기</button>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5"> 
+                            <p class="form-title-type-02">자격증명</p>
+                        <input type="text" id="certName" class="input-style input-gray input-border-none input-lg" placeholder="자격증명을 입력해주세요.">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">자격증 발행일</p>
+                        <input type="text" id="certDate" class="input-style input-gray input-border-none input-lg pickadate_default">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5" id="option-01-div">
+                            <p class="form-title-type-02">자격증 발행기관</p>
+                            <div class="file-box mb-3">
+                                    <button type="button" class="input-inline-label">추가하기</button>
+                                    <input type="text" id="option-01" class="input-inline input-style input-gray input-border-none input-lg" placeholder="자격증 발행기관을 입력해주세요.">
+                            </div>
+                            <div class="form-row-02" id="option-01-append"></div>
+                    </div>
+                    <div class="col-sm-12 mb-4"> 
+                        <div class="cert-list-div">
+                            <!-- {@ cert_list} -->
+                            <div class="cert-div modify-div" title="수정하기">
+                                <input type="hidden" name="cert_name_arr[]" value="{.cert_name}" />
+                                <input type="hidden" name="cert_org_arr[]" value="{.cert_org}" />
+                                <input type="hidden" name="cert_date_arr[]" value="{.cert_date}" />
+                                <input type="hidden" name="cert_tech_arr[]" value="{.cert_tech}" />
+                                <h3 class="cert-name">{.cert_name}</h3>
+                                <p class="cert-org">{.cert_org}</p>
+                                <p class="cert-date">{.cert_date}</p>
+                                <span class="btn-delete-cert"></span>
+                            </div>
+                            <!-- {/} -->
+                        </div>
+                    </div>
+                
+                    <div class="col-md-6 col-sm-12 mb-4 mt-5"> 
+                            <h2 class="col-12 form-title-type-01 form-title-03 pl-0">포트폴리오</h2>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-4 mt-5 txt-right">
+                            <button type="button" class="btn-type-01 btn-sm btn-turnkey-add" onclick="portfolio_add()">추가하기</button>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">포트폴리오명</p>
+                        <input type="text" id="pofolName" class="input-style input-gray input-border-none input-lg" placeholder="포트폴리오명을 입력해주세요.">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">카테고리</p>
+                                <input type="hidden" name="cate_seq" />
+                            <select type="text" name="sel_cate" class="input-style input-gray input-lg select-style" id="pofolCate">
+                                <!-- {@ cate_list} -->
+                                <option data-seq="{.cate_seq}">{.cate_name}</option>
+                                <!-- {/} -->
+
+                            </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">시작일</p>
+                        <input type="text" id="pofolStartdate" class="input-style input-gray input-border-none input-lg pickadate_default">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">종료일</p>
+                            <input type="text" id="pofolEnddate" class="input-style input-gray input-border-none input-lg pickadate_default">
+                    </div>
+                    <div class="col-12 mb-5">
+                            <p class="form-title-type-02">수행내용</p>
+                            <textarea id="pofolContent" class="input-style input-gray input-border-none input-lg textarea-style" cols="30" rows="10" placeholder="업무 수행 내용을 적어주세요."></textarea>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                            <p class="form-title-type-02">관련자료</p>
+                            <div class="file-box input-style input-border-none input-lg input-gray pre-style mb-3">
+                                    <span class="place-holder">파일을 등록해 주세요.</span>
+                                    <label for="pofol-add-1-1" class="input-file-label" id="pofol-label">추가</label>
+                                </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5 pofol-picture-div">
+                        <p class="form-title-type-02 mob-display-none" style="color:#fff">관련자료</p>
+                        <div class="form-row-02" style="flex-direction: column;">
+                            <div class="pofol-picture">
+                                <p></p>
+                                <!-- {@ range(0, count(pofol_list))} -->
+                                <input type="file" name="pofol_picture_{.value_+1}[]" class="input-file" id="pofol-add-{.value_+1}-1">
+                                <!-- {/} -->
+                            </div>
+                            <div class="pofol-picture">
+                                <p></p>
+                                <!-- {@ range(0, count(pofol_list))} -->
+                                <input type="file" name="pofol_picture_{.value_+1}[]" class="input-file" id="pofol-add-{.value_+1}-2">
+                                <!-- {/} -->
+                            </div>
+                            <div class="pofol-picture">
+                                <p></p>
+                                <!-- {@ range(0, count(pofol_list))} -->
+                                <input type="file" name="pofol_picture_{.value_+1}[]" class="input-file" id="pofol-add-{.value_+1}-3">
+                                <!-- {/} -->
+                            </div>
+                            <div class="pofol-picture">
+                                <p></p>
+                                <!-- {@ range(0, count(pofol_list))} -->
+                                <input type="file" name="pofol_picture_{.value_+1}[]" class="input-file" id="pofol-add-{.value_+1}-4">
+                                <!-- {/} -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 mb-4"> 
+                        <div class="pofol-list-div">
+                            <!-- {@ pofol_list} -->
+                            <div class="pofol-div modify-div" title="수정하기">
+                                <input type="hidden" name="pofol_name_arr[]" value="{.pofol_name}" />
+                                <input type="hidden" name="pofol_cate_arr[]" value="{.pofol_cate}" />
+                                <input type="hidden" name="pofol_startdate_arr[]" value="{.start_date}" />
+                                <input type="hidden" name="pofol_enddate_arr[]" value="{.end_date}" />
+                                <input type="hidden" name="pofol_content_arr[]" value="{.pofol_content}" />
+                                <!-- {@ .picture_list} -->
+                                <div class="pofol_picture_div">
+                                    <input type="hidden" name="pofol_picture_name_arr[]" value="{= str_replace('/data/uploads/portfolio/', '', ..path)}" />
+                                    <input type="hidden" name="pofol_picture_seq_arr[]" value="{..picture_seq}" />
+                                    <input type="hidden" name="pofol_picture_path_arr[]" value="{..path}" />
+                                    <input type="hidden" name="pofol_picture_prev_index_arr[]" value="{.index_}" />
+                                </div>
+                                <!-- {/} -->
+                                <h3 class="pofol-name">{.pofol_name}</h3>
+                                <p class="pofol-date">{.start_date} ~ {.end_date}</p>
+                                <p class="pofol-text">{.pofol_cate}</p>
+                                <span class="btn-delete-pofol"></span>
+                            </div>
+                            <!-- {/} -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mb-5 pt-5 txt-center">
+                    <button type="button" class="btn-type-02 input-border-radius" onclick="go_partner_complete()">확인</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<script>
+    default_load_data('{= count(cert_list)+1}', '{= count(pofol_list)+1}');
+</script>

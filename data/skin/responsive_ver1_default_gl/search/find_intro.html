@@ -1,0 +1,103 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+        <div class="row">
+                <div class="col-12 mt-5 pt-5 pb-5">
+                        <h1 class="wrap-title txt-center txt-bold mb-2">기계찾아줘</h1>
+                        <p class="wrap-title-sub txt-light">찾는 기계가 없으신가요?<br/> 좋은 중고기계 구입을 원하시는 구매자님을 위해 머신박스에서 만족하실때까지<br/> 무료로 쭉~ 기계를 추천해드리는 솔루션을 제공합니다.</p>
+                </div>
+                <div class="col-12 regi-bg2 found-count-border">
+                    <div class="form-row-02 found-count">
+                        <div>
+                            <span class="txt-light">신청중</span>
+                            <span class="accent-txt">{pro_cnt}</span>
+                        </div>
+                        <div>
+                            <span class="txt-light">신청누적</span>
+                            <span class="accent-txt">{tot_cnt}</span>
+                        </div>
+                    </div>
+                </div>
+                
+        </div>
+    </div>
+    <div class="container">
+            <div class="row mt-5">
+                    <div class="col-12 mb-5 txt-center">
+                        <a href="/sch/find_reg" class="btn-type-02 input-border-radius found-link">신청하기</a>
+                    </div>
+                   <div class="col-12 mt-4">
+                        <h1 class="wrap-title txt-center txt-bold">기계찾아줘 신청현황</h1>
+                   </div>
+                    <div class="col-12 mb-3">
+                        <!-- {@ find_list} -->
+                        <a href="/sch/find_info/{.find_seq}" class="found-list-01">
+                            <p>{? .state == 1}상담중{: .state == 2}상담완료{: .state == 3}상담종료{/}</p>
+                            <div class="flex-div">
+                                <span>기계종류: <i>{.kind_name}</i></span>
+                                <span>제조사: <i>{.mnf_name}</i></span>
+                                <span>모델명: <i>{.model_name}</i></span>
+                                <span>연식: <i>{.model_year}</i></span>
+                                <span>가격범위: <i>{.hope_price}</i></span>
+                                <span>등록일: <i>{= date('Y.m.d', strtotime(.reg_date))}</i></span>
+                            </div>
+                        </a>
+                        <!-- {:} -->
+                        <div class="default-box">
+                            <p class="default-message">기계 찾아줘 신청현황이 없습니다.</p>
+                        </div>
+                        <!-- {/} -->
+                    </div>
+                    <div class="col-12 mb-5 txt-center">
+                        <a href="/sch/find_sch" class="options-div found-link" style="padding: 0.2778rem 1.5rem;">전체보기</a>
+                    </div>
+                    <div class="col-12 mt-5">
+                            <h1 class="wrap-title txt-center txt-bold">기계찾아줘 이용안내</h1>
+                    </div>
+                    <div class="col-12 mb-5">
+                        <div class="form-row-02 intro-row-01 pb-5 pt-5">
+                            <div class="intro-txt-div">
+                                <p class="form-title-03 mb-2">1. 찾는 기계 정보 입력하기</p>
+                                <span class="wrap-title-sub txt-left txt-light">원하는 사양, 옵션을 구체적으로 입력하세요. 제조사 또는 비슷한 사양의 기계를 복수로 입력하시면 빠른 매칭을 할 수 있습니다.</span>
+                            </div>
+                            <div class="intro-img-div">
+                                <img src="../images/custom/intro/find.png" alt="">
+                            </div>
+                        </div>
+                        <div class="form-row-02 intro-row-01 pb-5 pt-5">
+                                <div class="intro-img-div">
+                                        <img src="../images/custom/intro/meeting.png" alt="">
+                                    </div>
+                                <div class="intro-txt-div">
+                                    <p class="form-title-03 mb-2">2. 기계 찾기 광고 시작</p>
+                                    <span class="wrap-title-sub txt-left txt-light">머신박스의 많은 회원사와 플랫폼을  이용하시는 많은 기계관계자, 공식딜러를 통해 자동 광고가 진행이 되며, 구매자님이 원하는 최적의 기계를 검색합니다.</span>
+                                </div>
+                        </div>
+                        <div class="form-row-02 intro-row-01 pb-5 pt-5">
+                                <div class="intro-txt-div">
+                                    <p class="form-title-03 mb-2">3. 추천 기계 선택</p>
+                                    <span class="wrap-title-sub txt-left txt-light">매칭을 통해 추천된 기계의 조건 등을 따져보고 선택하고, 머신박스를 통해 현장방문 등 안전하게 구매진행을 도와드립니다.</span>
+                                </div>
+                                <div class="intro-img-div">
+                                        <img src="../images/custom/intro/select.png" alt="">
+                                    </div>
+                        </div>
+                        <div class="form-row-02 intro-row-01 pb-5 pt-5">
+                                <div class="intro-img-div">
+                                        <img src="../images/custom/intro/safety.png" alt="">
+                                    </div>
+                                <div class="intro-txt-div">
+                                    <p class="form-title-03 mb-2">4. 구매진행하기</p>
+                                    <span class="wrap-title-sub txt-left txt-light">안전한 매매를 위해 머신박스만의 특별한 서비스 스마트안전계약, 대금보호시스템, 분쟁조정서비스를 이용하여, 거래를 더욱 더 안전하고, 믿을 수 있습니다.</span>
+                                </div>
+                        </div>
+                        <div class="form-row-02 intro-row-01 pb-5 pt-5">
+                                <div class="intro-txt-div">
+                                    <p class="form-title-03 mb-2">5. 대행서비스</p>
+                                    <span class="wrap-title-sub txt-left txt-light">머신박스가 대행하는 상하차, 배송, 해체/설치를 원클릭으로 신청하면, 간편하고,저렴한 가격으로 편하게 기계를 인도받을 수 있습니다.</span>
+                                </div>
+                                <div class="intro-img-div">
+                                        <img src="../images/custom/intro/completed.png" alt="">
+                                    </div>
+                        </div>
+                    </div>
+            </div>
+    </div>

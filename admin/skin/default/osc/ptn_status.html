@@ -1,0 +1,126 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsRegist.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../css/layer_stock.css" />
+<style>
+	.goodsOptionTable {display:none; position:absolute; border-collapse:collapse; top:-10px; left:60px; border:1px solid #f5f5f5;}
+	.goodsOptionTable table {width:220px;}
+	.goodsOptionTable th {padding:5px; border:1px solid #ddd; background-color:#f5f5f5}
+	.goodsOptionTable td {height:25px !important; border:1px solid #ddd; background-color:#ffffff; text-align:center;}
+
+	div.sub-choose-lay div.choose-form-lay {top:27px;right:0;width:200px;}
+	div.sub-choose-lay div.choose-down-lay {top:27px;right:140px;width:150px;}
+	div.list-string-price-lay {position:relative;}
+	div.list-string-price-lay img {cursor:pointer;}
+	div.view-string-price-lay {position:absolute;top:20px;left:41px;width:300px;z-index:100;background-color:#fff;}
+	.t_tot_stock {text-align:center; border-collapse:collapse; width:570px;}
+	.t_tot_stock td {border:1px solid #666; padding:5px;}
+	.gr_col {color:#666;}
+</style>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>파트너 관리</h2>
+		</div>
+
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(ptn_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+	
+	<ul class="right-btns">
+	   <li>
+			<span class="btn medium">
+				<button onclick="go_ptn_excel_download()">엑셀출력</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn medium deepblue">
+				<button onclick="go_ptn_modify()">수정</button>
+			</span>
+		</li>
+	</ul>
+</div>
+
+<!-- 신청리스트 테이블 : 시작 -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<table class="list-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="40" /><!--선택-->
+			<col width="40" /><!--번호-->
+			<col width="140" /><!--등록일-->
+			<col width="100" /><!--아이디-->
+			<col width="40" /><!--프로필-->
+			<col width="120" /><!--카테고리-->
+			<col width="160" /><!--주서비스-->
+			<col width="120" /><!--업태-->
+			<col width="120"/><!--업력-->
+			<col width="80"/><!--평가-->
+			<col width="80"/><!--실적-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th>선택</th>
+			<th>번호</th>
+			<th>등록일</th>
+			<th>아이디</th>
+			<th>프로필</th>
+			<th>카테고리</th>
+			<th>주서비스</th>
+			<th>업태</th>
+			<th>업력</th>
+			<th>실적</th>
+			<th>평가</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+	<!--{? ptn_list }-->
+		<!--{@ ptn_list }-->
+			<tr class="list-row">
+				<td align="center" ><input type="checkbox" class="chk chk_one" name="chk_ptn_seq" value="{.partner_seq}" /></td>
+				<td align="center" class="page_no">{.index_+1}</td>
+				<td align="center">{.reg_date}</td>
+				<td align="center"><a href="/mch/partner_info/{.partner_seq}" target="_blank">{.userid}</a></td>
+				<td align="center"><img src="{.profile_path}" style="width: 100%; height: 60px;"/></td>
+				<td align="center">{.cate_name}</td>
+				<td align="center">{.main_service}</td>
+				<td align="center">{.career_type}</td>
+				<td align="center">{.career_year}</td>
+				<td align="center"><a href="javascript:show_ptn_finish_layer('{.partner_seq}')">{.finish_cnt} 건</a></td>
+				<td align="center"><a href="javascript:show_ptn_grade_layer('{.partner_seq}')">{.grade_cnt} 건</a></td>
+			</tr>
+		<!--{ / }-->
+	<!--{ : }-->
+		<tr class="list-row">
+			<td align="center" colspan="11">
+					등록된 파트너가 없습니다.
+			</td>
+		</tr>
+	<!--{ / }-->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+</div>
+<!-- 신청리스트 테이블 : 끝 -->
+
+{ #layout_footer }

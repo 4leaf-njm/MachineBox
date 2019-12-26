@@ -1,0 +1,43 @@
+<div class="container-fluid top-pt">
+    <div class="container pt-5">
+        <div class="row mt-4">
+            <div class="col-12 mb-3">
+                <h1 class="wrap-title wrap-title-02 txt-bold txt-sm-center">이용 후기</h1>
+            </div>
+            <div class="review-info-wrap">
+                <img src="{info.path}" />
+                <div class="rev-info">
+                    <h3 class="rev-title">{info.title}</h3>
+                    <div class="rev-desc">
+                        <span class="desc-date">{= date('Y.m.d', strtotime(info.reg_date))}</span>
+                        <span class="desc-eval">
+                            <!-- {? info.grade == 0} -->
+                                <!-- {@ range(0, 4)} -->
+                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                <!-- {/} -->
+                            <!-- {: info.grade == 5} -->
+                                <!-- {@ range(0, 4)} -->
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                <!-- {/} -->
+                            <!-- {:} -->
+                                <!-- {@ range(0, info.grade-1)} -->
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                <!-- {/} -->
+                                <!-- {@ range(info.grade, 4)} -->
+                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                <!-- {/} -->
+                            <!-- {/} -->
+                            <i class="grade_num">{info.grade}.0</i>
+                        </span>
+                        <span class="desc-view">
+                            <img src="../images/custom/icon/ico_view.png" />
+                            <i class="view_cnt">{info.view_cnt}</i>
+                        </span>
+                    </div>
+                    <p class="rev-content">{info.content}</p>
+                    <p class="rev-user">- {? info.type == 's'}판매자{: info.type == 'o'}수주사{/}: {info.target_userid}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,343 @@
+{ #layout_header }
+
+<style style="text/css">
+	.btnhelp {display:inline-block; width:14px; height:14px; cursor:pointer; background:url('../images/common/bg_icon.png'); vertical-align:middle;margin-bottom:2px}
+</style>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.fmdomsaver.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.colorpicker.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+<script type="text/javascript" src="/app/javascript/js/scm.common.js"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsQuickRegist.js"></script>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>평가 관리</h2>
+		</div>
+
+		<!-- 좌측 버튼 -->
+		<ul class="page-buttons-left"></ul>
+
+		<!-- 우측 버튼 -->
+		<ul class="page-buttons-right"></ul>
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+<br style="line-height:30px;" />
+
+<div class="tab-menu-area">
+	<ul class="tab-menu">
+		<li {? tab_menu == '01'}class="active"{/}><a href="/admin/com/eval?tab_menu=01">판매자 평가</a></li>
+		<li {? tab_menu == '02'}class="active"{/}><a href="/admin/com/eval?tab_menu=02">수주사 평가</a></li>
+	</ul>
+</div>
+
+<!-- {? tab_menu == '01'} -->
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(eval_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+	
+	<ul class="right-btns">
+		<li>
+			<span class="btn small deepblue">
+				<button onclick="go_eval_modify_process()" class="btn_modify">수정</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn small red">
+				<button onclick="go_eval_delete_process()" class="btn_delete">삭제</button>
+			</span>
+		</li>
+	</ul>
+</div>
+
+<div>
+	<!-- 신청리스트 테이블 : 시작 -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<table class="list-table-style info-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="40" /><!--선택-->
+			<col width="40" /><!--번호-->
+			<col width="120" /><!--평가일-->
+			<col width="100" /><!--평가자-->
+			<col width="320" /><!--평가내용-->
+			<col width="90" /><!--a/s조건-->
+			<col width="90" /><!--기계상태-->
+			<col width="90" /><!--신뢰성-->
+			<col width="90" /><!--재구매의사-->
+			<col width="90" /><!--친절성-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th>선택</th>
+			<th>번호</th>
+			<th>평가일</th>
+			<th>평가</th>
+			<th>평가내용</th>
+			<th>a/s조건</th>
+			<th>기계상태</th>
+			<th>신뢰성</th>
+			<th>재구매의사</th>
+			<th>친절성</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+	<!--{? eval_list }-->
+		<!--{@ eval_list }-->
+			<tr class="list-row" style="height:70px;">
+				<td align="center"><input type="checkbox" class="chk chk_one" name="chk_eval_seq" value="{.seval_seq}" /></td>	
+				<td align="center" class="page_no">{.index_+1}</td>
+				<td align="center">{.reg_date}</td>
+				<td align="center">{.userid}</td>
+				<td align="left" class="pd10 form_textarea">{= nl2br(.content)}</td>
+				<td align="center" class="form_input" data-name="grade_01">{.grade_01}</td>
+				<td align="center" class="form_input" data-name="grade_02">{.grade_02}</td>
+				<td align="center" class="form_input" data-name="grade_03">{.grade_03}</td>
+				<td align="center" class="form_input" data-name="grade_04">{.grade_04}</td>
+				<td align="center" class="form_input" data-name="grade_05">{.grade_05}</td>
+			</tr>
+		<!--{ / }-->
+	<!--{ : }-->
+		<tr class="list-row">
+			<td align="center" colspan="10">작성된 평가가 없습니다.</td>
+		</tr>
+	<!--{ / }-->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+	<!-- 신청리스트 테이블 : 끝 -->
+</div>
+<!-- {/} -->
+
+<!-- {? tab_menu == '02'} -->
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(eval_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+	
+	<ul class="right-btns">
+		<li>
+			<span class="btn small deepblue">
+				<button onclick="go_eval_modify_process()" class="btn_modify">수정</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn small red">
+				<button onclick="go_eval_delete_process()" class="btn_delete">삭제</button>
+			</span>
+		</li>
+	</ul>
+</div>
+
+<div>
+	<!-- 신청리스트 테이블 : 시작 -->
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">	
+	<table class="list-table-style info-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="40" /><!--선택-->
+			<col width="40" /><!--번호-->
+			<col width="120" /><!--평가일-->
+			<col width="100" /><!--평가자-->
+			<col width="320" /><!--평가내용-->
+			<col width="90" /><!--전문성-->
+			<col width="90" /><!--만족도-->
+			<col width="90" /><!--의사소통-->
+			<col width="90" /><!--재의뢰의사-->
+			<col width="90" /><!--친절성-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th>선택</th>
+			<th>번호</th>
+			<th>평가일</th>
+			<th>평가</th>
+			<th>평가내용</th>
+			<th>전문성</th>
+			<th>만족도</th>
+			<th>의사소통</th>
+			<th>재의뢰의사</th>
+			<th>친절성</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+	<!--{? eval_list }-->
+		<!--{@ eval_list }-->
+			<tr class="list-row" style="height:70px;">
+				<td align="center"><input type="checkbox" class="chk chk_one" name="chk_eval_seq" value="{.peval_seq}" /></td>	
+				<td align="center" class="page_no">{.index_+1}</td>
+				<td align="center">{.reg_date}</td>
+				<td align="center">{.userid}</td>
+				<td align="left" class="pd10 form_textarea">{= nl2br(.content)}</td>
+				<td align="center" class="form_input" data-name="grade_01">{.grade_01}</td>
+				<td align="center" class="form_input" data-name="grade_02">{.grade_02}</td>
+				<td align="center" class="form_input" data-name="grade_03">{.grade_03}</td>
+				<td align="center" class="form_input" data-name="grade_04">{.grade_04}</td>
+				<td align="center" class="form_input" data-name="grade_05">{.grade_05}</td>
+			</tr>
+		<!--{ / }-->
+	<!--{ : }-->
+		<tr class="list-row">
+			<td align="center" colspan="10">작성된 평가가 없습니다.</td>
+		</tr>
+	<!--{ / }-->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	</table>
+	<!-- 신청리스트 테이블 : 끝 -->
+</div>
+<!-- {/} -->
+
+<form action="/admin/com/eval_modify_process" method="post" id="frm_modify" target="actionFrame">
+	<input type="hidden" name="tab_menu" value="{tab_menu}" />
+	<!-- {? tab_menu == '01'} -->
+	<input type="hidden" name="seval_seq" class="eval_seq" />
+	<!-- {: tab_menu == '02'} -->
+	<input type="hidden" name="peval_seq" class="eval_seq" />
+	<!-- {/} -->
+	<input type="hidden" name="content" />
+	<input type="hidden" name="grade_01" />
+	<input type="hidden" name="grade_02" />
+	<input type="hidden" name="grade_03" />
+	<input type="hidden" name="grade_04" />
+	<input type="hidden" name="grade_05" />
+	<input type="hidden" name="grade" />
+</form>
+
+<form action="/admin/com/eval_delete_process" method="post" id="frm_delete" target="actionFrame">
+	<input type="hidden" name="tab_menu" value="{tab_menu}" />	
+	<!-- {? tab_menu == '01'} -->
+	<input type="hidden" name="seval_seq" class="eval_seq" />
+	<!-- {: tab_menu == '02'} -->
+	<input type="hidden" name="peval_seq" class="eval_seq" />
+	<!-- {/} -->
+</form>
+
+<script>
+function go_eval_modify_process() {
+	var $parents = $('.chk_one:checked').parents('tr');
+	if($('.chk_one:checked').length == 0) {
+		alert('수정하실 평가를 선택해주세요.');
+		return;
+	}
+	if($('.btn_modify').text() == '수정') {
+		$.each($parents.find('.form_textarea'), function(index, value) {
+			$(this).html('<textarea class="simple" style="width: 90%;" rows="3">' + $(this).text() + '</textarea>');
+		});
+		$.each($parents.find('.form_input'), function(index, value) {
+			var name = $(this).data('name');
+			$(this).html('<input type="text" name="' + name + '" value="' + $(this).text() + '" size="6" />');
+		});
+		$('.btn_modify').text('변경');
+		$('.btn_delete').text('취소');
+		$('.chk_one').prop('disabled', true);
+	} else {
+		var is_return = false;
+		$.each($parents.find('.form_textarea textarea'), function(index, value) {
+			if($(this).val() == '') {
+				alert('내용을 입력해주세요.');
+				$(this).focus();
+				is_return = true;
+				return;
+			}
+			$('#frm_modify input[name=content]').val($(this).val());
+		});
+		if(is_return)
+			return;
+		var grade = 0;
+		$.each($parents.find('.form_input input'), function(index, value) {
+			if($(this).val() == '') {
+				alert('값을 입력해주세요.');
+				$(this).focus();
+				is_return = true;
+				return;
+			} else if(isNaN($(this).val()) == true) {
+				alert('숫자만 입력해주세요.');
+				$(this).focus();
+				is_return = true;
+				return;
+			} else if($(this).val() < 1 || $(this).val() > 5) {
+				alert('1 ~ 5 사이로 입력해주세요.');
+				$(this).focus();
+				is_return = true;
+				return;
+			}
+			var name = $(this).parent().data('name');
+			$('#frm_modify input[name=' + name + ']').val($(this).val());
+			grade += parseInt($(this).val());
+		});
+		if(is_return) 
+			return;
+		grade = grade / 5;
+		if(confirm('입력하신 내용으로 변경하시겠습니까 ?')) {
+			$('#frm_modify .eval_seq').val($('.chk_one:checked').val());
+			$('#frm_modify input[name=grade]').val(grade);
+			$('#frm_modify').submit();
+		}
+	}
+}
+
+function go_eval_delete_process() {
+	var $parents = $('.chk_one:checked').parents('tr');
+	if($('.btn_delete').text() == '취소') {
+		$.each($parents.find('.form_textarea'), function(index, value) {
+			$(this).html($(this).find('textarea').val());
+		});
+		$.each($parents.find('.form_input'), function(index, value) {
+			$(this).html($(this).find('input').val());
+		});
+		$('.btn_modify').text('수정');
+		$('.btn_delete').text('삭제');
+		$('.chk_one').prop('disabled', false);
+	} else {
+		var eval_seq = $('.chk_one:checked').val();
+		if(!eval_seq) {
+			alert('삭제하실 평가를 선택해주세요.');
+			return;
+		}
+		if(confirm('삭제하신 데이터는 복구가 불가능합니다.\n정말 삭제하시겠습니까 ?')) {
+			$('#frm_delete .eval_seq').val(eval_seq);
+			$('#frm_delete').submit();
+		}
+	}
+}
+
+$('.btn_reply').click(function(e) {
+	e.preventDefault();
+	
+	var seq = $(this).parents('tr').data('seq');
+	var reply = $(this).parents('tr').find('.txt_reply').val();
+	var userid = $(this).parents('tr').data('userid');
+	
+	if(reply == '') {
+		alert('답변 내용을 입력해주세요.')
+		$(this).parents('tr').find('.txt_reply').focus();
+		return;
+	}
+	if(confirm('입력하신 내용으로 답변을 보내시겠습니까 ?')) {
+		$('input[name=qna_seq]').val(seq);
+		$('input[name=reply]').val(reply);
+		$('input[name=userid]').val(userid);
+		$('#frm_qna').submit();
+	}
+});
+</script>
+{ #layout_footer }

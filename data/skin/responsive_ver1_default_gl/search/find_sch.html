@@ -1,0 +1,81 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+    <div class="row">
+        <div class="col-12 mt-5 pt-3 pb-5">
+            <h1 class="wrap-title txt-center txt-bold mb-1">기계찾아줘 신청현황</h1>
+            <p class="wrap-title-sub">상담중인 항목의 기계정보, 옵션을 확인하고, 추천하시기 바랍니다.</p>
+        </div>
+        <div class="col-12 mb-5 txt-center">
+            <a href="/sch/find_reg" class="btn-type-02 input-border-radius found-link">신청하기</a>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12 mb-5 found-filter">
+            <div class="form-row-01">
+                <h4 class="wrap-title-03">총  <i class="accent-txt">{= count(find_list)}</i>개</h4>
+                <div class="found-filter-row"> 
+                    <div>
+                        <span class="form-title-type-02">상태: </span>
+                        <select type="text" name="sch_state" class="input-style input-gray select-style select-active" onchange="go_find_sch('state', '{state}', '{kind}', '{mnf}', '{model}')">
+                            <option data-seq="0" {? state == 0 }selected{/}>전체</option>
+                            <option data-seq="1" {? state == 1 }selected{/}>상담중</option>
+                            <option data-seq="2" {? state == 2 }selected{/}>상담완료</option>
+                            <option data-seq="3" {? state == 3 }selected{/}>상담종료</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="form-title-type-02">기계종류: </span>
+                        <select type="text" name="sch_kind" class="input-style input-gray select-style" onchange="go_find_sch('kind', '{state}', '{kind}', '{mnf}', '{model}')">
+                            <option data-seq="0">전체</option>
+                            <!-- {@ kind_map} -->
+                            <optgroup label="{.kind_type}" data-no="{.kind_no}">
+                                <!-- {@ .kind_list} -->
+                                <option data-seq="{..kind_seq}" {? kind == ..kind_seq}selected{/}>{..kind_name}</option>
+                                <!-- {/} -->
+                            </optgroup>
+                            <!-- {/} -->
+                        </select>
+                    </div>  
+                    <div>
+                        <span class="form-title-type-02">제조사: </span>
+                        <select type="text" name="sch_mnf" name="sel_mnf" class="input-style input-gray select-style" onchange="go_find_sch('mnf', '{state}', '{kind}', '{mnf}', '{model}')">
+                            <option data-val="0">전체</option>
+                            <!-- {@ mnf_list} -->
+                            <option data-val="{.mnf_name}" {? mnf == .mnf_name}selected{/}>{.mnf_name}</option>
+                            <!-- {/} -->
+                        </select>
+                    </div>   
+                    <div>
+                        <span class="form-title-type-02">모델명: </span>
+                        <select type="text" name="sch_model" class="input-style input-gray select-style" onchange="go_find_sch('model', '{state}', '{kind}', '{mnf}', '{model}')">
+                            <option data-val="0">전체</option>
+                            <!-- {@ model_list} -->
+                            <option data-val="{.model_name}" {? model == .model_name}selected{/}>{.model_name}</option>
+                            <!-- {/} -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mb-5">
+            <!-- {@ find_list} -->
+            <a href="/sch/find_info/{.find_seq}" class="found-list-01">
+                <p>{? .state == '1'}상담중{: .state == '2'}상담완료{: .state == '3'}상담종료{/}</p>
+                <div class="flex-div">
+                    <span>기계종류: <i>{.kind_name}</i></span>
+                    <span>제조사: <i>{.mnf_name}</i></span>
+                    <span>모델명: <i>{.model_name}</i></span>
+                    <span>연식: <i>{.model_year}</i></span>
+                    <span>가격범위: <i>{.hope_price}</i></span>
+                    <span>등록일: <i>{= date('Y.m.d', strtotime(.reg_date))}</i></span>
+                </div>
+            </a>
+            <!-- {:} -->
+            <div class="default-box">
+                <p class="default-message">해당 조건을 만족하는 정보가 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+    </div>
+</div>

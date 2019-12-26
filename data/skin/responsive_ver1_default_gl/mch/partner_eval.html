@@ -1,0 +1,104 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-5 pt-2 pb-5">
+                <h1 class="wrap-title txt-center txt-bold mb-2">“{ptn_info.userid}” 평가하기</h1>
+                <p class="wrap-title-sub">같이 일했던 파트너님을 평가해주세요.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid wrap-title-bg-02">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 pt-4 pb-4">
+                <p class="wrap-title-sub">
+                    1. 프로젝트를 함께 진행했던 파트너에 대한 평가를 남겨주세요. <br/>
+                    2 별표를 클릭하여 파트너를 평가할 수 있습니다. 각 항목별 평점은 별 1개~별 5개까지 가능합니다.<br/>
+                    3. 평가는 수정이 불가능합니다. 신중하게 작성해주세요.<br/>
+                    <!-- 4 평가를 완료한 프로젝트는 [해당1]  > [해당2]에서 확인할 수 있습니다.<br/> -->
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="container">
+        <form action="/mch/partner_eval_process" method="post" id="frm_partner_eval">
+            <input type="hidden" name="partner_seq" value="{ptn_info.partner_seq}"/>
+            <input type="hidden" name="grade_01" />
+            <input type="hidden" name="grade_02" />
+            <input type="hidden" name="grade_03" />
+            <input type="hidden" name="grade_04" />
+            <input type="hidden" name="grade_05" />
+            <input type="hidden" name="grade" />
+            <div class="row">
+                    <h2 class="col-12 form-title-type-01 form-title-03 mt-5">“{osc_info.osc_name}” 거래</h2>
+                    <div class="col-12 mb-5">
+                        <p class="title-sub-text txt-light">등록일자: {= date('Y-m-d', strtotime(osc_info.reg_date))}<span class="separate">|</span>마감일자: {osc_info.osc_end_date}</p>
+                    </div>
+                    <div class="col-sm-12 mb-3">
+                        <div class="eval-wrap">
+                            <div class="eval-div">
+                                <h4 class="eval-title">전문성</h4>
+                                <span id="grade_01">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                </span>
+                            </div>
+                            <div class="eval-div">
+                                <h4 class="eval-title">만족도</h4>
+                                <span id="grade_02">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                </span>
+                            </div>
+                            <div class="eval-div">
+                                <h4 class="eval-title">의사소통</h4>
+                                <span id="grade_03">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                </span>
+                            </div>
+                            <div class="eval-div">
+                                <h4 class="eval-title">재의뢰 의사</h4>
+                                <span id="grade_04">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                </span>
+                            </div>
+                            <div class="eval-div">
+                                <h4 class="eval-title">친절성</h4>
+                                <span id="grade_05">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="col-12 form-title-type-01 form-title-04 mt-5 mb-2">자세하게 평가를 기입해주세요.</h3>
+                   <div class="col-12 mb-5">
+                        <textarea name="content" id="evalContent" class="input-style input-gray input-border-none input-lg textarea-style txt-light" cols="30" rows="10"></textarea>
+                    </div>    
+
+                    <div class="col-12 mb-5 txt-right mob-center">
+                        <button type="button" class="btn-type-01 btn-md input-border-radius ml-1 mr-1 mb-2" onclick="location.href='/user/my_osc_finish'">취소</button>
+                        <button type="button" class="btn-type-02 btn-md input-border-radius  ml-1 mr-1 mb-2" onclick="go_partner_eval_process()">평가하기</button>
+                    </div>
+            </div>
+        </form>
+    </div>

@@ -1,0 +1,54 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-2">최근에 본 기계</h1>
+
+				<h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">
+					최근에 본 기계&nbsp<i class="accent-txt">{= count(recent_sale_list)}</i>&nbsp건
+				</h5>
+                <div class="scroll-wrap ad-sale-wrap scroll-x mb-5" style="display: flex; flex-wrap: wrap;">
+                    <!-- {@ recent_sale_list} -->
+                    <div class="scroll-div mb-2">
+                        <!-- 이벤트뱃지 있는 애들은 event-active 클래스 -->
+                        <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                        <i class="event-badge event-active">입찰진행</i>
+                        <!-- {/} -->
+                        <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                        <i class="event-badge event-active">입찰마감</i>
+                        <!-- {/} -->
+                        <!-- {? .price_proposal != 0} -->
+                        <i class="event-badge event-active">가격제안</i>
+                        <!-- {/} -->
+                        <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                            <img src="{.path}" alt="">
+                            <div class="scroll-desc">
+                                <h4 class="desc-kind">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                <span>{= str_replace('년', '', .model_year)}년형</span>
+                                <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                <span>{.area_name}</span>
+                                <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                                <div class="ad-sale-icon-row">
+                                    <div>
+                                        <img src="../images/custom/icon/ico-heart.png" alt="">
+                                        <span>{.like_cnt}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="mb-4"></div>
+                    <!-- {:} -->
+                    <div class="default-box small mb-3">
+                        <p class="default-message">최근에 본 기계 내역이 없습니다.</p>
+                    </div>
+                    <!-- {/} -->
+                </div>
+            </div>
+		</div>
+	</div>
+</div>

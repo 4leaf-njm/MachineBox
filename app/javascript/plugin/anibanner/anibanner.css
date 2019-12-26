@@ -1,0 +1,109 @@
+/**
+ * Animation Banner (jQuery 1.7.2, jQuery UI 1.8.16 기반)
+ * Author : Ok Chang Won
+ * Date : 2014.08.01
+**/
+div.designBanner[designelement='banner'] {text-align:center}
+
+ul.anibanner_image_list {z-index:1;}
+ul.anibanner_image_list li {position:relative;}
+ul.anibanner_image_list li a {position:relative; display:block;}
+ul.anibanner_image_list li img.anibanner_image_element {z-index:2; position:relative;}
+ul.anibanner_image_list li span.anibanner_image_border {z-index:3; position:absolute; left:0px; top:0px; display:none;}
+
+/* 좌우 버튼 */
+.anibanner_navigation_btn_prev {z-index:2; position:absolute; cursor:pointer}
+.anibanner_navigation_btn_next {z-index:2; position:absolute; cursor:pointer}
+
+/* 좌우 버튼 스타일 */
+.anibanner_navigation_btn_style_1_prev {display:inline-block; width:72px; height:72px; background:url('/admin/skin/default/images/design/banner/btn/btn1_prev.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_1_prev:hover,
+.anibanner_navigation_btn_style_1_prev_on {display:inline-block; width:72px; height:72px; background:url('/admin/skin/default/images/design/banner/btn/btn1_prev_on.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_1_prev_off {display:inline-block; width:72px; height:72px; background:url('/admin/skin/default/images/design/banner/btn/btn1_prev.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_1_next {display:inline-block; width:72px; height:72px; background:url('/admin/skin/default/images/design/banner/btn/btn1_next.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_1_next:hover,
+.anibanner_navigation_btn_style_1_next_on {display:inline-block; width:72px; height:72px; background:url('/admin/skin/default/images/design/banner/btn/btn1_next_on.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_1_next_off {display:inline-block; width:72px; height:72px; background:url('/admin/skin/default/images/design/banner/btn/btn1_next.png') no-repeat; vertical-align:middle}
+
+.anibanner_navigation_btn_style_2_prev {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn2_prev.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_2_prev:hover,
+.anibanner_navigation_btn_style_2_prev_on {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn2_prev_on.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_2_prev_off {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn2_prev.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_2_next {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn2_next.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_2_next:hover,
+.anibanner_navigation_btn_style_2_next_on {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn2_next_on.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_2_next_off {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn2_next.png') no-repeat; vertical-align:middle}
+
+.anibanner_navigation_btn_style_3_prev {display:inline-block; width:46px; height:78px; background:url('/admin/skin/default/images/design/banner/btn/btn3_prev.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_3_prev:hover,
+.anibanner_navigation_btn_style_3_prev_on {display:inline-block; width:46px; height:78px; background:url('/admin/skin/default/images/design/banner/btn/btn3_prev_on.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_3_prev_off {display:inline-block; width:46px; height:78px; background:url('/admin/skin/default/images/design/banner/btn/btn3_prev.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_3_next {display:inline-block; width:46px; height:78px; background:url('/admin/skin/default/images/design/banner/btn/btn3_next.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_3_next:hover,
+.anibanner_navigation_btn_style_3_next_on {display:inline-block; width:46px; height:78px; background:url('/admin/skin/default/images/design/banner/btn/btn3_next_on.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_3_next_off {display:inline-block; width:46px; height:78px; background:url('/admin/skin/default/images/design/banner/btn/btn3_next.png') no-repeat; vertical-align:middle}
+
+.anibanner_navigation_btn_style_4_prev {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn4_prev.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_4_prev:hover,
+.anibanner_navigation_btn_style_4_prev_on {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn4_prev_on.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_4_prev_off {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn4_prev.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_4_next {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn4_next.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_4_next:hover,
+.anibanner_navigation_btn_style_4_next_on {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn4_next_on.png') no-repeat; vertical-align:middle}
+.anibanner_navigation_btn_style_4_next_off {display:inline-block; width:62px; height:62px; background:url('/admin/skin/default/images/design/banner/btn/btn4_next.png') no-repeat; vertical-align:middle}
+
+/* 페이징 스타일 */
+ul.anibanner_navigation_paging {position:relative; z-index:3; *zoom:1; display:inline-block;}
+ul.anibanner_navigation_paging:after {clear:both; display:block; content:""}
+ul.anibanner_navigation_paging li {cursor:pointer}
+ul.anibanner_navigation_paging li .inactiveImg {display:block;}
+ul.anibanner_navigation_paging li .activeImg {display:none;}
+ul.anibanner_navigation_paging li.current {cursor:default;}
+ul.anibanner_navigation_paging li.current .inactiveImg {display:none;}
+ul.anibanner_navigation_paging li.current .activeImg {display:block;}
+
+ul.anibanner_navigation_custom {display:inline-block; *zoom:1}
+ul.anibanner_navigation_custom:after {content:""; display:block; clear:both}
+ul.anibanner_navigation_custom li {float:left;}
+ul.anibanner_navigation_custom li .inactiveImg {display:block;}
+ul.anibanner_navigation_custom li .activeImg {display:none;}
+ul.anibanner_navigation_custom li.current {}
+ul.anibanner_navigation_custom li.current .inactiveImg {display:none;}
+ul.anibanner_navigation_custom li.current .activeImg {display:block;}
+
+ul.anibanner_navigation_paging_style_1 {display:inline-block; *zoom:1}
+ul.anibanner_navigation_paging_style_1:after {content:""; display:block; clear:both}
+ul.anibanner_navigation_paging_style_1 li {float:left; margin-left:8px; width:13px; height:13px; background:url('/admin/skin/default/images/design/banner/paging/navi_dot.png') no-repeat; overflow:hidden; text-indent:-1000px;}
+ul.anibanner_navigation_paging_style_1 li.current {background:url('/admin/skin/default/images/design/banner/paging/navi_dot_on.png') no-repeat;}
+ul.anibanner_navigation_paging_style_1 li .active {background:url('/admin/skin/default/images/design/banner/paging/navi_dot_on.png') no-repeat;}
+ul.anibanner_navigation_paging_style_1 li:first-child {margin-left:0px;}
+
+ul.anibanner_navigation_paging_style_2 {display:inline-block; *zoom:1}
+ul.anibanner_navigation_paging_style_2:after {content:""; display:block; clear:both}
+ul.anibanner_navigation_paging_style_2 li {float:left; margin-left:8px; width:12px; height:12px; background:url('/admin/skin/default/images/design/banner/paging/navi_squ.png') no-repeat; overflow:hidden; text-indent:-1000px;}
+ul.anibanner_navigation_paging_style_2 li.current {background:url('/admin/skin/default/images/design/banner/paging/navi_squ_on.png') no-repeat;}
+ul.anibanner_navigation_paging_style_2 li .active {background:url('/admin/skin/default/images/design/banner/paging/navi_squ_on.png') no-repeat;}
+ul.anibanner_navigation_paging_style_2 li:first-child {margin-left:0px;}
+
+ul.anibanner_navigation_paging_style_3 {display:inline-block; *zoom:1}
+ul.anibanner_navigation_paging_style_3:after {content:""; display:block; clear:both}
+ul.anibanner_navigation_paging_style_3 li {float:left; width:30px; height:5px; background-color:#a2a2a2; overflow:hidden; text-indent:-1000px;}
+ul.anibanner_navigation_paging_style_3 li.current {background-color:#ff5212;}
+ul.anibanner_navigation_paging_style_3 li .active {background-color:#ff5212;}
+
+ul.anibanner_navigation_paging_style_4 {display:inline-block; *zoom:1; width:110px; height:20px; position:relative;}
+ul.anibanner_navigation_paging_style_4:after {content:""; display:block; clear:both}
+ul.anibanner_navigation_paging_style_4 li.paging_btn_prev {position:absolute; width:30px; height:20px; left:0px; top:0px; background:url('/admin/skin/default/images/design/banner/paging/navi_btn_prev.png') no-repeat; overflow:hidden; text-indent:-1000px;}
+ul.anibanner_navigation_paging_style_4 li.paging_btn_body {text-align:center; color:#aaaaaa; letter-spacing:3px; font-family:tahoma;}
+ul.anibanner_navigation_paging_style_4 li.paging_btn_body .paging_btn_num_now {font-size:12px; color:#f04100; font-weight:bold;}
+ul.anibanner_navigation_paging_style_4 li.paging_btn_body .paging_btn_num_max {font-size:12px; color:#999999; font-weight:bold;}
+ul.anibanner_navigation_paging_style_4 li.paging_btn_next {position:absolute; width:30px; height:20px; right:0px; top:0px; background:url('/admin/skin/default/images/design/banner/paging/navi_btn_next.png') no-repeat; overflow:hidden; text-indent:-1000px;}
+
+ul.anibanner_navigation_paging_style_5 {display:inline-block; *zoom:1; width:94px; height:30px; position:relative; background:url('/admin/skin/default/images/design/banner/paging/navi_btn2_bg.png') no-repeat;}
+ul.anibanner_navigation_paging_style_5:after {content:""; display:block; clear:both}
+ul.anibanner_navigation_paging_style_5 li.paging_btn_prev {position:absolute; width:8px; height:13px; left:10px; top:8px; background:url('/admin/skin/default/images/design/banner/paging/navi_btn2_prev.png') no-repeat; overflow:hidden; text-indent:-1000px;}
+ul.anibanner_navigation_paging_style_5 li.paging_btn_body {text-align:center; color:#eeeeee; letter-spacing:3px; font-family:tahoma; line-height:26px;}
+ul.anibanner_navigation_paging_style_5 li.paging_btn_body .paging_btn_num_now {font-size:12px; color:#00eaff; font-weight:bold;}
+ul.anibanner_navigation_paging_style_5 li.paging_btn_body .paging_btn_num_max {font-size:12px; color:#ffffff; font-weight:bold;}
+ul.anibanner_navigation_paging_style_5 li.paging_btn_next {position:absolute; width:8px; height:13px; right:10px; top:8px; background:url('/admin/skin/default/images/design/banner/paging/navi_btn2_next.png') no-repeat; overflow:hidden; text-indent:-1000px;}
+

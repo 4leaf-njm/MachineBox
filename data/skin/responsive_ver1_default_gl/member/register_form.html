@@ -1,0 +1,760 @@
+<div id="formMemberArea" class="resp_member_join" enctype="multipart/form-data">
+
+{? mtype=='member' }
+	<div class="resp_join_table">
+                    
+		{? rute && rute != 'none'  //SNS전용이 아닌경우에만 출력}
+			{? sns_change == 0 }
+			<ul>
+				<li class="th"><p designElement="text">아이디 / 비밀번호</p></li>
+				<li class="td"><span designElement="text">아직 등록하지 않았습니다.</span> <button type="button" class="btn_resp size_b color2" onclick="sns_change_id();"><span designElement="text">등록</span></button></li>
+			</ul>
+			{ : }
+			<ul class="required">
+				<li class="th"><p designElement="text">아이디</p></li>
+				<li class="td">{userid}</li>
+			</ul>
+			<ul class="required">
+				<li class="th"><p designElement="text">기존 비밀번호</p></li>
+				<li class="td">
+					<input type="password" name="old_password" value="" class="eng_only" />
+				</li>
+			</ul>
+			<ul>
+				<li class="th"><p designElement="text">신규 비밀번호</p></li>
+				<li class="td">
+					<input type="password" name="new_password" value="" class="eng_only" placeholder="공백 없는 영문/숫자 포함 6~20자" />
+				</li>
+			</ul>
+			{ / }
+			{? joinform.user_name_use=='Y'}
+			<ul {? joinform.user_name_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">이름</p></li>
+				<li class="td">
+					<input type="text" name="user_name" value="{user_name}" {? user_name}readonly{/} />
+				</li>
+			</ul>
+			{ / }
+		{ : }
+			<ul class="required">
+				<li class="th "><p designElement="text">아이디</p></li>
+				<li class="td">
+					{? member_seq }
+						{userid}
+					{ : }
+						<input type="text" name="userid" id="userid" autocapitalize="off" value="" onkeypress="filterKey();" onpaste="javascript:return false;" class="eng_only" placeholder="공백 없는 영문/숫자 포함 6~20자" />
+						<p id="id_info" class="guide_text"></p>
+					{ / }
+				</li>
+			</ul>
+			{? member_seq }
+			<ul class="required">
+				<li class="th "><p designElement="text">기존 비밀번호</p></li>
+				<li class="td">
+					<input type="password" name="old_password" value="" class="eng_only" />
+				</li>
+			</ul>
+			<ul>
+				<li class="th"><p designElement="text">신규 비밀번호</p></li>
+				<li class="td">
+					<input type="password" name="new_password" value="" class="eng_only" placeholder="공백 없는 영문/숫자 포함 6~20자" />
+				</li>
+			</ul>
+			{ : }
+			<ul class="required">
+				<li class="th "><p designElement="text">비밀번호</p></li>
+				<li class="td">
+					<input type="password" name="password" value="" class="eng_only" placeholder="공백 없는 영문/숫자 포함 6~20자" />
+				</li>
+			</ul>
+			<ul class="required">
+				<li class="th "><p designElement="text">비밀번호 확인</p></li>
+				<li class="td">
+					<input type="password" name="re_password" value="" class="eng_only" />
+				</li>
+			</ul>
+			{ / }
+			{? joinform.user_name_use=='Y'}
+			<ul {? joinform.user_name_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">이름</p></li>
+				<li class="td">
+					<input type="text" name="user_name" value="{user_name}" {? user_name}readonly{/} />
+				</li>
+			</ul>
+			{ / }
+			{? joinform.nickname_use=='Y' }
+				<ul {? joinform.nickname_required=='Y' }class="required"{ / }>
+					<li class="th "><p designElement="text">닉네임</p></li>
+					<li class="td">
+						<input type="text" name="nickname" value="{nickname}" maxlength="10" />
+					</li>
+				</ul>
+			{ / }
+		{ / }
+		{? joinform.email_use=='Y' }
+			<ul {? joinform.email_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">이메일</p></li>
+				<li class="td">
+					<input type="email" name="email[0]" value="{=str_split_arr(email,'@',0)}" class="size_mail1" /> @
+					<input type="email" name="email[1]" value="{=str_split_arr(email,'@',1)}" class="size_mail2" />
+					<select name="find_email" id="find_email">
+						<option value="">직접입력</option>
+						{@ email_arr }
+						<option value="{.codecd}">{.codecd}</option>
+						{ / }
+					</select>
+					<div class="Pt10">
+						<label><input type="checkbox" name="mailing" value="Y" /> <span designElement="text">정보메일을 수신하겠습니다.</span></label>
+					</div>
+					<p class="Pt10 desc" designElement="text">이메일 수신에 동의하시면 여러가지 할인혜택과 각종 이벤트 정보를 받아보실 수 있습니다.<br />회원가입관련, 주문배송관련 등의 메일은 수신동의와 상관없이 모든 회원에게 발송됩니다.<br /></p>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.phone_use=='Y' }
+			<ul {? joinform.phone_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">전화번호</p></li>
+				<li class="td">
+					<input type="tel" name="phone[]" value="{=str_split_arr(phone,'-',0)}" class="size_phone" maxlength="4" /> -
+					<input type="tel" name="phone[]" value="{=str_split_arr(phone,'-',1)}" class="size_phone" maxlength="4" /> -
+					<input type="tel" name="phone[]" value="{=str_split_arr(phone,'-',2)}" class="size_phone" maxlength="4" />
+				</li>
+			</ul>
+		{ / }
+		{? joinform.cellphone_use=='Y' }
+			<ul {? joinform.cellphone_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">휴대폰번호</p></li>
+				<li class="td">
+					<input type="tel" name="cellphone[]" value="{=str_split_arr(cellphone,'-',0)}" class="size_phone" maxlength="4" {?regitst_auth}readonly{/} /> -
+					<input type="tel" name="cellphone[]" value="{=str_split_arr(cellphone,'-',1)}" class="size_phone" maxlength="4" {?regitst_auth}readonly{/} /> -
+					<input type="tel" name="cellphone[]" value="{=str_split_arr(cellphone,'-',2)}" class="size_phone" maxlength="4" {?regitst_auth}readonly{/} />
+					<!--{ ? confirmPhone == 'Y' }-->
+					<script>$("input[name='cellphone[]']").attr("disabled",true);</script>
+					<button type="button" class="btn_resp size_b color2" onclick="authphone_popup('cellphone');"><span designElement="text">휴대폰인증</span></button>
+					<!--{ / }-->
+					<div class="Pt10">
+						<label><input type="checkbox" name="sms" value="Y" /> <span designElement="text">SMS를 수신하겠습니다.</span></label>
+					</div>
+					<p class="Pt10 desc" designElement="text">SMS 수신에 동의하시면 여러가지 할인혜택과 각종 이벤트 정보를 받아보실 수 있습니다.<br />회원가입관련, 주문배송관련 등의 SMS는 수신동의와 상관없이 구매 회원에게 발송됩니다.<br /></p>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.address_use=='Y' }
+			<ul {? joinform.address_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">주소</p></li>
+				<li class="td">
+					<input type="hidden" name="address_type" value="{address_type}"/>
+					<input type="tel" name="new_zipcode" value="{new_zipcode}" class="size_zip_all" readonly />
+					<button type="button" class="btn_resp size_b color4" onclick="openDialogZipcode_resp('member');"><span designElement="text">주소찾기</span></button>
+					<div class="address_area">
+						<input type="text" name="address" value="{address}" class="address size_full {? address_type == 'street'}hide{/}" readonly />
+						<input type="text" name="address_street" value="{address_street}" class="address_street size_full {? address_type != 'street'}hide{/}" readonly />
+					</div>
+					<div class="address_area">
+						<input type="text" name="address_detail" value="{address_detail}" class="size_full" />
+					</div>
+					{? member_seq}
+						{? address_type == "street"}
+							<button type="button" class="btn_resp size_b" onclick="view_address('zibun');">지번 주소보기</button>
+						{:}
+							{? address_street}
+							<button type="button" class="btn_resp size_b" onclick="view_address('street');">도로명 주소보기</button>
+							{/}
+						{/}
+					{/}
+					<p id="address_view" style="padding-top:5px; display:none;"></p>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.birthday_use=='Y' }
+			<ul {? joinform.birthday_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">생년월일</p></li>
+				<li class="td">
+					<label>
+						<input type="text" name="birthday" value="{birthday}" class="datepicker" style="width:110px;" readonly />
+						<span class="btn_resp size_b" designElement="text">찾기</span>
+					</label>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.anniversary_use=='Y' }
+			<ul {? joinform.anniversary_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">기념일</p></li>
+				<li class="td">
+					<select name="anniversary[]">
+						<option value="">선택</option>
+						<!--{ @ m_arr }-->
+						<option value="{.value_}" {?substr(anniversary,0,2)==.value_ }selected{/}>{.value_}</option>
+						<!--{ / }-->
+					</select> <span designElement="text">월</span> &nbsp;
+					<select name="anniversary[]">
+						<option value="">선택</option>
+						<!--{ @ d_arr }-->
+						<option value="{.value_}" {?substr(anniversary,3,2)==.value_ }selected{/}>{.value_}</option>
+						<!--{ / }-->
+					</select> <span designElement="text">일</span>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.sex_use=='Y' }
+			<ul {? joinform.sex_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">성별</p></li>
+				<li class="td designed_radio_checkbox join_form">
+					<label><input type="radio" name="sex" value="male" {? sex == 'male' }checked{/} /> <span designElement="text">남성</span></label>
+					<label><input type="radio" name="sex" value="female"  {? sex == 'female' }checked{/}  /> <span designElement="text">여성</span></label>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.user_icon=='Y' }
+			<ul>
+				<li class="th"><p designElement="text">아이콘</p></li>
+				<li class="td">
+					<ul class="member_icon_list">
+						{@ memberIcondata }
+						<li>
+							<label class="lab1">
+								<div class="Mb4"><input type="radio" name="user_icon" value="{=(.index_+1)}" {? user_icon == (.index_+1) } checked="checked" {/} /></div>
+								<img src="/data/icon/member/{.value_}" class="icon_membericon"/>
+							</label>
+						</li>
+						{/}
+						{? member_seq}
+						<li>
+							<label class="lab1 L">
+								<div class="Mb4">
+									<input type="radio" name="user_icon" value="99" {? user_icon==99 &&  user_icon_file } checked="checked" {/} />
+									<button type="button" class="btn_resp size_a Ml4" id="membericonUpdate">직접등록</button>
+								</div>
+								<img src="/data/icon/member/{user_icon_file}" id="membericon_img" {? !user_icon_file } class="hide" {/} />
+							</label>
+						</li>
+						{/}
+					</ul>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.recommend_use=='Y' }
+			{? member_seq && recommend }
+			<ul {? joinform.recommend_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">추천인ID</p></li>
+				<li class="td">{recommend}</li>
+			</ul>
+			{: !member_seq }
+			<ul {? joinform.recommend_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">추천인ID</p></li>
+				<li class="td">
+					<input type="text" name="recommend" id="recommend" value="{recommend}" style="width:160px;" />
+					<button type="button" onclick="chkRecommend('u');" class="btn_resp size_b">확인</button>
+					<p id="recommend_return_txt" class="guide_text"></p>
+					<ul class="list_01 v3 desc pd_1">
+					<!--
+					{? emoneyapp.emoneyJoin > 0 }
+						<li>신규회원 -  마일리지 <span class="pointcolor">{=number_format(emoneyapp.emoneyJoin)}</span>원 지급</li>
+					{/}
+					-->
+					{? emoneyapp.emoneyJoiner > 0 }
+						<li><p designElement="text">추천인ID 입력시 - 마일리지 <span class="pointcolor">{=number_format(emoneyapp.emoneyJoiner)}</span>원 추가지급</p></li>
+					{/}
+					{? emoneyapp.emoneyRecommend > 0 }
+						<li><p designElement="text">추천받은 회원 - 마일리지 <span class="pointcolor2">{emoneyapp.emoneyRecommend}</span>원 지급</p></li>
+					{/}
+					</ul>
+				</li>
+			</ul>
+			{ / }
+		{ / }
+		{? fb_invite }
+			<ul>
+				<li class="th "><p designElement="text">Facebook 초대한ID</p></li>
+				<li class="td"><input type="text" name="fb_invite" value="{fb_invite}" /></li>
+			</ul>
+		{ / }
+
+		{? form_sub}
+			{@ form_sub}
+				{? .used == 'Y' && .join_type=='user' }
+					{? .required=='Y' }
+				<ul class="form_sub required">
+					<li class="th">
+						<p><input type="hidden" name="required[]" value="{.joinform_seq}"><input type="hidden" name="required_title[]" value="{.label_title}">{.label_title}</p>
+					</li>
+					{:}
+				<ul class="form_sub">
+					<li class="th">
+						<p>{.label_title}</p>
+					</li>
+					{/}
+					<li class="td custom_form designed_radio_checkbox join_form">
+						{.label_view}
+						{?.label_desc}<p class="desc pd_2">{.label_desc}</p>{/}
+					</li>
+				</ul>
+				{/}
+			{/}
+		{/}
+	</div>
+{/}
+
+                    
+{? mtype=='business' }
+	<div class="resp_join_table">
+        {? form_sub}
+            {@ form_sub}
+                {? .used == 'Y' && .join_type=='order'}
+                    {? .required=='Y' }
+                <ul class="form_sub required">
+                    <li class="th"><p><input type="hidden" name="required[]" value="{.joinform_seq}"><input type="hidden" name="required_title[]" value="{.label_title}">{.label_title}</p></li>
+                    {:}
+                <ul class="form_sub">
+                    <li class="th"><p>{.label_title}</p></li>
+                    {/}
+                    <li class="td custom_form designed_radio_checkbox join_form">
+                        {.label_view}
+                        {?.label_desc}<p class="desc pd_2">{.label_desc}</p>{/}
+                    </li>
+                </ul>
+                {/}
+            {/}
+            <ul id="dealer-apply-div" class="d-none">
+                <li class="th"><p designElement="text">공식딜러 신청</p></li>
+                <li class="td">
+                    <div>
+                        <input type="hidden" name="gubun" />
+                        <input type="hidden" name="main_dealer_yn" />
+                        <label><input type="checkbox" name="chk_dealer_yn" /> <span designElement="text">머신박스 공식딜러를 신청합니다.</span></label>
+                    </div>
+                    <p class="Pt5 desc" designElement="text">머신박스의 매입견적서 요청 시 규정에 따라 성실히 견적서를 제출합니다.<br />또한, 매입 확정 시 매입에 성실히 임할 것에 동의합니다.</p>
+                    <p class="Pt10 desc" designElement="text">※ 공식딜러란 ?<br/>기계유통업 종사자로 머신박스 플랫폼의 긴급판매 물건을 매입하기 위한 견적서 제출, 매입 등의 활동을 하는 매입전문 딜러</p>
+                </li>
+            </ul>
+            <script>
+                if('{gubun}' == '기업회원') {
+                    $("input[name='label[2][value][]']").eq(0).prop('checked', true);
+                    $("input[name='label[2][value][]']").parent('label').eq(0).addClass('on');
+                } else if('{gubun}' == '딜러회원') {
+                    $("input[name='label[2][value][]']").eq(1).prop('checked', true);
+                    $("input[name='label[2][value][]']").parent('label').eq(1).addClass('on');
+                    $('#dealer-apply-div').removeClass('d-none');
+                }
+                $("input[name='label[2][value][]']").on('click', function(){
+                    if($(this).val() == '기업회원') {
+                        $('#dealer-apply-div').addClass('d-none');
+                        $('input[name=gubun]').val('기업회원');
+                    } else if ($(this).val() == '딜러회원') {
+                        $('#dealer-apply-div').removeClass('d-none');
+                        $('input[name=gubun]').val('딜러회원');
+                    }
+                });
+                $('input[name=chk_dealer_yn]').on('change', function() {
+                    var $this = $(this);
+                    if($(this).is(':checked')) {
+                        $.ajax({
+                            type: 'post',
+                            url: '/user/is_main_dealer',
+                            dataType: 'json',
+                            success: function(data) {
+                                if(data == 'y') {
+                                    alert('이미 공식딜러 회원입니다.');
+                                    $this.prop('checked', false);
+                                } else if(data == 'h') {
+                                    alert('공식딜러 신청 승인대기 중입니다. 관리자의 승인을 기다려주세요.');
+                                    $this.prop('checked', false);
+                                }
+                                else
+                                    $('input[name=main_dealer_yn]').val('h');
+                            }, 
+                            error: function() {
+                                console.log('error');
+                            }
+                        });
+                    }
+                    else
+                        $('input[name=main_dealer_yn]').val('n');
+                });
+            </script>
+            <style>
+                input[type="checkbox"]:before {content: '' !important;}
+                input[type="checkbox"]:checked:after {content: '' !important;}
+                input[type="radio"] {width: 0 !important;}
+                input[type="radio"]:before {content: '' !important; width: 0; height: 0;}
+            </style>
+        {/}
+                    
+		{? rute && rute != 'none'  //SNS전용이 아닌경우에만 출력}
+			<input type="hidden" name="user_name" value="{user_name}" />
+			{? sns_change == 0 }
+			<ul>
+				<li class="th"><p designElement="text">아이디 / 비밀번호</p></li>
+				<li class="td"><span designElement="text">아직 등록하지 않았습니다.</span> <button type="button" class="btn_resp size_b color2" onclick="sns_change_id();"><span designElement="text">등록</span></button></li>
+			</ul>
+			{ : }
+			<ul class="required">
+				<li class="th"><p designElement="text">아이디</p></li>
+				<li class="td">{userid}</li>
+			</ul>
+			<ul class="required">
+				<li class="th"><p designElement="text">기존 비밀번호</p></li>
+				<li class="td"><input type="password" name="old_password" value="" class="eng_only" /></li>
+			</ul>
+			<ul>
+				<li class="th"><p designElement="text">신규 비밀번호</p></li>
+				<li class="td">
+					<input type="password" name="new_password" value="" class="eng_only" placeholder="공백 없는 영문/숫자 포함 6~20자" />
+				</li>
+			</ul>
+			{ / }
+		{ : }
+			<ul class="required">
+				<li class="th"><p designElement="text">아이디</p></li>
+				<li class="td">
+				{? member_seq }
+					{userid}
+				{ : }
+					<input type="text" name="userid" id="userid" value="" onkeypress="filterKey();" class="eng_only" onpaste="javascript:return false;" placeholder="공백 없는 영문/숫자 포함 6~20자" />
+					<p id="id_info" class="guide_text"></p>
+				{ / }
+				</li>
+			</ul>
+			{? member_seq }
+			<ul class="required">
+				<li class="th"><p designElement="text">기존 비밀번호</p></li>
+				<li class="td"><input type="password" name="old_password" value="" class="eng_only" /></li>
+			</ul>
+			<ul>
+				<li class="th"><p designElement="text">신규 비밀번호</p></li>
+				<li class="td">
+					<input type="password" name="new_password" value="" class="eng_only" placeholder="공백 없는 영문/숫자 포함 6~20자" />
+				</li>
+			</ul>
+			{ : }
+			<ul class="required">
+				<li class="th"><p designElement="text">비밀번호</p></li>
+				<li class="td">
+					<input type="password" name="password" value="" class="eng_only" placeholder="공백 없는 영문/숫자 포함 6~20자" />
+				</li>
+			</ul>
+			<ul class="required">
+				<li class="th"><p designElement="text">비밀번호 확인</p></li>
+				<li class="td">
+					<input type="password" name="re_password" value="" class="eng_only" />
+				</li>
+			</ul>
+			{ / }
+		{ / }
+		{? joinform.nickname_use=='Y' }
+			<ul {? joinform.nickname_required=='Y' }class="required"{ / }>
+				<li class="th "><p designElement="text">닉네임</p></li>
+				<li class="td">
+					<input type="text" name="nickname" value="{nickname}" maxlength="10" />
+				</li>
+			</ul>
+		{ / }
+		{? joinform.bname_use=='Y' }
+			<ul {? joinform.bname_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">업체명</p></li>
+				<li class="td"><input type="text" name="bname" value="{bname}" /></li>
+			</ul>
+		{ / }
+		{? joinform.bceo_use=='Y' }
+			<ul {? joinform.bceo_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">대표자명</p></li>
+				<li class="td"><input type="text" name="bceo" value="{bceo}" /></li>
+			</ul>
+		{ / }
+		{? joinform.bno_use=='Y' }
+			<ul {? joinform.bno_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">사업자 등록번호</p></li>
+				<li class="td">
+					<input type="tel" name="bno" value="{bno}" placeholder="ex) 123-12-12345" />
+					<p id="bno_info" class="guide_text"></p>
+				</li>
+			</ul>
+            <ul {? joinform.bno_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">사업자 등록증 첨부</p></li>
+				<li class="td">
+                    <div class="file_input">
+                        <label id="bcard_btn">첨부하기
+                            <input type="file" name="bcard_file" id="bcard_file" />
+                        </label>
+                        <input type="text" id="bcard_text" value="{? bpermit_yn == 'y'}이미 인증이 완료되었습니다.{:}pdf, jpg 파일만 첨부 가능 합니다.{/}" readonly />
+                        <input type="hidden" name="bpermit_yn" value="{? bpermit_yn}{bpermit_yn}{:}n{/}" />
+                    </div>
+				</li>
+			</ul>      
+                    
+            <ul {? joinform.bno_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">기업유형</p></li>
+				<li class="td">
+                    <select name="bcategory" data-id="bcategory">
+                        <option {? bcategory == '제조'}selected{/}>제조</option>
+                        <option {? bcategory == '수리'}selected{/}>수리</option>
+                        <option {? bcategory == '임가공'}selected{/}>임가공</option>
+                        <option {? bcategory == '유통'}selected{/}>유통</option>
+                        <option {? bcategory == '재제조'}selected{/}>재제조</option>
+                        <option {? bcategory == '엔지니어링'}selected{/}>엔지니어링</option>
+                        <option {? bcategory == '도비/운송'}selected{/}>도비/운송</option>
+                        <option {? bcategory == '연구기관'}selected{/}>연구기관</option>
+                        <option {? bcategory == '금융'}selected{/}>금융</option>
+                        <option data-mode="input">기타</option>
+                    </select>
+                    <input type="text" name="bcategory_text" placeholder="기타 입력" class="d-none" id="bcategory"/>
+				</li>
+			</ul>   
+                    
+            <ul {? joinform.bno_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">주기계</p></li>
+				<li class="td">
+                    <select name="bmain"></select>
+				</li>
+			</ul>  
+                    
+            <ul {? joinform.bno_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">경력년수</p></li>
+				<li class="td">
+                    <input type="text" name="bcareer" value="{bcareer}" /> 년
+				</li>
+			</ul> 
+		{ / }
+		{? joinform.bitem_use=='Y' }
+			<ul {? joinform.bitem_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">업태</p></li>
+				<li class="td"><input type="text" name="bitem" value="{bitem}" /></li>
+			</ul>
+			<ul {? joinform.bitem_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">종목</p></li>
+				<li class="td"><input type="text" name="bstatus" value="{bstatus}" /></li>
+			</ul>
+		{ / }
+		{? joinform.badress_use=='Y' }
+			<ul {? joinform.badress_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">사업장 주소</p></li>
+				<li class="td">
+					<input type="hidden" name="baddress_type" value="{baddress_type}" />
+					<input type="text" name="new_bzipcode" value="{bzipcode}" class="size_zip_all" readonly />
+					<button type="button" class="btn_resp size_b color4" onclick="openDialogZipcode_resp('business')"><span designElement="text">주소찾기</span></button>
+					<div class="address_area">
+						<input type="text" name="baddress" value="{baddress}" class="size_full {? address_type == 'street'}hide{/}" readonly />
+						<input type="text" name="baddress_street" value="{baddress_street}" class="size_full {? address_type != 'street'}hide{/}" readonly />
+					</div>
+					<div class="address_area">
+						<input type="text" name="baddress_detail" value="{baddress_detail}" class="size_full" />
+					</div>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.bperson_use=='Y' }
+			<ul {? joinform.bperson_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">담당자 명</p></li>
+				<li class="td"><input type="text" name="bperson" value="{bperson}" /></li>
+			</ul>
+		{ / }
+		{? joinform.bpart_use=='Y' }
+			<ul {? joinform.bpart_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">담당자 부서명</p></li>
+				<li class="td"><input type="text" name="bpart" value="{bpart}" /></li>
+			</ul>
+		{ / }
+		{? joinform.bemail_use=='Y' }
+			<ul {? joinform.bemail_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">이메일</p></li>
+				<li class="td">
+					<input type="email" name="email[0]" value="{=str_split_arr(email,'@',0)}" class="size_mail1" /> @
+					<input type="email" name="email[1]" value="{=str_split_arr(email,'@',1)}" class="size_mail2" />
+					<select name="find_email" id="find_email">
+						<option value="">직접선택</option>
+						{@ email_arr }
+						<option value="{.codecd}">{.codecd}</option>
+						{ / }
+					</select>
+					<div class="Pt10">
+						<label><input type="checkbox" name="mailing" value="Y" /> <span designElement="text">정보메일을 수신하겠습니다.</span></label>
+					</div>
+					<p class="Pt10 desc" designElement="text">이메일 수신에 동의하시면 여러가지 할인혜택과 각종 이벤트 정보를 받아보실 수 있습니다.<br />회원가입관련, 주문배송관련 등의 메일은 수신동의와 상관없이 모든 회원에게 발송됩니다.<br /></p>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.bphone_use=='Y' }
+			<ul {? joinform.bphone_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">전화번호</p></li>
+				<li class="td">
+					<input type="tel" name="bphone[]" value="{=str_split_arr(bphone,'-',0)}" class="size_phone" /> -
+					<input type="tel" name="bphone[]" value="{=str_split_arr(bphone,'-',1)}" class="size_phone" /> -
+					<input type="tel" name="bphone[]" value="{=str_split_arr(bphone,'-',2)}" class="size_phone" />
+				</li>
+			</ul>
+		{ / }
+		{? joinform.bcellphone_use=='Y' }
+			<ul {? joinform.bcellphone_required=='Y' }class="required"{ / }>
+				<li class="th"><p designElement="text">휴대폰번호</p></li>
+				<li class="td">
+					<input type="text" name="bcellphone[]" value="{=str_split_arr(bcellphone,'-',0)}" class="size_phone" /> -
+					<input type="text" name="bcellphone[]" value="{=str_split_arr(bcellphone,'-',1)}" class="size_phone" /> -
+					<input type="text" name="bcellphone[]" value="{=str_split_arr(bcellphone,'-',2)}" class="size_phone" />
+					<!--{ ? confirmPhone == 'Y' }-->
+					<script>$("input[name='bcellphone[]']").attr("disabled",true);</script>
+					<button type="button" class="btn_resp size_b color2" onclick="authphone_popup('bcellphone');">휴대폰인증</button>
+					<!--{ / }-->
+					<div class="Pt10">
+						<label><input type="checkbox" name="sms" value="Y" /> <span designElement="text">SMS를 수신하겠습니다.</span></label>
+					</div>
+					<p class="Pt10 desc" designElement="text">SMS 수신에 동의하시면 여러가지 할인혜택과 각종 이벤트 정보를 받아보실 수 있습니다.<br />회원가입관련, 주문배송관련 등의 SMS는 수신동의와 상관없이 구매 회원에게 발송됩니다.<br /></p>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.user_icon=='Y' }
+			<ul>
+				<li class="th"><p designElement="text">아이콘</p></li>
+				<li class="td">
+					<ul class="member_icon_list">
+						{@ memberIcondata }
+						<li>
+							<label class="lab1">
+								<div class="Mb4"><input type="radio" name="user_icon" value="{=(.index_+1)}" {? user_icon == (.index_+1) } checked="checked" {/} /></div>
+								<img src="/data/icon/member/{.value_}" class="icon_membericon"/>
+							</label>
+						</li>
+						{/}
+						{? member_seq}
+						<li>
+							<div class="Mb4">
+								<input type="radio" name="user_icon" value="99" {? user_icon==99 &&  user_icon_file } checked="checked" {/} />
+								<button type="button" class="btn_resp size_b" id="membericonUpdate">직접등록</button>
+							</div>
+							<label>
+								<img src="/data/icon/member/{user_icon_file}" id="membericon_img" {? !user_icon_file } class="hide" {/} />
+							</label>
+						</li>
+						{/}
+					</ul>
+				</li>
+			</ul>
+		{ / }
+		{? joinform.recommend_use=='Y' }
+			<ul {? joinform.recommend_required=='Y' }class="required"{ / }>
+				<li class="th"><p>추천인ID</p></li>
+				<li class="td">
+					<input type="text" name="recommend" id="brecommend" value="{recommend}" style="width:160px;" />
+					<button type="button" class="btn_resp size_b" onclick="chkRecommend('b');">확인</button>
+					<p id="brecommend_return_txt" class="guide_text"></p>
+					<ul class="list_01 v3 desc pd_1">
+					<!--
+					{? emoneyapp.emoneyJoin > 0 }
+						<li>신규회원 -  마일리지 <span class="pointcolor">{=number_format(emoneyapp.emoneyJoin)}</span>원 지급</li>
+					{/}
+					-->
+					{? emoneyapp.emoneyJoiner > 0 }
+						<li><p designElement="text">추천인ID 입력시 - 마일리지 <span class="pointcolor">{=number_format(emoneyapp.emoneyJoiner)}</span>원 추가지급</p></li>
+					{/}
+					{? emoneyapp.emoneyRecommend > 0 }
+						<li><p designElement="text">추천받은 회원 - 마일리지 <span class="pointcolor2">{emoneyapp.emoneyRecommend}</span>원 지급</p></li>
+					{/}
+					</ul>
+				</li>
+			</ul>
+		{ / }
+	</div>
+{ / }
+
+</div>
+
+<script type="text/javascript">
+	$(function(){
+        $.ajax({
+            type: 'post',
+            url: '/user/get_kind_type',
+            dataType: 'json',
+            success: function(data) {
+                var html = '';
+                var bmain = '{bmain}';
+                $.each(data.kind_type, function(index, value) {
+                    var selected = '';
+                    if(value == bmain)
+                        selected = 'selected';
+                    html += '<option ' + selected + '>' + value + '</option>';
+                });
+                $('select[name=bmain').html(html);
+            },
+            error: function() {
+                console.log('error');
+            }
+        });
+        
+		$(".selectLabelSet").each(function(){
+			var selectLabelSetObj = $(this);
+			$("select.selectLabelDepth1",selectLabelSetObj).bind('change',function(){
+				var childs = $("option:selected",this).attr('childs').split(';');
+				var joinform_seq = $(this).attr('joinform_seq');
+				var select2 = $("input.hiddenLabelDepth[type='hidden'][joinform_seq='"+joinform_seq+"']").val();
+				if(childs[0]){
+					$(".selectsubDepth",selectLabelSetObj).show();
+					$("select.selectLabelDepth2[joinform_seq='"+joinform_seq+"']").empty();
+					for(var i=0; i< childs.length ; i++){
+						$("select.selectLabelDepth2[joinform_seq='"+joinform_seq+"']")
+						.append("<option value='"+childs[i]+"'>"+childs[i]+"</option>");
+					}
+				}else{
+					$(".selectsubDepth",selectLabelSetObj).hide();
+				}
+				$("select.selectLabelDepth2 option[value='"+select2+"']").attr('selected',true);
+			}).trigger('change');
+		});
+
+
+		/* ========== 반응형 프론트엔드 추가 ========= */
+		// designed radio UI
+		$('.designed_radio_checkbox input[type=radio]').closest('.designed_radio_checkbox').addClass('type_radio');
+		$('.designed_radio_checkbox input[checked]').parent('label').addClass('on');
+
+		$('.designed_radio_checkbox input[type=radio]').on('change', function() {
+			$(this).parent().parent().find('label').removeClass('on');
+			$(this).parent('label').addClass('on');
+		});
+		// designed checkbox UI
+		$('.designed_radio_checkbox input[type=checkbox]').on('change', function() {
+			if ( $(this).prop('checked') ) {
+				$(this).parent('label').addClass('on');
+			} else {
+				$(this).parent('label').removeClass('on');
+			}
+		});
+		/* ========== //반응형 프론트엔드 추가 ========= */
+	});
+
+	// 추천인 확인
+	function chkRecommend(type){
+		var recommend	= $("#recommend").val();
+		if(type=="b")	recommend = $("#brecommend").val();
+		if	(!recommend){
+			//추천인명을 입력하세요
+			openDialogAlert(getAlert('mb009'), 400, 150);
+			return;
+		}
+		actionFrame.location.href	= '/member/recommend_confirm?recomid='+recommend+'&type='+type;
+	}
+    
+    $('#bcard_btn').on('click', function() {
+        var bpermit_yn = $('input[name=bpermit_yn]').val();
+        
+        if(bpermit_yn == 'y') {
+            alert('이미 인증이 완료되었습니다.');
+            return false;
+        }
+    });
+    
+    $(document).on('change', '#bcard_file', function(e){
+        var files = e.target.files;
+        var filesArr = Array.prototype.slice.call(files);
+    
+        var reader = new FileReader();
+        
+        filesArr.forEach(function(f) {
+            var ext = f.name.slice(f.name.lastIndexOf(".") + 1).toLowerCase();
+
+            if(ext != 'jpg' && ext != 'pdf') {
+                alert('pdf, jpg 파일만 첨부 가능 합니다.');
+                return;
+            }
+    
+            $('#bcard_text').val('첨부가 완료되었습니다.');
+        });
+    });
+</script>

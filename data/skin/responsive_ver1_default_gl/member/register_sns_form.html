@@ -1,0 +1,1060 @@
+{is_file_facebook_tag}
+{? _GET.formtype == 'myinfojoin' //sns회원통합}
+	<script type="text/javascript">
+		window.fbAsyncInit = function() {
+		FB.init({
+		  appId      : '{APP_ID}', //App ID
+		  status     : true, // check login status
+		  cookie     : true, // enable cookies to allow the server to access the session
+		  xfbml      : true,  // parse XFBML,
+		  oauth      : true,
+		  version    : 'v{APP_VER}'
+		});
+
+		{? _GET.snstype == 'facebook'}
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+			{? !fbuser && !_GET.code  && !_GET.error }
+				document.location.href='{loginUrl}';
+			{: permissionloginUrl }
+				document.location.href='{permissionloginUrl}';
+			{:}
+				{? _GET.stream }
+					FB.getLoginStatus(handelStatusChangepublish_stream_form);
+				{:}
+					FB.getLoginStatus(handelStatusChangeMbconnect);
+				{/}
+			{/}
+		{/}
+
+		}
+		</script>
+
+		<script type="text/javascript">
+	$(document).ready(function() {
+		loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+		{? _GET.snstype && _GET.snstype != 'facebook' }
+			SnsMbconnect('{_GET.snstype}');
+		{/}
+	});
+	</script>
+
+	 <script type="text/javascript">
+		//기본 facebook 로그인
+		function handelStatusChange_form(response) {
+			if (response && response.status == 'connected') {
+				// 로그인
+				isLogin = true;
+				initializeFbTokenValues();
+				initializeFbUserValues();
+				if(response.authResponse){
+					fbId = response.authResponse.userID;
+					fbAccessToken = response.authResponse.accessToken;
+				}
+				FB.api('/me', function(response) {
+					 fbUid = response.email;
+					 fbName = response.name;
+					 if (fbName != "") {
+						loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+						$.ajax({
+						'url' : '../sns_process/facebookloginck',
+						'type' : 'post',
+						'dataType': 'json',
+						'success': function(res) {
+							if(res.result == true){
+								loadingStop("body",true);
+								openDialogAlert(res.msg,'400','180',function(){
+								//가입완료후 본래창 새로고침
+								{? snsrefererurl == _SERVER.HTTP_HOST }
+									opener.document.location.href='../mypage/myinfo';self.close();
+								{:}
+									document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?formtype={_GET.formtype}&snstype={_GET.snstype}';
+								{/}
+								});
+							}else{
+								openDialogAlert(res.msg,'400','140',function(){FB.logout();self.close();});
+							}
+						}
+						});
+					}
+				});
+		   }else{
+			   //연결을 취소하셨습니다.
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+		   }
+		}
+
+		//기존 회원통합을 위한 facebook login
+		function handelStatusChangeMbconnect(response) {
+			if (response && response.status == 'connected') {
+			// 로그인
+			isLogin = true;
+			initializeFbTokenValues();
+			initializeFbUserValues();
+			if(response.authResponse){
+				fbId = response.authResponse.userID;
+				fbAccessToken = response.authResponse.accessToken;
+			}
+			FB.api('/me', function(response) {
+				 fbUid = response.email;
+				 fbName = response.name;
+				 if (fbName != "") {
+					loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+					$.ajax({
+					'url' : '../sns_process/facebookloginck',
+					'data' : {'facebooktype':'mbconnect_direct'},
+					'type' : 'post',
+					'dataType': 'json',
+					'success': function(res) {
+						if(res.result == true){
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','180',function(){
+							//가입완료후 본래창 새로고침
+							{? snsrefererurl == _SERVER.HTTP_HOST }
+								opener.document.location.href='../mypage/myinfo';self.close();
+							{:}
+								document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?formtype={_GET.formtype}&snstype={_GET.snstype}';
+							{/}
+							});
+						}else{
+							openDialogAlert(res.msg,'400','140',function(){FB.logout();self.close();});
+						}
+					}
+					});
+				}
+			});
+		   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+				// 로그아웃된 경우
+				isLogin = false;
+				if (fbId != "")  initializeFbTokenValues();
+				if (fbUid != "") initializeFbUserValues();
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}else{
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}
+		}
+
+
+		//feed 권한추가
+		function handelStatusChangepublish_stream_form(response) {
+			if (response && response.status == 'connected') {
+				//권한부여후 본래창 새로고침
+				{? snsrefererurl == _SERVER.HTTP_HOST }
+					opener.document.location.href='../mypage/myinfo';self.close();
+				{:}
+					document.location.href='http://{snsrefererurl}/sns_process/snsstreamck?formtype={_GET.formtype}';
+				{/}
+		   }else{
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}
+		}
+
+
+		//기존 회원통합을 위한 SNS join
+		function SnsMbconnect(snstype) {
+			$.ajax({
+			'url' : '../sns_process/'+snstype+'loginck',
+			'data' : {'mform':'join','facebooktype':'mbconnect_direct'},
+			'type' : 'post',
+			'dataType': 'json',
+			'success': function(res) {
+				if(res.result == true) {
+					var w;var h;
+					switch(snstype) {
+						case 'twitter':
+							w = 810;h = 550;
+							break;
+						case 'me2day':
+							w = 1000;h = 750;
+							popupResize(w,h);
+							break;
+						case 'cyworld':
+							w = 430;h = 560;
+							break;
+					}
+					document.location.href='../sns_process/snsredirecturl?snsurl='+res.loginurl;
+
+				}else{
+					openDialogAlert(res.msg,'400','140',function(){self.close();});
+				}
+			}
+			});
+		}
+
+		//트위터 쇼핑몰회원가입(새창에서이뤄짐)
+
+		//미투데이 쇼핑몰회원통합
+		function me2dayjoginlogin() {
+			$.ajax({
+			'url' : '../sns_process/me2dayjoin',
+			'data' : {'facebooktype':'mbconnect_direct'},
+			'type' : 'post',
+			'dataType': 'json',
+			'success': function(res) {
+				if(res.result == true){
+					//가입완료후 본래창 새로고침
+					{? snsrefererurl == _SERVER.HTTP_HOST }
+						opener.document.location.href='../mypage/myinfo';self.close();
+					{:}
+						document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?formtype={_GET.formtype}&snstype={_GET.snstype}';
+					{/}
+				}else{
+					openDialogAlert(res.msg,'400','140',function(){self.close();});
+				}
+			}
+			});
+		}
+
+		//cyworld 쇼핑몰로그인
+		function cyworldjoginlogin() {
+			$.ajax({
+			'url' : '../sns_process/cyworldjoin',
+			'data' : {'facebooktype':'mbconnect_direct'},
+			'type' : 'post',
+			'dataType': 'json',
+			'success': function(res) {
+				if(res.result == true){
+					//가입완료후 본래창 새로고침
+					{? snsrefererurl == _SERVER.HTTP_HOST }
+						opener.document.location.href='../mypage/myinfo';self.close();
+					{:}
+						document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?formtype={_GET.formtype}&snstype={_GET.snstype}';
+					{/}
+				}else{
+					openDialogAlert(res.msg,'400','140',function(){self.close();});
+				}
+			}
+			});
+		}
+
+		function initializeFbTokenValues() {
+			fbId = "";
+			fbAccessToken = "";
+		}
+		function initializeFbUserValues() {
+			fbUid = "";
+			fbName = "";
+		}
+	 </script>
+
+{: _GET.formtype == 'wishadd'//facebook wish add }
+	<script type="text/javascript">
+	window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '{APP_ID}', //App ID
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      xfbml      : true,  // parse XFBML,
+      oauth      : true,
+		  version    : 'v{APP_VER}'
+    });
+	loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+	{? !fbuser && !_GET.code  && !_GET.error }
+		document.location.href='{loginUrl}';
+	{: permissionloginUrl }
+		document.location.href='{permissionloginUrl}';
+	{:}
+		{? _GET.stream }
+			FB.getLoginStatus(handelStatusChangepublish_stream_form);
+		{:}
+			FB.getLoginStatus(handelStatusChange_form);
+		{/}
+	{/}
+
+	}
+	</script>
+	 <script type="text/javascript">
+		//기본 facebook 로그인 //
+		function handelStatusChange_form(response) {
+			if (response && response.status == 'connected') {
+			// 로그인
+			isLogin = true;
+			initializeFbTokenValues();
+			initializeFbUserValues();
+			if(response.authResponse){
+				fbId = response.authResponse.userID;
+				fbAccessToken = response.authResponse.accessToken;
+			}
+			FB.api('/me', function(response) {
+				 fbUid = response.email;
+				 fbName = response.name;
+				 if (fbName != "") {
+						loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+						$.ajax({
+						'url' : 'http://m.{config_system.subDomain}/sns_process/facebookloginck',
+						'data' : {'facebooktype':'login'},
+						'type' : 'post',
+						'dataType': 'json',
+						'success': function(res) {
+							if(res.result == true){
+								loadingStop("body",true);
+								openDialogAlert(res.msg,'400','180',function(){
+								//로그인후 본래창 자동로그인처리하기
+								{? snsrefererurl == _SERVER.HTTP_HOST }
+									{?_GET.return_url }
+										opener.document.location.href='{_GET.return_url}';self.close();
+									{:}
+										opener.document.location.href='../main/index';self.close();
+									{/}
+
+								{:}
+									document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}&return_url={_GET.return_url}';
+								{/}
+								});
+							}else{
+								openDialogAlert(res.msg,'400','160',function(){self.close();});
+							}
+						}
+						});
+				}
+			});
+		   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+				// 로그아웃된 경우
+				isLogin = false;
+				{? defined('__ISUSER__')}
+					logoutajax('facebook');self.close();
+				{/}
+				if (fbId != "")  initializeFbTokenValues();
+				if (fbUid != "") initializeFbUserValues();
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}else{
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}
+		}
+
+		//feed 권한추가 -> 로그인시키지
+		function handelStatusChangepublish_stream_form(response) {
+			if (response && response.status == 'connected') {
+				//상품이 wishlist에 담겼습니다.<br/><strong>지금 확인하시겠습니까?</strong>
+				openDialogConfirm(getAlert('mb236'),400,140,function(){
+				opener.parent.document.location.replace('/mypage/wish');self.close();
+				},function(){self.close();});
+			}else{
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}
+		}
+	</script>
+
+{: _GET.formtype == 'fblike'//facebook fblike add }
+	<script type="text/javascript">
+	//"♥좋아요! <span class='desc'>♥좋아요하고 할인받자!</span>"
+	var title = getAlert('mb235');
+	function facebookopendialog() {
+		var iframe = $('<iframe frameborder="0" width="0" height="0"  marginwidth="0"marginheight="0" scrolling="no" ></iframe>');
+		var dialog = $("<div id='facebookoglikeId' class='facebookoglikeId' style='text-align:center'></div>").append(iframe).appendTo("body").dialog({
+			autoOpen: false,
+			modal: false,
+			resizable: false,
+			width: '450',
+			height:'300',
+			close: function () {
+				iframe.attr("src", "");
+			}
+		});
+		dialog.dialog("option", "title", title).dialog("open");
+		loadingStart($(".facebookoglikeId"),{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+	}
+
+	{? !fbuser && !_GET.code  && !_GET.error }
+		//loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+		document.location.href='{loginUrl}';
+	{: permissionloginUrl }
+		//loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+		document.location.href='{permissionloginUrl}';
+	{:}
+		window.fbAsyncInit = function() {
+		FB.init({
+		  appId      : '{APP_ID}', //App ID
+		  status     : true, // check login status
+		  cookie     : true, // enable cookies to allow the server to access the session
+		  xfbml      : true,  // parse XFBML,
+		  oauth      : true,
+		  version    : 'v{APP_VER}'
+		});
+			//loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+			//"page", "popup", "touch", "iframe", "async".
+			FB.getLoginStatus(handelStatusChange_form);
+		}
+	{/}
+	</script>
+	 <script type="text/javascript">
+		//기본 facebook 로그인 //
+		function handelStatusChange_form(response) {
+			if (response && response.status == 'connected') {
+			// 로그인
+			isLogin = true;
+			initializeFbTokenValues();
+			initializeFbUserValues();
+			if(response.authResponse){
+				fbId = response.authResponse.userID;
+				fbAccessToken = response.authResponse.accessToken;
+			}
+			FB.api('/me', function(response) {
+				 fbUid = response.email;
+				 fbName = response.name;
+				 if (fbName != "") {
+					//loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+					$.ajax({
+					'url' : '../snsredirect/facebook_redirect',
+					'data' : {'facebooklikeopen':'Y','type':'f','no':'{_GET.no}','returnurl':'{_GET.returnurl}','ssid':'{_GET.ssid}','fblikeseq':'{_GET.fblikeseq}','fblikeid':'{_GET.fblikeid}','mode':'{_GET.mode}'},
+					'dataType': 'json',
+					'success': function(res) {
+						if(res.result == true){
+							document.location.href=res.retururl;
+						}else{
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','160',function(){self.close();});
+						}
+					}
+					});
+				}
+			});
+		   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+				// 로그아웃된 경우
+				isLogin = false;
+				{? defined('__ISUSER__')}
+					logoutajax('facebook');self.close();
+				{/}
+				if (fbId != "")  initializeFbTokenValues();
+				if (fbUid != "") initializeFbUserValues();
+				loadingStop("body",true);
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}else{
+				loadingStop("body",true);
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}
+		}
+	</script>
+{: _GET.formtype == 'join'//sns 회원가입 }
+	<script type="text/javascript">
+		window.fbAsyncInit = function() {
+		FB.init({
+		  appId      : '{APP_ID}', //App ID
+		  status     : true, // check login status
+		  cookie     : true, // enable cookies to allow the server to access the session
+		  xfbml      : true,  // parse XFBML,
+		  oauth      : true,
+		  version    : 'v{APP_VER}'
+		});
+
+
+		{? _GET.join_type == 'fbmember' //일반회원}
+			/**
+			{? __ISMOBILE_AGENT__ }
+				FB.login(handelStatusChange_form,{display:'touch'},{scope:'{fbuserauth}'});//"popup", "dialog", "iframe", "touch",
+			{:}
+				FB.login(handelStatusChange_form,{scope:'{fbuserauth}'});//"popup", "dialog", "iframe", "touch",
+			{/}
+			**/
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+			logoutajaxck('facebook');
+			{? !fbuser && !_GET.code  && !_GET.error }
+				document.location.href='{loginUrl}';
+			{: permissionloginUrl }
+				$.ajax({
+					'url' : '../sns_process/facebooklogout',
+					'dataType': 'json',
+					'success': function(res) {
+						document.location.href='{permissionloginUrl}';
+					}
+				});
+			{:}
+				FB.getLoginStatus(handelStatusChange_form);
+			{/}
+
+		{: _GET.join_type == 'fbbusiness' //기업회원}
+			/**
+			{? __ISMOBILE_AGENT__ }
+				FB.login(handelStatusChangebiz,{display:'touch'},{scope:'{fbuserauth}'});//"popup", "dialog", "iframe", "touch",
+			{:}
+				FB.login(handelStatusChangebiz,{scope:'{fbuserauth}'});//"popup", "dialog", "iframe", "touch",
+			{/}
+			**/
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+			logoutajaxck('facebook');
+			{? !fbuser && !_GET.code  && !_GET.error }
+				document.location.href='{loginUrl}';
+			{: permissionloginUrl }
+				$.ajax({
+					'url' : '../sns_process/facebooklogout',
+					'dataType': 'json',
+					'success': function(res) {
+						document.location.href='{permissionloginUrl}';
+					}
+				});
+			{:}
+				FB.getLoginStatus(handelStatusChangebiz);
+			{/}
+
+		{/}
+
+		}
+		</script>
+
+		<script type="text/javascript">
+		$(document).ready(function() {
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+			{? _GET.join_type == 'twmember' //일반회원 }
+				joinloginajax('member', 'twitter');
+
+			{: _GET.join_type == 'twbusiness' //기업회원}
+				joinloginajax('biz', 'twitter');
+
+			{: _GET.join_type == 'm2member' //일반회원}
+				joinloginajax('member', 'me2day');
+
+			{: _GET.join_type == 'm2business' //기업회원}
+				joinloginajax('biz', 'me2day');
+
+			{: _GET.join_type == 'yzmember' //일반회원}
+				joinloginajax('member', 'yozm');
+
+			{: _GET.join_type == 'yzbusiness' //기업회원}
+				joinloginajax('biz', 'yozm');
+
+			{: _GET.join_type == 'cymember' //일반회원}
+				joinloginajax('member', 'cyworld');
+
+			{: _GET.join_type == 'cybusiness' //기업회원}
+				joinloginajax('biz', 'cyworld');
+			{/}
+
+			{? _GET.oauth_verifier && _GET.oauth_token && _GET.oauth_token_GET.twitter == 'Y' }
+				joinloginajax(_GET.mtype, 'twitter');
+			{/}
+
+		});
+		</script>
+
+		 <script type="text/javascript">
+
+		//기본 facebook 로그인
+		function handelStatusChange_form(response) {
+			if (response && response.status == 'connected') {
+			// 로그인
+			isLogin = true;
+			initializeFbTokenValues();
+			initializeFbUserValues();
+			if(response.authResponse){
+				fbId = response.authResponse.userID;
+				fbAccessToken = response.authResponse.accessToken;
+			}
+			FB.api('/me', function(response) {
+				 fbUid = response.email;
+				 fbName = response.name;
+				 if (fbName != "") {
+						loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+						$.ajax({
+						'url' : '../sns_process/facebookloginck',
+						'type' : 'post',
+						'dataType': 'json',
+						'success': function(res) {
+							if(res.result == true){
+								loadingStop("body",true);
+								openDialogAlert(res.msg,'400','180',function(){
+								//가입완료후 본래창 자동로그인처리하기
+								{? snsrefererurl == _SERVER.HTTP_HOST }
+									opener.document.location.href='../main/index';self.close();
+								{:}
+									document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}';
+								{/}
+								});
+							}else{
+								openDialogAlert(res.msg,'400','140',function(){self.close();});
+							}
+						}
+						});
+				}
+			});
+		   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+				// 로그아웃된 경우
+				isLogin = false;
+				{? defined('__ISUSER__')}
+					loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+					logoutajax('facebook');
+				{/}
+				if (fbId != "")  initializeFbTokenValues();
+				if (fbUid != "") initializeFbUserValues();
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}else{
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}
+		}
+
+		//기업회원으로 통합하기
+		function handelStatusChangebiz(response) {
+			if (response && response.status == 'connected') {
+			// 로그인
+			isLogin = true;
+			initializeFbTokenValues();
+			initializeFbUserValues();
+			if(response.authResponse){
+				fbId = response.authResponse.userID;
+				fbAccessToken = response.authResponse.accessToken;
+			}
+			FB.api('/me', function(response) {
+				 fbUid = response.email;
+				 fbName = response.name;
+				 if (fbName != "") {
+						loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+						$.ajax({
+						'url' : '../sns_process/facebookloginck',
+						'data' : {'mtype':'biz'},
+						'type' : 'post',
+						'dataType': 'json',
+						'success': function(res) {
+							if(res.result == true) {
+								loadingStop("body",true);
+								openDialogAlert(res.msg,'400','180',function(){
+								//가입완료후 본래창 자동로그인처리하기
+								{? snsrefererurl == _SERVER.HTTP_HOST }
+									opener.document.location.href='../main/index';self.close();
+								{:}
+									document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}';
+								{/}
+								});
+							}else{
+								openDialogAlert(res.msg,'400','140',function(){self.close();});
+							}
+						}
+						});
+				}
+			});
+		   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+				// 로그아웃된 경우
+				isLogin = false;
+				{? defined('__ISUSER__')}
+					loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+					logoutajax('facebook');
+				{/}
+				if (fbId != "")  initializeFbTokenValues();
+				if (fbUid != "") initializeFbUserValues();
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}else{
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}
+		}
+
+		function joinloginajax(jtype, sns ) {
+			if(sns != 'twitter' ){
+					var w;var h;
+				switch(sns) {
+					case 'twitter':
+						w = 810;h = 550;
+						break;
+					case 'me2day':
+						w = 900;h = 750;
+						break;
+					case 'cyworld':
+						w = 430;h = 560;
+						break;
+				}
+				var height_ = w;
+				var width_ = h;
+				var left_ = screen.width;
+				var top_ = screen.height;
+
+				left_ = left_/2 - (width_/2);
+				top_ = top_/2 - (height_/2);
+				{? _SERVER.HTTPS == 'on'}
+					var openurl = 'https://{_SERVER.HTTP_HOST}'
+				{:}
+					var openurl = 'http://{_SERVER.HTTP_HOST}'
+				{/}
+				var newWin  = window.open(openurl + "/sns_process/snsredirecturl?snsloginstart=1","_blank","height="+height_+",width="+width_+",status=yes,scrollbars=no,statusbar=no,resizable=no,left="+left_+",top="+top_+"");
+			}
+
+			if (newWin == null || typeof(newWin)=='undefined'){
+				//팝업이 차단되었습니다.<br/>차단된 팝업을 허용해 주세요.
+				openDialogAlert(getAlert('mb004'),'400','140',function(){});
+			}
+
+			if(jtype == 'biz'){
+				$.ajax({
+				'url' : '../sns_process/'+sns+'loginck',
+				'data' : {'mform':'join','mtype':'biz'},
+				'type' : 'post',
+				'dataType': 'json',
+				'success': function(res) {
+					if(res.result == true) {
+						if(sns == 'twitter' ){
+							document.location.href='../sns_process/snsredirecturl?snsurl='+res.loginurl;
+						}else{
+							newWin.location = res.loginurl;
+							newWin.focus();
+							
+						}
+
+					}else{
+						newWin.close();
+						openDialogAlert(res.msg,'400','140',function(){self.close();});
+					}
+				}
+				});
+			}else{
+				$.ajax({
+				'url' : '../sns_process/'+sns+'loginck',
+				'data' : {'mform':'join'},
+				'type' : 'post',
+				'dataType': 'json',
+				'success': function(res) {
+					if(res.result == true) {
+						if(sns == 'twitter' ){
+							document.location.href='../sns_process/snsredirecturl?snsurl='+res.loginurl;
+						}else{
+							newWin.location = res.loginurl;
+							newWin.focus();
+							
+						}
+					}else{
+						newWin.close();
+						openDialogAlert(res.msg,'400','140',function(){self.close();});
+					}
+				}
+				});
+			}
+		}
+
+		//미투데이 쇼핑몰회원가입
+		function me2dayjoginlogin() {
+			$.ajax({
+			'url' : '../sns_process/me2dayjoin',
+			'type' : 'post',
+			'dataType': 'json',
+			'success': function(res) {
+				if(res.result == true){
+					//가입완료후 본래창 자동로그인처리하기
+					{? snsrefererurl == _SERVER.HTTP_HOST }
+						opener.document.location.href='../main/index';self.close();
+					{:}
+						document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}';
+					{/}
+				}else{
+					openDialogAlert(res.msg,'400','140',function(){self.close();});
+				}
+			}
+			});
+		}
+
+		//cyworld 쇼핑몰로그인
+		function cyworldjoginlogin() {
+			$.ajax({
+			'url' : '../sns_process/cyworldjoin',
+			'type' : 'post',
+			'dataType': 'json',
+			'success': function(res) {
+				if(res.result == true){
+					//가입완료후 본래창 자동로그인처리하기
+					{? snsrefererurl == _SERVER.HTTP_HOST }
+						opener.document.location.href='../main/index';self.close();
+					{:}
+						document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}';
+					{/}
+				}else{
+					openDialogAlert(res.msg,'400','140',function(){self.close();});
+				}
+			}
+			});
+		}
+
+
+		//회원정보 초기화 시키기..
+		function logoutajax(sns){
+			$.ajax({
+			'url' : '../sns_process/'+sns+'logout',
+			'dataType': 'json',
+			'success': function(res) {
+				if(res.result == true){
+					//가입완료후 본래창 자동로그인처리하기
+					{? snsrefererurl == _SERVER.HTTP_HOST }
+						opener.document.location.href='../main/index';self.close();
+					{:}
+						document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}';
+					{/}
+				}else{
+					self.close();
+				}
+			}
+			});
+		}
+	 </script>
+{:}
+
+	<script type="text/javascript">
+	loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+	
+	{? _GET.snstype == 'facebook' }
+		{? !fbuser && !_GET.code  && !_GET.error }
+			document.location.href='{loginUrl}';
+		{: permissionloginUrl }
+					$.ajax({
+						'url' : '../sns_process/facebooklogout',
+						'dataType': 'json',
+						'success': function(res) {
+							document.location.href='{permissionloginUrl}';
+						}
+					});
+		{:}
+			window.fbAsyncInit = function() {
+			FB.init({
+			  appId      : '{APP_ID}', //App ID
+			  status     : true, // check login status
+			  cookie     : true, // enable cookies to allow the server to access the session
+			  xfbml      : true,  // parse XFBML,
+			  oauth      : true,
+			  version    : 'v{APP_VER}'
+			});
+				{? _GET.snstype == 'facebook' }
+						{? _GET.stream }
+							FB.getLoginStatus(handelStatusChangepublish_stream_form);
+						{:}
+							FB.getLoginStatus(handelStatusChange_form);
+						{/}
+						{? _GET.stream }
+							FB.getLoginStatus(handelStatusChangepublish_stream_form);
+						{:}
+							FB.getLoginStatus(handelStatusChange_form);
+						{/}
+					{/}
+			}
+		{/}
+	{/}
+	</script>
+
+	<script type="text/javascript">
+	$(document).ready(function() {
+		loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+		{? _GET.snstype && _GET.snstype != 'facebook'}
+			snsloginck('{_GET.snstype}');
+		{/}
+	});
+	</script>
+
+	 <script type="text/javascript">
+		//기본 facebook 로그인 //
+		function handelStatusChange_form(response) {
+			if (response && response.status == 'connected') {
+			// 로그인
+			isLogin = true;
+			initializeFbTokenValues();
+			initializeFbUserValues();
+			if(response.authResponse){
+				fbId = response.authResponse.userID;
+				fbAccessToken = response.authResponse.accessToken;
+			}
+			FB.api('/me', function(response) {
+				 fbUid = response.email;
+				 fbName = response.name;
+				 if (fbName != "") {
+						loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+						$.ajax({
+						'url' : 'http://m.{config_system.subDomain}/sns_process/facebookloginck',
+						'data' : {'facebooktype':'login'},
+						'type' : 'post',
+						'dataType': 'json',
+						'success': function(res) {
+							if(res.result == true){
+								loadingStop("body",true);
+								openDialogAlert(res.msg,'400','180',function(){
+								//로그인후 본래창 자동로그인처리하기
+								{? snsrefererurl == _SERVER.HTTP_HOST }
+									{?_GET.return_url }
+										opener.document.location.href='{_GET.return_url}';self.close();
+									{:}
+										opener.document.location.href='../main/index';self.close();
+									{/}
+
+								{:}
+									document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}&return_url={_GET.return_url}';
+								{/}
+								});
+							}else{
+								openDialogAlert(res.msg,'400','160',function(){self.close();});
+							}
+						}
+						});
+				}
+			});
+		   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+				// 로그아웃된 경우
+				isLogin = false;
+				{? defined('__ISUSER__')}
+					logoutajax('facebook');self.close();
+				{/}
+				if (fbId != "")  initializeFbTokenValues();
+				if (fbUid != "") initializeFbUserValues();
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}else{
+				// 로그아웃된 경우
+				isLogin = false;
+				{? defined('__ISUSER__')}
+					logoutajax('facebook');self.close();
+				{/}
+				if (fbId != "")  initializeFbTokenValues();
+				if (fbUid != "") initializeFbUserValues();
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+			}
+		}
+
+		//feed 권한추가 -> 로그인시키지
+		function handelStatusChangepublish_stream_form(response) {
+			if (response && response.status == 'connected') {
+				//권한부여후 본래창 새로고침
+				{? snsrefererurl == _SERVER.HTTP_HOST }
+					opener.document.location.href='../mypage/myinfo';self.close();
+				{:}
+					document.location.href='http://{snsrefererurl}/sns_process/snsstreamck?formtype=myinfojoin';
+				{/}
+		   }else{
+				openDialogAlert(getAlert('mb238');,'400','160',function(){self.close();});
+		   }
+		}
+
+
+		//기본 SNS로그인//
+		function snsloginck(sns) {
+			if(sns != 'twitter' ){
+				var w;var h;
+				switch(sns) {
+					case 'twitter':
+						w = 810;h = 550;
+						break;
+					case 'me2day':
+						w = 900;h = 750;
+						break;
+					case 'cyworld':
+						w = 430;h = 560;
+						break;
+				}
+				var height_ = w;
+				var width_ = h;
+				var left_ = screen.width;
+				var top_ = screen.height;
+
+				left_ = left_/2 - (width_/2);
+				top_ = top_/2 - (height_/2);
+				{? _SERVER.HTTPS == 'on'}
+					var openurl = 'https://{_SERVER.HTTP_HOST}'
+				{:}
+					var openurl = 'http://{_SERVER.HTTP_HOST}'
+				{/}
+				var newWin  = window.open(openurl + "/sns_process/snsredirecturl?snsloginstart=1","_blank","height="+height_+",width="+width_+",status=yes,scrollbars=no,statusbar=no,resizable=no,left="+left_+",top="+top_+"");
+			}
+
+			if (newWin == null || typeof(newWin)=='undefined'){
+				//팝업이 차단되었습니다.<br/>차단된 팝업을 허용해 주세요.
+				openDialogAlert(getAlert('mb004'),'400','140',function(){});
+			}
+
+			$.ajax({
+			'url' : '../sns_process/' + sns + 'loginck',
+			'data' : {'mform':'login'},
+			'type' : 'post',
+			'dataType': 'json',
+			'success': function(res) {
+					loadingStop("body",true);
+				if(res.result == true) {
+					if(sns == 'twitter' ){
+						document.location.href='../sns_process/snsredirecturl?snsurl='+res.loginurl;
+					}else{
+						newWin.location = res.loginurl;
+						newWin.focus();
+						
+					}
+
+				}else{
+					newWin.close();
+					openDialogAlert(res.msg,'400','140',function(){self.close();});
+				}
+			}
+			});
+		}
+
+
+	//미투데이 쇼핑몰로그인
+	function me2dayjoginlogin() {
+		$.ajax({
+		'url' : '../sns_process/me2daylogin',
+		'type' : 'post',
+		'dataType': 'json',
+		'success': function(res) {
+			if(res.result == true){
+				//가입완료후 본래창 자동로그인처리하기
+				{? snsrefererurl == _SERVER.HTTP_HOST }
+					{?_GET.return_url }
+						opener.document.location.href='{_GET.return_url}';self.close();
+					{:}
+						opener.document.location.href='../main/index';self.close();
+					{/}
+				{:}
+					document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}&return_url={_GET.return_url}';
+				{/}
+			}else{
+				openDialogAlert(res.msg,'400','140',function(){self.close();});
+			}
+		}
+		});
+	}
+
+
+	//cyworld 쇼핑몰로그인
+	function cyworldjoginlogin() {
+		$.ajax({
+		'url' : '../sns_process/cyworldlogin',
+		'type' : 'post',
+		'dataType': 'json',
+		'success': function(res) {
+			if(res.result == true){
+				//가입완료후 본래창 자동로그인처리하기
+				{? snsrefererurl == _SERVER.HTTP_HOST }
+					{?_GET.return_url }
+						opener.document.location.href='{_GET.return_url}';self.close();
+					{:}
+						opener.document.location.href='../main/index';self.close();
+					{/}
+				{:}
+					document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}&return_url={_GET.return_url}';
+				{/}
+			}else{
+				openDialogAlert(res.msg,'400','140',function(){self.close();});
+			}
+		}
+		});
+	}
+
+	//회원정보 초기화 시키기..
+	function logoutajax(sns){
+		$.ajax({
+		'url' : '../sns_process/'+sns+'logout',
+		'dataType': 'json',
+		'success': function(res) {
+			if(res.result == true){
+				//가입완료후 본래창 자동로그인처리하기
+				{? snsrefererurl == _SERVER.HTTP_HOST }
+					opener.document.location.href='../main/index';self.close();
+				{:}
+					document.location.href='http://{snsrefererurl}/sns_process/snsjoinck?snstype={_GET.snstype}';
+				{/}
+			}else{
+				openDialogAlert(res.msg,'400','140',function(){self.close();});
+			}
+		}
+		});
+	}
+
+	 </script>
+{/}
+<script type="text/javascript">
+	//회원정보 초기화 시키기..
+	function logoutajaxck(sns){
+		$.ajax({
+		'url' : '../sns_process/'+sns+'logout',
+		'dataType': 'json',
+		'success': function(res) {
+		}
+		});
+	}
+
+	function popupResize(pop_width,pop_height){
+        window.resizeTo(pop_width,pop_height);
+    }
+ </script>

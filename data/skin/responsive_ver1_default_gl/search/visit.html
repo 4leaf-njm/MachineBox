@@ -1,0 +1,89 @@
+<div class="container-fluid top-pt calc-wrap wrap-bg-gray">
+    <div class="container pt-2">
+        <div class="row">
+            <div class="col-12 mb-5 mt-5">
+                    <h1 class="wrap-title txt-center txt-bold mb-1">방문예약신청 머신박스 방문예약 서비스입니다.</h1>
+                <p class="wrap-title-sub">판매자님과의 예약일 조정을 감안해서 방문예약일 3가지를 입력해주세요.<br/>일방적인 취소, 미방문은 구매자님의 거래 신용도에 큰 영향을 주며, 향후 거래가<br/>제한될 수 있습니다.방문예약일 설정을 신중하게 하시기 바랍니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid pb-3">
+    <div class="container mb-5 pt-5">
+        <form action="/sch/visit_process" method="post" id="frm_visit">
+            <input type="hidden" name="type" value="{type}" />
+            <input type="hidden" name="info_seq" value="{info_seq}" />
+            <input type="hidden" name="estimate_seq" value="{estimate_seq}" />
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">희망 방문일 설정 1</p>
+                        <input type="text" name="hope_date[]" class="input-style input-border-none input-lg input-gray pickadate" readonly>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02 invisible">.</p>
+                        <input type="text" name="hope_time[]" class="input-style input-border-none input-lg input-gray pickatime" readonly>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">희망 방문일 설정 2</p>
+                        <input type="text" name="hope_date[]" class="input-style input-border-none input-lg input-gray pickadate" readonly>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02 invisible">.</p>
+                        <input type="text" name="hope_time[]" class="input-style input-border-none input-lg input-gray pickatime" readonly>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">희망 방문일 설정 3</p>
+                        <input type="text" name="hope_date[]" class="input-style input-border-none input-lg input-gray pickadate" readonly>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="regi-form">
+                        <p class="form-title-type-02 invisible">.</p>
+                        <input type="text" name="hope_time[]" class="input-style input-border-none input-lg input-gray pickatime" readonly>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12 txt-center mt-3">
+                    <button type="button" class="btn-type-02 download-btn" onclick="go_visit()">신청하기</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/template" id="visitModal">
+    <p style="font-size: 13.5px; font-weight: 600; font-family: '나눔고딕'; line-height: 180%; letter-spacing: -0.1px;">희망 방문일 설정1은 <u>2일 이내</u>, 방문일 설정3은 <u>5일 이내</u>로 설정하시기 바랍니다.<br/>방문예정일은 판매자님과의 약속입니다. 일방적인 취소, 미방문은 구매자님의 거래 신용도에 큰 영향을 주며, 향후 거래가 제한 될 수 있습니다.<br/>불가피한 사유로 변경 시 <u>최소 1일전</u>에 관리자에게 공지하시기 바랍니다.</p>
+</script>
+<script>
+function show_visit_modal() {
+    new Dialogify('#visitModal')
+     .title('안내')
+     .buttons([
+         {
+             text: '확인',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER}).showModal();
+}
+show_visit_modal();
+</script>

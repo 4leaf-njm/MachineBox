@@ -1,0 +1,196 @@
+{ #layout_header }
+
+<style style="text/css">
+	.btnhelp {display:inline-block; width:14px; height:14px; cursor:pointer; background:url('../images/common/bg_icon.png'); vertical-align:middle;margin-bottom:2px}
+</style>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.fmdomsaver.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.colorpicker.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+<script type="text/javascript" src="/app/javascript/js/scm.common.js"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsQuickRegist.js"></script>
+<script type="text/javascript" src="/app/javascript/js/batch.js"></script>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>이용후기 {? reg_mode == 'insert'}등록{: reg_mode == 'modify'}수정{/}</h2>
+		</div>
+
+		<!-- 좌측 버튼 -->
+		<ul class="page-buttons-left"></ul>
+
+		<!-- 우측 버튼 -->
+		<ul class="page-buttons-right"></ul>
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+<br style="line-height:30px;" />
+
+<form action="../com/rev_regist_process" method="post" id="frm_regist" target="actionFrame" enctype="multipart/form-data">
+<input type="hidden" name="mode" value="" />
+<input type="hidden" name="serialize" id="serialize" value=""/>
+<input type="hidden" name="mcount" value="0">
+<input type="hidden" name="member" value="search">
+<input type="hidden" name="searchSelect" value="search">
+<input type="hidden" name="selectMember" value="">
+<input type="hidden" name="wheres" value=""/>
+
+<input type="hidden" name="rev_seq" value="{rev_seq}" />
+<input type="hidden" name="reg_mode" value="{reg_mode}" />
+<input type="hidden" name="userid" value="{userid}" />
+<input type="hidden" name="target_userid" value="{target_userid}" />
+<input type="hidden" name="grade" />
+
+<div class="clearbox">
+	<ul class="left-btns clearbox">
+		<li>
+			<span class="btn small black"><button type="button" onclick="go_rev_regist_process()">{? reg_mode == 'insert'}등록{: reg_mode == 'modify'}수정{/}</button></span>
+		</li>
+		<li>
+			<span class="btn small"><button type="button" class="searchMemberBtn" callpage="sale">선택</button></span>
+			(작성자 : <span class="txt_userid">{? reg_mode == 'insert'}선택안함{: reg_mode == 'modify'}{userid}{/}</span>)
+		</li>
+		<li>
+			<span class="btn small"><button type="button" class="searchMemberBtn" callpage="rev">선택</button></span>
+			(<span class="txt_target">판매자</span> : <span class="txt_target_userid">{? reg_mode == 'insert'}선택안함{: reg_mode == 'modify'}{target_userid}{/}</span>)
+		</li>
+	</ul>
+</div>
+<table class="info-table-style quick-goods-regist-table" width="100%" style="margin-bottom: 40px;">
+<thead>
+<tr>
+	<th class="its-th-align center" width="100">후기유형</th>
+	<th class="its-th-align center" width="60">후기사진</th>
+	<th class="its-th-align center" width="200">후기제목</th>
+	<th class="its-th-align center" width="300">후기내용</th>
+	<th class="its-th-align center" width="70" id="txt_grade1">A/S조건</th>
+	<th class="its-th-align center" width="70" id="txt_grade2">기계상태</th>
+	<th class="its-th-align center" width="70" id="txt_grade3">신뢰성</th>
+	<th class="its-th-align center" width="70" id="txt_grade4">재구매의사</th>
+	<th class="its-th-align center" width="70" id="txt_grade5">친절성</th>
+</tr>
+</thead>
+<tbody class="quick-goods-regist-tbody">
+<tr class="option-rows" style="height: 50px;">
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<select name="type" class="simple" style="width:100%;">
+        <option value="s"{? type == 's'} selected {/}>기계</option>
+        <option value="o"{? type == 'o'} selected {/}>외주</option>
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<div class="picture-list">
+	       <div class="preview-div" style="margin: 0 auto;">
+	           <label for="rev_image" class="btn-picture-add">
+	               <div class="preview-back" style="background-image: url('{path}');"></div>
+	               <p class="preview-txt">사진</p>
+	               <input type="file" name="rev_image" class="input-file" id="rev_image">
+	           </label>
+	       </div>
+     </div>
+  </td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="title" style="width: 85%;" data-val="후기 제목" value="{title}"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<textarea name="content" class="simple" style="width: 90%; height: 50px;" data-val="후기 내용">{content}</textarea>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="6" name="grade_01" data-val="평점" value="{grade_01}" /> 점
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="6" name="grade_02" data-val="평점" value="{grade_02}" /> 점
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="6" name="grade_03" data-val="평점" value="{grade_03}" /> 점
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="6" name="grade_04" data-val="평점" value="{grade_04}" /> 점
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="6" name="grade_05" data-val="평점" value="{grade_05}" /> 점
+	</td>
+</tr>
+</tbody>
+</table>
+</form>
+<script>
+update_text();
+$('select[name=type]').on('change', function(index, value) {
+	update_text();
+});
+
+function update_text() {
+	 var type = $('select[name=type] option:selected').text();
+	 if(type == '기계') {
+		  $('.txt_target').text('판매자');
+			$('#txt_grade1').text('A/S조건');
+			$('#txt_grade2').text('기계상태');
+			$('#txt_grade3').text('신뢰성');
+			$('#txt_grade4').text('재구매의사');
+			$('#txt_grade5').text('친절성');
+	 } else if (type == '외주') {
+		  $('.txt_target').text('수주사');
+		  $('#txt_grade1').text('전문성');
+			$('#txt_grade2').text('만족도');
+			$('#txt_grade3').text('의사소통');
+			$('#txt_grade4').text('재의뢰의사');
+			$('#txt_grade5').text('친절성');
+	 }
+}
+function go_rev_regist_process() {
+	if($('input[name=userid]').val() == '') {
+		alert('작성자를 선택해주세요.');
+		return;
+	}
+	if($('input[name=target_userid]').val() == '') {
+		alert($('.txt_target').text() + '를 선택해주세요.');
+		return;
+	}
+	var is_return = false;
+	var grade = 0;
+	 $.each($('input'), function(index, value) {
+		  var val = $(this).data('val');
+		  if(val) {
+			  if($(this).val() == '') {
+				  alert(val + '을 입력해주세요.');
+				  $(this).focus();
+				  is_return = true;
+				  return false;
+			  }
+			  if(val == '평점') {
+				  if(isNaN($(this).val()) == true) {
+						alert('숫자만 입력해주세요.');
+						$(this).focus();
+						is_return = true;
+						return false;
+					} else if($(this).val() < 1 || $(this).val() > 5) {
+						alert('1 ~ 5 사이로 입력해주세요.');
+						$(this).focus();
+						is_return = true;
+						return false;
+					}
+				  grade += parseInt($(this).val());
+			  }
+		  }
+	 });
+	 if(is_return) 
+			return;
+	 
+	 if($('textarea[name=content]').val() == '') {
+		 alert('후기 내용을 입력해주세요.');
+		 $('textarea[name=content]').focus();
+		 return;
+	 }
+	 var reg_mode = '{reg_mode}';
+	 var mode_nm = reg_mode == 'insert' ? '등록' : '수정';
+	 if(confirm('입력하신 내용으로 ' + mode_nm + ' 하시겠습니까 ?')) {
+		  $('#frm_regist input[name=grade]').val(parseInt(grade/5));
+          $('#frm_regist').submit();
+		}
+}
+</script>
+
+{ #layout_footer }

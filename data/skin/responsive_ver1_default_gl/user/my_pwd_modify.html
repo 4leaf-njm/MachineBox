@@ -1,0 +1,49 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-2">비밀번호 변경</h1>
+
+                <div class="my_pass_wrap">
+                    <form action="/user/my_pwd_modify_process" method="post">
+                        <input type="hidden" name="step" value="{step}" />
+                    <!-- {? step == 'step_01'} -->
+                        <div id="step_01">
+                            <div class="my-service border mt-5">
+                                <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">현재 비밀번호 입력</h5>
+                                <ul class="pt-3 pb-3 my-list">
+                                    <li class="my-normal-txt spacing-072 list-100 txt-center">
+                                        <input type="text" name="old_password" placeholder="현재 비밀번호" class="pt-1 pb-1 pl-2 pr-2" value="{old_password}" style="width: 35%;">
+                                    </li>
+                                    <li class="my-normal-txt spacing-072 list-100 txt-center">
+                                        <button type="submit" class="btn_style_01 mt-2" style="width: 150px; height: 32px; line-height: 30px;">확인</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    <!-- {: step == 'step_02'} -->
+                        <div id="step_02">
+                            <div class="my-service border mt-5">
+                                <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">새로운 비밀번호 입력</h5>
+                                <ul class="pt-3 pb-3 my-list">
+                                    <li class="my-normal-txt spacing-072 list-100 txt-center">
+                                        <input type="text" name="new_password" placeholder="새로운 비밀번호" class="pt-1 pb-1 pl-2 pr-2" style="width: 35%;">
+                                    </li>
+                                    <li class="my-normal-txt spacing-072 list-100 txt-center">
+                                        <button type="submit" class="btn_style_01 mt-2" style="width: 150px; height: 32px; line-height: 30px;">확인</button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    <!-- {/} -->
+                        
+                    </form>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>

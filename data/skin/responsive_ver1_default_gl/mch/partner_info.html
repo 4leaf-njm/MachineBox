@@ -1,0 +1,121 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+    <div class="container">
+        <div class="row align-items-center mt-5">
+            <div class="col-md-4 col-sm-12 mb-4">
+                <div class="form-row-02 align-items-center">
+                    <div for="profile-add" class="profile-div" style="background-image: url('{info.profile_path}')"></div>
+                    <input type="file" class="input-file" id="profile-add">
+                    <div class="ml-5">
+                        <p class="form-title-type-01 form-title-03 mb-0">{info.userid}</p>
+                        <div>
+                            <span>
+                            <!-- {? info.grade == 0} -->
+                                <!-- {@ range(0, 4)} -->
+                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                <!-- {/} -->
+                            <!-- {: info.grade == 5} -->
+                                <!-- {@ range(0, 4)} -->
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                <!-- {/} -->
+                            <!-- {:} -->
+                                <!-- {@ range(0, info.grade-1)} -->
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                <!-- {/} -->
+                                <!-- {@ range(info.grade, 4)} -->
+                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                <!-- {/} -->
+                            <!-- {/} -->
+                            </span>
+                            <span style="padding-left: 8px; font-size: 13px; color: #313131;">평점 {info.grade}점</span>
+                        </div>
+                        <div>
+                            <span style="display: block; padding-top: 4px; font-size: 13px; color: #2f2e2e;">평판 {info.grade_cnt}건&nbsp;&nbsp;&nbsp;외주완료 {info.finish_cnt}건</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 col-sm-12 mb-4">
+                <div class="form-row-02 align-items-center justify-content-between">
+                    <span class="partner-detail">업력:<i>{info.career_year}</i></span>
+                    <span class="partner-detail">업종:<i>{info.career_type}</i></span>
+                    <span class="partner-detail">카테고리:<i>{info.cate_name}</i></span>
+                    <span class="partner-detail">지역:<i>{info.area_name}</i></span>
+                    <span class="partner-detail">보유기술:<i>{? !info.tech_list}없음{:}{info.tech_list}{/}</i></span>
+                    <span class="partner-detail">주서비스:<i>{info.main_service}</i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12 mb-5 pb-4">
+            <h4 class="wrap-title-03 mb-3">회사 소개</h4>
+            <p class="wrap-title-sub txt-left">{info.introduce}</p>
+        </div>
+        <div class="col-12 mb-5">
+            <h4 class="wrap-title-03 mb-3">자격증</h4>
+            
+            <div class="form-row-01 certifi-row certifi-title">
+                <p class="accent-txt">자격증명</p>
+                <p class="accent-txt">자격증 발행기관</p>
+                <p class="accent-txt">자격증 발행일</p>
+            </div>
+            <!-- {@ cert_list} -->
+            <div class="form-row-01 certifi-row">
+                <p><b>{.cert_name}</b></p>
+                <p>{.cert_org}</p>
+                <p><i>{= date('Y.m.d', strtotime(.cert_date))}</i></p>
+            </div>
+            <!-- {:} -->
+            <div class="default-box small">
+                <p class="default-message">등록한 자격증이 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+        <div class="col-12">
+            <h4 class="wrap-title-03 mb-3">포트폴리오</h4>
+        </div>    
+        
+        <!-- {@ pofol_list} -->
+        <div class="col-md-4 col-sm-12 mb-3">
+            <div class="portfolio-wrap">
+                <div class="portfolio-title">
+                    <h4 class="txt-medium">{.pofol_name}</h4>
+                    <span>{= date('Y.m.d', strtotime(.start_date))} ~ {= date('Y.m.d', strtotime(.end_date))}</span>
+                    <p>{.pofol_cate}</p>
+                </div>
+                <div class="portfolio-desc">
+                    <p>{.pofol_content}</p>
+                    <div class="form-row-01">
+                        <div class="pofol-picture">
+                            <!-- {@ .picture_list} -->
+                            <p><a href="javascript:download_pofol('{..path}')">관련자료 {..index_+1}</a></p>
+                            <!-- {/} -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- {:} -->
+        <div class="default-box small">
+            <p class="default-message">등록한 포트폴리오가 없습니다.</p>
+        </div>
+        <!-- {/} -->
+        
+        <div class="col-12 mb-5 pt-5 txt-center">
+            <button class="btn-type-02 input-border-radius" onclick="location.href='/mch/osc_req/{info.partner_seq}'">지원 요청하기</button>
+        </div>
+    </div>
+</div>
+
+<form action="/mch/download_pofol" method="post" id="frm_down_pofol" target="actionFrame">
+	<input type="hidden" name="pofol_path" />
+</form>
+
+<script>
+function download_pofol(pofol_path) {
+    $('input[name=pofol_path]').val(pofol_path);
+    $('#frm_down_pofol').submit();
+}
+</script>

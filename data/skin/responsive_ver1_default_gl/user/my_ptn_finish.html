@@ -1,0 +1,62 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-2">수주 완료</h1>
+
+				<h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">
+					수주완료&nbsp<i class="accent-txt">{= count(ptn_list)}</i>&nbsp건
+				</h5>
+                
+                <form action="/user/osc_meeting_process" method="post" id="frm_meeting" target="actionFrame">
+                    <input type="hidden" name="osc_seq" />
+                    <input type="hidden" name="userid" />
+                    <input type="hidden" name="meet_state" value="2" />
+                </form>
+                
+                <!-- {@ ptn_list} -->
+                    <div class="scroll-wrap">
+                        <div class="scroll-div work-div">
+                            <a href="/mch/osc_info/{.osc_seq}">
+                                <i class="work-badge"><!-- {? .osc_state == 1} -->모집중<!-- {: .osc_state == 2} -->모집완료<!-- {/} --></i>
+                                <div class="product-row-01 partner-row">
+                                    <div class="product-row-01 partner-desc work-intro">
+                                        <div class="scroll-desc">
+                                            <h4 class="mr-3 txt-bold">{.osc_name}</h4>
+                                            <span>등록일 : {= date('Y.m.d', strtotime(.reg_date))}</span>
+                                            <span>예상일 : {= date('Y.m.d', strtotime(.start_expect_date))}</span>
+                                            <p>{= nl2br(.osc_content)}</p>
+                                            <div class="product-row-01">
+                                                <p>지역 : {.area_name}</p>
+                                                <p>관련기술 : 
+                                                <!-- {@ tech_list} -->
+                                                <span class="btn-type-01 d-inline-block mb-0">{..value_}</span>
+                                                <!-- {/} -->
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="work-info">
+                                        <p class="work-info-price"><b>{= number_format(.budget)}</b>원</p>
+                                        <div class="work-info-row">
+                                            <p>마감일 <i>{= date('Y.m.d', strtotime(.osc_end_date))}</i></p>
+                                            <p>지원자 <i>{.apply_cnt}명</i></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div> 
+                    </div>
+                    <!-- {:} -->
+                    <div class="default-box">
+                        <p class="default-message">수주 완료 내역이 없습니다.</p>
+                    </div>
+                    <!-- {/} -->
+                </div>
+            </div>
+		</div>
+	</div>

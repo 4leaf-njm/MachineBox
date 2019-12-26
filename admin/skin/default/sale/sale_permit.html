@@ -1,0 +1,233 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsRegist.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../css/layer_stock.css" />
+<style>
+	.goodsOptionTable {display:none; position:absolute; border-collapse:collapse; top:-10px; left:60px; border:1px solid #f5f5f5;}
+	.goodsOptionTable table {width:220px;}
+	.goodsOptionTable th {padding:5px; border:1px solid #ddd; background-color:#f5f5f5}
+	.goodsOptionTable td {height:25px !important; border:1px solid #ddd; background-color:#ffffff; text-align:center;}
+
+	div.sub-choose-lay div.choose-form-lay {top:27px;right:0;width:200px;}
+	div.sub-choose-lay div.choose-down-lay {top:27px;right:140px;width:150px;}
+	div.list-string-price-lay {position:relative;}
+	div.list-string-price-lay img {cursor:pointer;}
+	div.view-string-price-lay {position:absolute;top:20px;left:41px;width:300px;z-index:100;background-color:#fff;}
+	.t_tot_stock {text-align:center; border-collapse:collapse; width:570px;}
+	.t_tot_stock td {border:1px solid #666; padding:5px;}
+	.gr_col {color:#666;}
+</style>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>판매 승인</h2>
+		</div>
+
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(turnkey_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+</div>
+
+<!-- 신청리스트 테이블 : 시작 -->
+<table class="list-table-style" cellspacing="0">
+	<!-- 테이블 헤더 : 시작 -->
+	<colgroup>
+		<col width="40" /><!--번호-->
+		<col width="80" /><!--기계분류-->
+		<col width="95" /><!--기계종류-->
+		<col width="95" /><!--제조사-->
+		<col width="95" /><!--모델명-->
+		<col width="165"/><!--사진-->
+		<col width="95"/><!--판매자인도조건-->
+		<col width="150" /><!--등록일-->	
+		<col width="80" /><!--판매희망금액-->
+		<col width="80" /><!--판매유형-->
+		<col width="55" /><!--상태-->
+		<col width="65" /><!--승인-->
+		<col width="55" /><!--보류-->
+		<col width="55" /><!--관리-->
+	</colgroup>
+	<thead class="lth">
+	<tr>
+		<th>번호</th>
+		<th>기계분류</th>
+		<th>기계종류</th>
+		<th>제조사</th>
+		<th>모델명</th>
+		<th>사진</th>
+		<th>판매자인도조건</th>
+		<th>등록일</th>
+		<th>판매희망금액</th>
+		<th>판매유형</th>
+		<th>상태</th>
+		<th>승인</th>
+		<th>보류</th>
+		<th>관리</th>
+	</tr>
+	</thead>
+	<!-- 테이블 헤더 : 끝 -->
+
+	<!-- 리스트 : 시작 -->
+	<tbody class="ltb">
+<!--{? sale_list }-->
+	<!--{@ sale_list }-->
+		<tr class="list-row" style="height:100px;" id="item-{.info_seq}">
+			<td align="center" class="page_no">{.index_+1}</td>
+			<td align="center">{.kind_type}</td>
+			<td align="center">{.kind_name}</td>
+			<td align="center">{.mnf_name}</td>
+			<td align="center">{.model_name}</td>
+			<td align="left" style="font-size: 0;">
+			<!-- {@ .picture_list} -->
+				<img src="{..path}" width="38" title="{..part}" style="margin-left:3px;" /">
+			<!-- {/} -->
+			</td>
+			<td align="center">{.deliver_condition}</td>
+			<td align="center">{.sales_date}</td>
+			<td align="right">{=get_currency_price(.hope_price)}&nbsp;</td>
+			<td align="center">{? .type == 'emergency'}긴급판매{: .type == 'direct'}머박<br/>다이렉트{/}</td>
+			<td align="center">
+				<b id="item-state-{.info_seq}">{? .state == '승인'}승인{: .state == '미승인'}<span style="color:#FF4848;">미승인</span>{: .state == '보류'}<span style="color:#FF4848;">보류</span>{/}</b>
+			</td>
+			<td align="center">
+				<div><span class="btn small valign-middle"><input type="button" value="승&nbsp;&nbsp;인" onclick="show_permit_modal('{.state}', '승인', '{.info_seq}')"/></span></div>
+				<div style="margin-top:2px;"><span class="btn small valign-middle" style="padding-right: 2px;"><input type="button" value="미승인" onclick="show_permit_modal('{.state}', '미승인', '{.info_seq}')"/></span></div>
+			</td>
+			<td align="center">
+				<div><span class="btn small valign-middle"><input type="button" value="보류" onclick="show_permit_modal('{.state}', '보류', '{.info_seq}')"/></span></div>
+			</td>
+			<td align="center">
+				<div><span class="btn small valign-middle"><input type="button" value="확인" onclick="show_check_modal('{.check_list.check_01_res}', '{.check_list.check_01_det}', '{.check_list.check_02_res}', '{.check_list.check_02_det}', '{.check_list.check_03_res}', '{.check_list.check_04_res}')" /></span></div>
+				<div style="margin-top:2px;"><span class="btn small valign-middle"><a href="/sch/mch_detail/{.type}/{.info_seq}" target="_blank">상세</a></span></div>
+			</td>
+		</tr>
+	<!--{ / }-->
+<!--{ : }-->
+	<tr class="list-row">
+		<td align="center" colspan="15">
+			<!--{ ? search_text }-->
+				'{search_text}' 검색된 기계가 없습니다.
+			<!--{ : }-->
+				등록한 기계가 없습니다.
+			<!--{ / }-->
+		</td>
+	</tr>
+<!--{ / }-->
+	</tbody>
+	<!-- 리스트 : 끝 -->
+
+</table>
+<!-- 신청리스트 테이블 : 끝 -->
+
+<form action="sale_permit_process" method="post" id="frm_permit" target="actionFrame">
+	<input type="hidden" name="info_seq" />
+	<input type="hidden" name="state" />
+	<input type="hidden" name="message" />
+</form>
+
+<script type="text/template" id="permitModal">
+    <b>사용자에게 보낼 메시지를 작성해주세요.</b>
+    <textarea class="text-field" placeholder="메시지"></textarea>
+</script>
+<script>
+function show_permit_modal(cur_state, state, info_seq) {
+	if(cur_state == state) {
+		alert('이미 [' + state + '] 상태입니다.');
+		return;
+	}
+    new Dialogify('#permitModal')
+     .title(state)
+     .buttons([
+         {
+             text: state,
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+                 var message = this.$content.find('textarea.text-field').val();
+                 if (message == '') {
+                     alert('보낼 메시지를 입력해주세요.');
+                     this.$content.find('textarea.text-field').focus();
+                     return;
+                 }
+                 if(confirm('작성하신 내용으로 메시지를 보내시겠습니까 ?')) {
+                	 $('#frm_permit input[name=info_seq]').val(info_seq);
+                	 $('#frm_permit input[name=state]').val(state);
+                	 $('#frm_permit input[name=message]').val(message);
+                	 $('#frm_permit').submit();
+                	
+                     this.close();
+                 }
+             }
+         },
+         {
+             text: '취소',
+             click: function(e) {
+                 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER}).showModal();
+}
+</script>
+
+<script type="text/template" id="checkModal">
+    <b>★ 소유권 확인 질문사항 ★</b>
+	<div style="margin-top: 15px;">
+		<b style="line-height: 150%">1. 본체 외에 출품기계에 포함된 부분 부속품이 있나요?</b>
+		<p style="margin-top:8px; margin-bottom: 2px;">답변: <span id="check_01_res"></span></p>
+		<p>상세: <span id="check_01_det"></span></p>	
+	</div>	
+	<div style="margin-top: 15px;">
+		<b style="line-height: 150%">2. 화재, 침수, 전손이력, 주요부품 이상, 구조변경 등의 사항이 있나요?</b>
+		<p style="margin-top:8px; margin-bottom: 2px;">답변: <span id="check_02_res"></span></p>
+		<p>상세: <span id="check_02_det"></span></p>	
+	</div>
+	<div style="margin-top: 15px;">
+		<b style="line-height: 150%">3. 출품기계가 본인 소유 또는 소유자로부터 적법하게 양도(처분)권한을 위임받은 기계입니까?</b>
+		<p style="margin-top:8px;">답변: <span id="check_03_res"></span></p>
+	</div>
+	<div style="margin-top: 15px;">
+		<b style="line-height: 150%">4. 담보제공, 압류, 저당 설정 등의 하자가 없으며, 계약 후 즉시 소유권이전 등의 조치가 가능한 기계입니까?</b>
+		<p style="margin-top:8px;">답변: <span id="check_04_res"></span></p>
+	</div>
+</script>
+<script>
+function show_check_modal(check_01_res, check_01_det, check_02_res, check_02_det, check_03_res, check_04_res) {
+    new Dialogify('#checkModal')
+     .title('확인사항')
+     .buttons([
+         {
+             text: '확인',
+             type: Dialogify.BUTTON_DANGER,
+             click: function(e) {
+            	 this.close();
+             }
+         }
+     ], {position: Dialogify.BUTTON_CENTER})
+     .on('show', function(){
+    	 this.$content.find('#check_01_res').text(check_01_res);
+    	 this.$content.find('#check_01_det').text(check_01_det);
+    	 this.$content.find('#check_02_res').text(check_02_res);
+    	 this.$content.find('#check_02_det').text(check_02_det);
+    	 this.$content.find('#check_03_res').text(check_03_res);
+    	 this.$content.find('#check_04_res').text(check_04_res);
+     }).showModal();
+}
+</script>
+
+{ #layout_footer }

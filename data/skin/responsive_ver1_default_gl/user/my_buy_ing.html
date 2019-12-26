@@ -1,0 +1,188 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+			<div class="col-md-2 col-sm-12">
+				{# mypage_menu}
+			</div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-2">구매중 기계</h1>
+
+				<h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">
+					가격제안&nbsp<i class="accent-txt">{= count(prop_list)}</i>&nbsp건
+				</h5>
+				<form action="/sch/proposal_res_process" method="post" id="frm_proposal" target="actionFrame">
+					<input type="hidden" name="res_type" value="buyer" /> 
+                    <input  type="hidden" name="sale_userid" /> 
+                    <input type="hidden" name="prop_seq" /> 
+                    <input type="hidden" name="counter_permit_yn" />
+				</form>
+				<!-- {@ prop_list} -->
+				<div class="my-service border">
+					<h5
+						class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">
+						등록번호: <a href="/sch/mch_detail/{.type}/{.info_seq}">{.sales_no}</a>
+					</h5>
+					<ul class="pt-2 pb-2 my-list">
+						<li class="my-normal-txt spacing-072 list-50">제안 금액 : {=
+							price_format(.prop_price)}원</li>
+						<li class="my-normal-txt spacing-072 list-50">메시지 답변기한 :
+							{.prop_date}</li>
+						<li class="my-normal-txt spacing-072 list-50">제안 신청일 :
+							{.reg_date}</li>
+						<li class="my-normal-txt spacing-072 list-50">판매자 답변여부 : {?
+							.permit_yn == 'h'}답변 대기{: .permit_yn == 'y'}제안 승인{: .permit_yn ==
+							'n'}제안 거절{: .permit_yn == 'c'}카운터딜 제안{: .permit_yn == 'x'}답변기한 초과{/}</li>
+					</ul>
+				</div>
+				<!-- {? .permit_yn == 'c'} -->
+				<div class="my-service border">
+					<h5
+						class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">판매자
+						카운터딜 제안</h5>
+					<ul class="pt-2 pb-2 my-list">
+						<li class="my-normal-txt spacing-072 list-50">카운터딜 금액 : {=
+							price_format(.counter_price)}원</li>
+						<li class="my-normal-txt spacing-072 list-50">카운터딜 답변기한 :
+							{.counter_date}</li>
+						<li class="my-normal-txt spacing-072 list-100">내 답변 : {?
+							.counter_permit_yn == 'h'}답변 대기{: .counter_permit_yn == 'y'}제안
+							승인{: .counter_permit_yn == 'n'}제안 거절{: .counter_permit_yn == 'x'}답변기한 초과{/} <!-- {? .counter_permit_yn == 'h'} -->
+							<a
+							href="javascript:go_proposal_counter_process('y', '{.prop_seq}', '{.sale_userid}')"
+							class="btn_style_01 ml-3">승인</a> <a
+							href="javascript:go_proposal_counter_process('n', '{.prop_seq}', '{.sale_userid}')"
+							class="btn_style_01">거절</a> <!-- {/} -->
+						</li>
+					</ul>
+				</div>
+				<!-- {/} -->
+				<div class="mb-4"></div>
+				<!-- {:} -->
+				<div class="default-box small mb-3">
+					<p class="default-message">가격제안 하신 내역이 없습니다.</p>
+				</div>
+				<!-- {/} -->
+
+				<h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">
+					입찰&nbsp<i class="accent-txt">{= count(bid_list)}</i>&nbsp건
+				</h5>
+				<!-- {@ bid_list} -->
+				<div class="my-service border">
+					<h5
+						class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">
+						등록번호: <a href="/sch/mch_detail/{.type}/{.info_seq}">{.sales_no}</a>
+					</h5>
+					<ul class="pt-2 pb-2 my-list">
+						<li class="my-normal-txt spacing-072 list-100">남은 시간 : <span
+							id="bid_time_{.info_seq}"></span></li>
+						<li class="my-normal-txt spacing-072 list-100">현재가 : {=
+							price_format(.bid_current_price)}원</li>
+						<li class="my-normal-txt spacing-072 list-100">낙찰 여부 : {?
+							.bid_result_yn == 'y' && .info_list[count(.info_list)-1].bid_yn
+							== 'n'}유찰 {: .bid_result_yn == 'y' &&
+							.info_list[count(.info_list)-1].bid_yn == 'y'}낙찰 {:
+							.bid_result_yn == 'n' && .info_list[count(.info_list)-1].bid_yn
+							== 'n'}진행중 {/}</li>
+					</ul>
+					<script>
+						$(window).on(
+								'load',
+								function() {
+									bid_timer_load('{.isEnd}', '{.restTime}',
+											'{.info_seq}');
+								});
+					</script>
+				</div>
+				<div class="my-service border">
+					<h5
+						class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">입찰
+						내역</h5>
+					<ul class="pt-2 pb-2 my-list">
+						<!-- {@ .info_list} -->
+						<li class="my-normal-txt spacing-072 list-50">입찰 시간 :
+							{..reg_date}</li>
+						<li class="my-normal-txt spacing-072 list-50">입찰 금액 :
+							{= price_format(..my_bid_price)}원</li>
+						<!-- {/} -->
+					</ul>
+				</div>
+				<div class="mb-4"></div>
+				<!-- {:} -->
+				<div class="default-box small mb-3">
+					<p class="default-message">입찰 하신 내역이 없습니다.</p>
+				</div>
+				<!-- {/} -->
+                
+                <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">
+					현장방문&nbsp<i class="accent-txt">{= count(visit_list)}</i>&nbsp건
+				</h5>
+				<form method="post" id="frm_visit" target="actionFrame">
+					<input type="hidden" name="visit_seq" /> 
+				</form>
+				<!-- {@ visit_list} -->
+				<div class="my-service border">
+					<h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">
+						등록번호: <a href="/sch/mch_detail/{.type}/{.info_seq}">{.sales_no}</a>
+					</h5>
+					<ul class="pt-2 pb-2 my-list">
+						<li class="my-normal-txt spacing-072 list-50 txt-center">방문 신청일 : {.reg_date}</li>
+						<li class="my-normal-txt spacing-072 list-50 txt-center">진행상태 :&nbsp;
+                            {? .state == '1'}방문 신청{: .state == '2'}판매자 방문일 선택완료 
+                            <a href="javascript:go_visit_permit('{.visit_seq}')" class="btn_style_01 ml-3">승인</a>
+                            {: .state == '3'}미팅예약 완료{: .state == '4'}현장방문 완료{: .state == '5'}현장방문 취소{/}
+                        </li>
+                        <li class="my-normal-txt spacing-072 list-100 border-t txt-center mt-2 pt-2 txt-medium">희망 방문일</li>
+                        <!-- {@ .det_list} -->
+						<li class="my-normal-txt spacing-072 list-100 txt-center">{..full_date}</li>
+                        <!-- {/} -->
+                        
+                        <!-- {@ .det_list} -->
+                            <!-- {? ..select_yn == 'y'} -->
+                            <li class="my-normal-txt spacing-072 list-100 border-t txt-center mt-2 pt-2 txt-medium">판매자 희망일</li>
+                            <li class="my-normal-txt spacing-072 list-100 txt-center">{..full_date}</li>
+                            <!-- {/} -->
+                        <!-- {/} -->
+					</ul>
+				</div>
+				<div class="my-service border">
+                    <ul class="pt-2 pb-2 my-list">
+                        <li class="my-normal-txt spacing-072 list-100 txt-center">
+                            <a href="javascript:go_visit_cancel('{.visit_seq}', '{.state}')" class="d-block txt-bold">현장방문 취소</a> 
+                        </li>
+                    </ul>
+                </div>
+				<div class="mb-4"></div>
+				<!-- {:} -->
+				<div class="default-box small mb-3">
+					<p class="default-message">현장방문 신청 내역이 없습니다.</p>
+				</div>
+				<!-- {/} -->
+                
+                <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">
+					즉시구매&nbsp<i class="accent-txt">{= count(imdbuy_list)}</i>&nbsp건
+				</h5>
+				<!-- {@ imdbuy_list} -->
+				<div class="my-service border">
+					<h5
+						class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">
+						등록번호: <a href="/sch/mch_detail/{.type}/{.info_seq}">{.sales_no}</a>
+					</h5>
+					<ul class="pt-2 pb-2 my-list">
+                        <li class="my-normal-txt spacing-072 list-100">구매 신청일 : {.reg_date}</li>
+						<li class="my-normal-txt spacing-072 list-100">구매 금액 : {= price_format(.buy_price)}원</li>
+						<li class="my-normal-txt spacing-072 list-100">희망일 : {.hope_date} {.hope_time}</li>
+						<li class="my-normal-txt spacing-072 list-100">승인 여부 : {? .permit_yn == 'y'}승인{: .permit_yn == 'n'}미승인{/}</li>
+					</ul>
+				</div>
+				<div class="mb-4"></div>
+				<!-- {:} -->
+				<div class="default-box small mb-3">
+					<p class="default-message">즉시구매 하신 내역이 없습니다.</p>
+				</div>
+				<!-- {/} -->
+                
+            </div>
+		</div>
+	</div>
+</div>

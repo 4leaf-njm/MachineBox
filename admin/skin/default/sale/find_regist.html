@@ -1,0 +1,475 @@
+{ #layout_header }
+
+<style style="text/css">
+	.btnhelp {display:inline-block; width:14px; height:14px; cursor:pointer; background:url('../images/common/bg_icon.png'); vertical-align:middle;margin-bottom:2px}
+</style>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.fmdomsaver.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.colorpicker.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+<script type="text/javascript" src="/app/javascript/js/scm.common.js"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsQuickRegist.js"></script>
+<script type="text/javascript" src="/app/javascript/js/batch.js"></script>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>기계찾아줘 {? reg_mode == 'insert'}신청{: reg_mode == 'modify'}수정{/}</h2>
+		</div>
+
+		<!-- 좌측 버튼 -->
+		<ul class="page-buttons-left"></ul>
+
+		<!-- 우측 버튼 -->
+		<ul class="page-buttons-right"></ul>
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+<br style="line-height:30px;" />
+
+<form action="../sale/find_regist_process" method="post" id="frm_regist" target="actionFrame">
+<input type="hidden" name="mode" value="" />
+<input type="hidden" name="serialize" id="serialize" value=""/>
+<input type="hidden" name="mcount" value="0">
+<input type="hidden" name="member" value="search">
+<input type="hidden" name="searchSelect" value="search">
+<input type="hidden" name="selectMember" value="">
+<input type="hidden" name="wheres" value=""/>
+	
+<input type="hidden" name="reg_mode" value="{reg_mode}" />
+<input type="hidden" name="find_seq" value="{seq}" />
+<input type="hidden" name="userid" />
+
+<div class="clearbox">
+	<ul class="left-btns clearbox">
+		<li>
+			<span class="btn small black"><button type="button" onclick="go_find_regist_process('{reg_mode}')">{? reg_mode == 'insert'}신청{: reg_mode == 'modify'}수정{/}</button></span>
+		</li>
+		<li>
+			<span class="btn small"><button type="button" id="searchMemberBtn" callpage="sale">선택</button></span>
+			(신청자 : <span class="txt_userid"></span>)
+		</li>
+	</ul>
+</div>
+
+<table class="info-table-style quick-goods-regist-table" width="100%" style="margin-bottom: 40px;">
+<thead>
+<tr>
+	<th class="its-th-align center" width="110">기계종류</th>
+	<th class="its-th-align center" width="110">제조사</th>
+	<th class="its-th-align center" width="110">모델명</th>
+	<th class="its-th-align center" width="140">연식</th>
+	<th class="its-th-align center" width="140">가격대</th>
+	<th class="its-th-align center" width="80">지역</th>
+	<th class="its-th-align center" width="220">요청사항</th>
+	<th class="its-th-align center" width="100">구입예정일</th>
+	<th class="its-th-align center" width="150">배송대행서비스 신청</th>
+</tr>
+</thead>
+<tbody class="quick-goods-regist-tbody">
+<tr class="option-rows" style="height: 50px;">
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="kind_no" />
+		<input type="hidden" name="kind_seq" />
+		<select name="sel_kind" class="simple" style="width:100%;">
+			<option>선택</option>
+			<!-- {@ kind_map} -->
+      <optgroup label="{.kind_type}" data-no="{.kind_no}">
+          <!-- {@ .kind_list} -->
+          <option data-seq="{..kind_seq}">{..kind_name}</option>
+          <!-- {/} -->
+      </optgroup>
+      <!-- {/} -->
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="mnf_name" />
+		<select name="sel_mnf" class="simple" style="width:100%;" data-id="input-mnf">
+		<option>선택</option>
+		<option data-mode="input">직접입력</option>
+		<option data-none="none">선택안함</option>
+			<!-- {@ mnf_list} -->
+      <option data-seq="{.mnf_seq}">{.mnf_name}</option>
+      <!-- {/} -->
+		</select>
+		<input type="hidden" name="input_mnf" />
+    <input type="text" name="txt_mnf" class="d-none mt5" placeholder="직접입력" id="input-mnf" style="position: absolute; left: 5px; top: 30px; width: 84%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="model_name" />
+		<select name="sel_model" class="simple" style="width:100%;" data-id="input-model">
+			 <option>선택</option>		
+			 <option data-mode="input">직접입력</option>
+       <!-- {@ model_list} -->
+       <option data-seq="{.model_seq}">{.model_name}</option>
+       <!-- {/} -->
+		</select>
+		<input type="hidden" name="input_model" />
+    <input type="text" name="txt_model" class="d-none mt5" placeholder="직접입력" id="input-model" style="position: absolute; left: 5px; top: 30px; width: 84%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="model_year" />
+		<input type="text" size="4" name="model_year_01" /> 년&nbsp;~&nbsp;
+		<input type="text" size="4" name="model_year_02" /> 년
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="hope_price" />
+		<select name="sel_price" class="simple" data-id="input-price" style="width: 100%;">
+         <option data-val="0">희망 가격대 선택</option>
+         <option data-mode="input">직접입력</option>
+         <option>1000만원이하</option>
+         <option>2000만원이하</option>
+         <option>3000만원이하</option>
+         <option>4000만원이하</option>
+         <option>5000만원이하</option>
+         <option>6000만원이하</option>
+         <option>7000만원이하</option>
+         <option>8000만원이하</option>
+         <option>9000만원이하</option>
+         <option>1억이하</option>
+         <option>1억 1000만원이하</option>
+         <option>1억 2000만원이하</option>
+         <option>1억 3000만원이하</option>
+         <option>1억 4000만원이하</option>
+         <option>1억 5000만원이하</option>
+         <option>1억 6000만원이하</option>
+         <option>1억 7000만원이하</option>
+         <option>1억 8000만원이하</option>
+         <option>1억 9000만원이하</option>
+         <option>2억이하</option>
+         <option>2억이상</option>
+     </select>
+     <input type="text" name="txt_price" class="d-none mt5" placeholder="직접입력" id="input-price" style="position: absolute; left: 5px; top: 30px; width: 88%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="area_list" />
+		<div id="area_list"></div>
+		<div class="d-none area_clone">
+			<select name="sel_area[]" class="simple" style="width:100%; margin-bottom: 3px;">
+				<option data-val="-">선택</option>	
+				<option data-val="상관없음">상관없음</option>	
+				<!-- {@ area_list} -->
+	      <option data-val="{.area_name}">{.area_name}</option>
+	      <!-- {/} -->
+			</select>
+		</div>
+		<span class="btn small valign-middle" style="margin-top: 2px;"><input type="button" value="추가" class="btn_area_add"/></span>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<textarea name="option" class="simple" style="width: 90%;" rows="3"></textarea>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="buy_expect_date" class="datepicker" />
+	</td>
+	<td class="its-td-align center seller-box deliver-service-div" style="vertical-align:top;">
+		<p><label><input type="checkbox" name="deliver_service[]" value="신청안함" /> 신청안함</label></p>
+		<p><label><input type="checkbox" name="deliver_service[]" value="상차" class="mr20" /> 상차</label></p>
+		<p><label><input type="checkbox" name="deliver_service[]" value="하차" class="mr20" /> 하차</label></p>
+		<p><label><input type="checkbox" name="deliver_service[]" value="배송" class="mr20" /> 배송</label></p>
+		<p><label><input type="checkbox" name="deliver_service[]" value="해체/설치" /> 해체/설치</label></p>
+	</td>
+</tr>
+</tbody>
+</table>
+</form>
+
+<script>
+$('select[name=sel_kind]').change(function(){
+	 $('select[name=sel_mnf] option').eq(0).prop('selected', true);
+	 $('select[name=sel_model] option').eq(0).prop('selected', true);
+	 $('input[name=txt_mnf]').addClass('d-none');
+	 $('input[name=txt_model]').addClass('d-none');
+	 change_mnf_list();
+	 change_model_list();
+});
+$('select[name=sel_mnf]').change(function(){
+	 $('select[name=sel_model] option').eq(0).prop('selected', true);
+	 $('input[name=txt_model]').addClass('d-none');
+	 change_model_list();
+});
+function change_mnf_list() {
+    var kind_name = $('select[name=sel_kind] option:selected').val();
+
+    $.ajax({
+        type: 'post',
+        url: '/sale/get_mnf_list',
+        dataType: 'json',
+        data: {'kind_name': kind_name},
+        success: function(data) {
+            var html = '';
+            html += '<option>선택</option>';
+            if($('select[name=sel_mnf]').data('id'))
+                html += '<option data-mode="input">직접입력</option>';
+           	if($('select[name=sel_mnf]').data('none'))
+                html += '<option data-none="none">선택안함</option>';
+            $.each(data.mnf_list, function(index, value) {
+                html += '<option data-seq="' + value.mnf_seq + '">' + value.mnf_name + '</option>';
+            });
+            $('select[name=sel_mnf]').html(html);
+        },
+        error: function() {
+            console.log('error');
+        }
+    });
+}
+function change_model_list() {
+    var kind_name = $('select[name=sel_kind] option:selected').val();
+    var mnf_name = $('select[name=sel_mnf] option:selected').val();
+
+    $.ajax({
+        type: 'post',
+        url: '/sale/get_model_list',
+        dataType: 'json',
+        data: {'kind_name': kind_name, 'mnf_name': mnf_name},
+        success: function(data) {
+            var html = '';
+            html += '<option>선택</option>';
+            if($('select[name=sel_model]').data('id'))
+                html += '<option data-mode="input">직접입력</option>';
+            $.each(data.model_list, function(index, value) {
+                html += '<option data-seq="' + value.model_seq + '">' + value.model_name + '</option>';
+            });
+            $('select[name=sel_model]').html(html);
+        },
+        error: function() {
+            console.log('error');
+        }
+    });
+}
+$('input[name=txt_mnf]').on('focusout', function() {
+	var mnf_name = $(this).val();
+	$.ajax({
+      type: 'post',
+      url: '/sale/get_mnf_one',
+      dataType: 'json',
+      data: {'mnf_name': mnf_name},
+      success: function(data) {
+          if(data.result == true) {
+        	   alert('제조사 [' + mnf_name + ']은(는) 이미 등록되어 있습니다.\n등록된 데이터로 변경시키겠습니다.');
+        	   $.each($('select[name=sel_kind] option'), function(index, value) {
+        		   	 if($(this).text() == data.item.mnf_kind) {
+        		   		 $(this).prop('selected', true);
+        		   		 return;
+        		   	 }
+        	   });
+        	   setTimeout(function(){
+	        	   change_mnf_list();
+	        	   setTimeout(function(){
+		        	   $.each($('select[name=sel_mnf] option'), function(index, value) {
+		      		   	 if($(this).text() == data.item.mnf_name) {
+		      		   		 $(this).prop('selected', true);
+		      		   		 return;
+		      		   	 }
+		      	     });
+		        	   $('input[name=txt_mnf]').addClass('d-none');
+	        	   }, 100);
+        	   }, 100);
+          }
+      },
+      error: function() {
+          console.log('error');
+      }
+  });
+});
+$('input[name=txt_model]').on('focusout', function() {
+	var model_name = $(this).val();
+	$.ajax({
+      type: 'post',
+      url: '/sale/get_model_one',
+      dataType: 'json',
+      data: {'model_name': model_name},
+      success: function(data) {
+          if(data.result == true) {
+        	   alert('모델명 [' + model_name + ']은(는) 이미 등록되어 있습니다.\n등록된 데이터로 변경시키겠습니다.');
+        	   $.each($('select[name=sel_kind] option'), function(index, value) {
+        		   	 if($(this).text() == data.item.model_kind) {
+        		   		 $(this).prop('selected', true);
+        		   		 return;
+        		   	 }
+        	   });
+        	   setTimeout(function(){
+	        	   change_mnf_list();
+	        	   setTimeout(function(){
+	        		   $.each($('select[name=sel_mnf] option'), function(index, value) {
+           		   	 if($(this).text() == data.item.model_mnf) {
+           		   		 $(this).prop('selected', true);
+           		   		 return;
+           		   	 }
+           	     });
+	        		   $('input[name=txt_mnf]').addClass('d-none');
+	        		   setTimeout(function(){
+		        		   change_model_list();
+		        		   setTimeout(function(){
+		            	   $.each($('select[name=sel_model] option'), function(index, value) {
+		           		   	 if($(this).text() == data.item.model_name) {
+		           		   		 $(this).prop('selected', true);
+		           		   		 return;
+		           		   	 }
+		           	     });
+		            	   $('input[name=txt_model]').addClass('d-none');
+		        		   }, 100);
+	        		   }, 100);
+	        	   }, 100);
+        	   }, 100);
+          }
+      },
+      error: function() {
+          console.log('error');
+      }
+  });
+});
+
+var find_seq = '{seq}';
+if(find_seq) {
+	$.ajax({
+		type: 'post',
+		url: 'ajax_get_find',
+		dataType: 'json',
+		data: {'find_seq': find_seq},
+		success: function(data) {
+			data = data.result;
+			$.each($('select[name=sel_kind] option'), function(index, value) {
+				if($(this).data('seq') == data.kind_seq)
+					$(this).prop('selected', true);
+			});
+			var selected = false;
+			$.each($('select[name=sel_mnf] option'), function(index, value) {
+				if($(this).text() == data.mnf_name) {
+					$(this).prop('selected', true);
+					selected = true;					
+				}
+			});
+			if(selected == false) {
+				$('select[name=sel_mnf] option').eq(1).prop('selected', true);
+				$('input[name=txt_mnf]').removeClass('d-none');
+				$('input[name=txt_mnf]').val(data.mnf_name);
+			}
+			selected = false;
+			$.each($('select[name=sel_model] option'), function(index, value) {
+				if($(this).text() == data.model_name) {
+					$(this).prop('selected', true);
+					selected = true;
+				}
+			});
+			if(selected == false) {
+				$('select[name=sel_model] option').eq(1).prop('selected', true);
+				$('input[name=txt_model]').removeClass('d-none');
+				$('input[name=txt_model]').val(data.model_name);
+			}
+			selected = false;
+			$.each($('select[name=sel_price] option'), function(index, value) {
+				if($(this).text() == data.hope_price) {
+					$(this).prop('selected', true);
+					selected = true;					
+				}
+			});
+			if(selected == false) {
+				$('select[name=sel_price] option').eq(1).prop('selected', true);
+				$('input[name=txt_price]').removeClass('d-none');
+				$('input[name=txt_price]').val(data.hope_price);
+			}
+			var model_year = data.model_year.split('~');
+			$('input[name=model_year_01]').val(model_year[0]);
+			$('input[name=model_year_02]').val(model_year[1]);
+			$('input[name=buy_expect_date]').val(data.buy_expect_date);
+			$('textarea[name=option]').val(data.option);
+			
+			$('input[name=find_seq]').val(data.find_seq);
+			$('input[name=userid]').val(data.userid);
+			$('.txt_userid').text(data.userid);
+			
+			$('#area_list select').remove();
+			if(data.area_list.split(',').length == 0) {
+				var html = $('.area_clone').html();
+				$('#area_list').append(html);
+			} else {
+				$.each(data.area_list.split(','), function(index, value) {
+					var html = $('.area_clone').html();
+					$('#area_list').append(html);
+					$.each($('#area_list select').eq(index).find('option'), function(idx, val) {
+						 if($(this).text() == value) {
+							 $(this).prop('selected', true);
+						 }
+					});
+				});
+			}
+			if(data.deliver_service.split(',').length > 0) {
+				$.each(data.deliver_service.split(','), function(index, value) {
+						$.each($(".deliver-service-div input[name='deliver_service[]']"), function(idx, val) {
+							 if($(this).val() == value) {
+								  $(this).prop('checked', true);
+								  return;
+							 }
+						});
+				});
+			}
+		},
+		error: function() {
+			console.log('error');
+		}
+	});
+} else {
+	$('.txt_userid').text('선택안함');
+}
+
+$('#area_list').html($('.area_clone').html());
+$('.btn_area_add').on('click', function(index, value) {
+	var html = $('.area_clone').html();
+	$('#area_list').append(html);
+});
+
+function go_find_regist_process(mode) {
+	if($('input[name=userid]').val() == '') {
+		alert('신청자를 선택해주세요.');
+		return;
+	}
+	var mode_nm = mode == 'insert' ? '신청' : '수정';
+	if(confirm('입력하신 내용으로 ' + mode_nm + '하시겠습니까 ?')) {
+		$.each($('#area_list select'), function(index, value) {
+			var val = $(this).find('option:selected').data('val');
+			if(val == '-') {
+				$(this).remove();
+			}
+		});
+		var txt_mnf = $('#input-mnf');
+    var txt_model = $('#input-model');
+    var mnf_name = '';
+    var model_name = '';
+    if(!txt_mnf.hasClass('d-none')) {
+    	  mnf_name = txt_mnf.val();
+    } else {
+    		mnf_name = $('select[name=sel_mnf] option:selected').text();
+    }
+    if(!txt_model.hasClass('d-none')) {
+    	  model_name = txt_model.val();
+    } else {
+    	  model_name = $('select[name=sel_model] option:selected').text();
+    }
+    var model_year = $('input[name=model_year_01]').val().replace('년', '') + '~' + $('input[name=model_year_02]').val().replace('년', '');
+    var hope_price = '';
+    if($('select[name=sel_price] option:selected').data('mode') == 'input') {
+    	 hope_price = $('#input-price').val();
+    } else if($('select[name=sel_price] option:selected').data('val') == '0') {
+    	 hope_price = '-';
+    } else {
+    	 hope_price = $('select[name=sel_price] option:selected').text();
+    }
+    var area_list = '';
+    $.each($('#area_list select'), function(index, value) {
+			var val = $(this).find('option:selected').data('val');
+			area_list += area_list == '' ? val : ',' + val;
+		});
+    $('input[name=kind_seq]').val($('select[name=sel_kind] option:selected').data('seq')); 
+    $('input[name=mnf_name]').val(mnf_name); 
+    $('input[name=model_name]').val(model_name); 
+    $('input[name=model_year]').val(model_year); 
+    $('input[name=hope_price]').val(hope_price); 
+    $('input[name=area_list]').val(area_list);
+    
+		$('#frm_regist').submit();
+	}
+}
+</script>
+
+{ #layout_footer }

@@ -1,0 +1,486 @@
+{ #layout_header }
+
+<form action="download_bcard" method="post" id="frm_down_bcard" target="actionFrame">
+	<input type="hidden" name="bcard_path" />
+</form>
+<script>
+function download_bcard(bcard_path) {
+	$('input[name=bcard_path]').val(bcard_path);
+	$('#frm_down_bcard').submit();
+}
+</script>
+
+<script type="text/javascript" src="/app/javascript/js/batch.js?v={=date('YmdHis')}"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		// CHECKBOX
+		$("#memberForm input:[name='member_chk[]']").click(function(){
+			if($.isFunction("chkMemberCount")){
+				chkMemberCount()
+			}
+		});
+
+		// SMS
+		$("#sms_form").click(function(){
+			<!--{? !auth_send }-->
+			alert("권한이 없습니다.");
+			return;
+			<!--{ : }-->
+			var screenWidth;
+			var screenHeight;
+
+			screenWidth = screen.width;
+			screenHeight = screen.height;
+			
+			if(screenWidth > 1250) screenWidth = "1250";
+			if(screenHeight > 1024) screenHeight = "1024";
+
+			
+			window.open('../batch/sms_form',"sms_form","menubar=no, toolbar=no, location=yes, status=no, resizable=yes, scrollbars=yes,width=" + screenWidth + ", height=" + screenHeight);
+			<!--{ / }-->
+		});
+		
+		// SMS
+		$("#sms_batch_form").click(function(){
+			<!--{? !auth_send }-->
+			alert("권한이 없습니다.");
+			return;
+			<!--{ / }-->
+			window.open('../member/batch_sms?{query_string}','','width=500,height=420');
+		});
+
+		// EMONEY
+		$("#emoney_form").click(function(){
+			<!--{? !auth_promotion }-->
+			alert("권한이 없습니다.");
+			return;
+			<!--{ : }-->
+			var screenWidth;
+			var screenHeight;
+
+			screenWidth = screen.width;
+			screenHeight = screen.height;
+			
+			if(screenWidth > 1250) screenWidth = "1250";
+			if(screenHeight > 1024) screenHeight = "1024";
+
+			
+			window.open('../batch/emoney_form',"emoney_form","menubar=no, toolbar=no, location=yes, status=no, resizable=yes, scrollbars=yes,width=" + screenWidth + ", height=" + screenHeight);
+			<!--{ / }-->
+
+		});
+
+		$("#point_form").click(function(){
+			<!--{? !auth_promotion }-->
+			alert("권한이 없습니다.");
+			return;
+			<!--{ : }-->
+			var screenWidth;
+			var screenHeight;
+
+			screenWidth = screen.width;
+			screenHeight = screen.height;
+			
+			if(screenWidth > 1250) screenWidth = "1250";
+			if(screenHeight > 1024) screenHeight = "1024";
+
+			
+			window.open('../batch/point_form',"point_form","menubar=no, toolbar=no, location=yes, status=no, resizable=yes, scrollbars=yes,width=" + screenWidth + ", height=" + screenHeight);
+			<!--{ / }-->
+		});
+
+		// EMAIL
+		$("#email_form").click(function(){
+			<!--{? !auth_send }-->
+			alert("권한이 없습니다.");
+			return;
+			<!--{ / }-->
+			emailFormOpen();
+		});
+
+		$("#orderby_disp").change(function(){
+			var value_arr = $(this).val().split(" ");
+			$("#memberForm input[name='orderby']").val(value_arr[0]);
+			$("#memberForm input[name='sort']").val(value_arr[1]);
+			$("#memberForm").submit();
+		});
+		$("#display_quantity").change(function(){
+			$("#memberForm").submit();
+		});
+
+		$("#withdrawal_btn").click(function(){
+			<!--{? !auth_act }-->
+			alert("권한이 없습니다.");
+			return;
+			<!--{ / }-->
+			var cnt = $("#memberForm input:checkbox[name='member_chk[]']:checked").length;
+			if(cnt<1){
+				alert("탈퇴시킬 회원을 선택해 주세요.");
+				return;
+			}else{
+				if(!confirm("선택한 회원을 탈퇴시키겠습니까? ")) return;
+				$("#memberForm").attr("action","../member_process/withdrawal_set");
+				$("#memberForm").attr("target","actionFrame");
+				$("#memberForm").submit();
+			}
+		});
+
+		$("#joingate").click(function(){
+			window.open('/member/register?join_type=member&adminjoin=1','','');//'/member/agreement'
+		});
+
+		// 체크박스 색상
+		$("#memberForm input[type='checkbox'][name='member_chk[]']").live('change',function(){
+			if($(this).is(':checked')){
+				$(this).closest('tr').addClass('checked-tr-background');
+			}else{
+				$(this).closest('tr').removeClass('checked-tr-background');
+			}
+		}).change();
+
+		$("button[name='excel_down']").bind('click',function(){
+			<!--{? !auth_member_down }-->
+			alert("다운로드 권한이 없습니다.\n\n설정 > 관리자에서 설정할 수 있습니다.");
+			return;
+
+			<!--{ : }-->
+			if(!$("#excel_type").val()){
+				alert("양식을 선택 해 주세요.");
+				return;
+			}
+			$("#gradeForm input[name='exceldown_mode']").val('');
+
+			openDialog('회원정보 다운로드','admin_member_download', {'width':550,'height':430});
+
+			$("input[name='member_download_passwd']").val("");
+			$("input[name='member_download_passwd']").focus();
+			<!--{ / }-->
+		});
+
+		$("input[name='member_download_passwd']").keydown(function(e){
+			if(e.keyCode == 13) {
+				return false;
+			}
+		});
+
+		$("button[name='excel_down_real']").bind('click',function(){
+			if (!$("input[name='member_download_passwd']").val()) {
+				alert("비밀번호를 입력해 주세요.");
+				$("input[name='member_download_passwd']").focus();
+				return;
+			}
+
+			parent.closeDialog('admin_member_download');
+			var queryString = $("#memberForm").serializeArray();
+			queryString.push({name: 'member_download_passwd', value: $("input[name='member_download_passwd']").val()});
+			ajaxexceldown('/admin/member_process/excel_down', queryString);
+		});
+
+		// 다운로드항목설정
+		$("button[name='download_list']").click(function(){
+			<!--{? !auth_member_down }-->
+			alert("다운로드 권한이 없습니다.");
+			return;
+			<!--{ / }-->
+
+			openDialogPopup("항목설정", "download_list_setting", {
+				'url' : 'download_write',
+				'width' : 800,
+				'height' : 460
+			});
+		});
+
+		// 회원승인/등급
+		$("#grade_form").click(function(){
+
+			<!--{? !auth_promotion }-->
+			alert("권한이 없습니다.");
+			return;
+			<!--{ : }-->
+
+			grade_reset('open');
+
+			openDialog("회원(승인/등급) 일괄변경<span class='desc'></span>", "grade_form_popup", {"width":"650","height":"245","show" : "fade","hide" : "fade"});
+			<!--{ / }-->
+
+		});
+
+		$("#gradeForm input[name='batch_mode']").click(function(){
+
+			grade_reset('reset');
+
+			if($("#gradeForm input[name='batch_mode']:checked").val() == "member_grade"){
+				$("#searchMemberBtn").attr("callpage","grade");
+				$("#gradeForm input[name='wheres']").val("status=done");
+				$(".process_title").html("등급변경");
+				$(".member_status_cont").hide();
+				$(".member_grade_cont").show();
+				
+			}else{
+				$("#searchMemberBtn").attr("callpage","status");
+				$("#gradeForm input[name='wheres']").val("status=hold");
+				$(".process_title").html("회원승인");
+				$(".member_status_cont").show();
+				$(".member_grade_cont").hide();
+			}
+		});
+
+		// 회원(승인/등급) 일괄변경 : 엑셀다운로드
+		$("#downloadMemberBtn").click(function(){
+
+			{? auth_member_down }
+			if($("#gradeForm input[name='mcount']").val() == 0){
+				openDialogAlert('다운로드 파일이 없습니다.<br />먼저 회원을 검색해 주세요.', 400, 150);
+				return;
+			}
+
+			{? preg_match("/chrome/", strtolower(_SERVER['HTTP_USER_AGENT'])) || preg_match("/firefox/", strtolower(_SERVER['HTTP_USER_AGENT']))}
+			if($("#gradeForm input[name='mcount']").val() > 30000){
+				openDialogAlert("현재 브라우져에서는 대량 다운로드가 원할하지 않을 수 있습니다.<br />다운로드가 되지 않을 시 IE에서 다운로드 하시기 바랍니다.", 450, 160);
+			}
+			{/}
+			$("#gradeForm input[name='exceldown_mode']").val('grade');
+
+			openDialog('회원정보 다운로드','admin_member_download', {'width':600,'height':430});
+			{:}
+				openDialogAlert('다운로드 권한이 없습니다.<br /> <a href="../setting/manager"><span class="orange"><b>설정 > 관리자</b></span></a>에서 설정할 수 있습니다.', 400, 150);
+				return;
+			{/}
+		});
+
+		// 회원(승인/등급) 일괄변경 : 일괄처리
+		$("#grade_submit").click(function(){
+			document.gradeForm.submit();
+			//loadingStart();
+		});
+
+	});
+
+	function grade_reset(mode){
+		//초기화
+		if(mode == "open"){
+			$("#gradeForm input[name='batch_mode']").attr("checked",false);
+			$("#gradeForm input[name='batch_mode'][value='member_status']").attr("checked",true).trigger('click');
+		}
+		$("#gradeForm input[name='member_old_grade']").val('');
+		$("#gradeForm input[name='member_old_grade_name']").val('');
+		$("#gradeForm input[name='serialize']").val('');
+		$("#gradeForm input[name='selectMember']").val('');
+		$("#gradeForm input[name='mcount']").val(0);
+		$("#search_member").html(0);
+	}
+
+	function emailFormOpen(){
+
+
+		var screenWidth;
+		var screenHeight;
+
+		screenWidth = screen.width;
+		screenHeight = screen.height;
+		
+		if(screenWidth > 1250) screenWidth = "1250";
+		if(screenHeight > 1024) screenHeight = "1024";
+
+		
+		window.open('../batch/email_form',"send_email","menubar=no, toolbar=no, location=yes, status=no, resizable=yes, scrollbars=yes,width=" + screenWidth + ", height=" + screenHeight);
+
+		
+		/*
+		$("#container").css("height","0px");
+		$("#container").attr("src","email_form");
+		$("#container").show();
+		*/
+	}
+
+	function ajaxexceldown(url, queryString){
+		var inputs = "";
+		 jQuery.each(queryString, function(i, field){
+			 inputs +='<input type="hidden" name="'+field.name+'" value="'+ field.value +'" />';
+		 });
+		jQuery('<form action="'+ url +'" method="post" target="actionFrame" >'+inputs+'</form>')
+		.appendTo('body').submit().remove();
+	}
+
+	function excelDownloadOk(){
+		parent.closeDialog('admin_member_download');
+
+		if($("#exceldown_mode").val() == "grade"){
+			$("#gradeForm").attr("action","/admin/batch_process/grade_member_download");
+			$("#gradeForm").submit();
+			$("#gradeForm").attr("action","/admin/batch_process/set_grade");
+		}else{
+			var queryString = $("#memberForm").serializeArray();
+			queryString.push({name: 'member_download_passwd', value: $("input[name='member_download_passwd']").val()});
+			//ajaxexceldown('/admin/member_process/excel_down', queryString);
+			ajaxexceldown_spout('/cli/excel_down/create_member', queryString);
+		}
+	}
+	
+	function ajaxexceldown_spout(url, queryString){
+		var params = {};
+		params['snsrute'] = [];
+		jQuery.each(queryString, function(i, field){
+			if(field.name != "member_chk[]" && field.name != "snsrute[]"){ //회원 중복 선택 방지 kmj
+				params[field.name] = field.value;
+			}
+
+			if(field.name == "snsrute[]"){ //회원 중복 선택 방지 kmj
+				params['snsrute'].push(field.value);
+			}
+		});
+
+
+		//회원 선택 다운로드 추가 kmj
+		if(params['excel_type'] == "select"){
+			params['member_chk'] = [];
+			$('input[name="member_chk[]"]:checked').each(function() {
+				params['member_chk'].push(this.value);
+			});
+
+			params['searchcount'] = params['member_chk'].length;
+		}
+
+		$.ajax({      
+			type: "POST",  
+			url: url,      
+			data: params, 
+			success:function(args){ 
+				loadingStop();
+				var exe = args.split('.').pop();
+				if(exe == "csv" || exe == "zip" || exe == "xlsx"){
+					window.location.href = '/admin/excel_spout/file_download?url=' + args; 
+				} else {
+					alert(args);
+				}
+			}, error:function(e){  
+				alert(e.responseText);  
+			}  
+		});
+	}
+
+</script>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+
+		<!-- 좌측 버튼 -->
+		<ul class="page-buttons-left" style="z-index:1;">
+			<li><span class="btn large orange"><button type="button" id="email_form">이메일 수동발송</button></span></li>
+			<li><span class="btn large orange"><button type="button" id="sms_form">SMS 수동발송</button></span></li>
+			<li><span class="btn large orange"><button type="button" id="emoney_form">마일리지</button></span></li>
+			<li>
+			<!--{ ? serviceLimit('H_FR') }-->
+				<span class="btn large {=serviceLimit('C1')}"><button type="button" onclick="{=serviceLimit('A1')}">포인트</button></span>
+			<!--{ : }-->
+				<span class="btn large orange"><button type="button" id="point_form">포인트</button></span>
+			<!--{ / }-->
+			</li>
+			<li><span class="btn large orange"><button type="button" id="grade_form">회원(승인/등급) 일괄변경</button></span></li>
+		</ul>
+
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>회원리스트</h2>
+		</div>
+
+		<!-- 우측 버튼 -->
+		<ul class="page-buttons-right">
+			<li><span class="btn large black"><button id="joingate">회원가입<span class="arrowright"></span></button></span></li>
+		</ul>
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+
+<form name="memberForm" id="memberForm">
+<input type="hidden" name="member_seq" />
+<input type="hidden" name="orderby" value="{sc.orderby}"/>
+<input type="hidden" name="sort" value="{sc.sort}"/>
+<input type="hidden" name="searchcount" value="{sc.searchcount}"/>
+<input type="hidden" name="type" />
+<input type="hidden" name="perpage"  id="perpage" value="{sc.perpage}" />
+<input type="hidden" name="mcount" value="{sc.searchcount}">
+
+<input type="hidden" name="query_string" value="{query_string}"/>
+
+{# member_search }
+
+{# member_list }
+
+<div class="clearbox">
+	<ul class="left-btns" style="margin-top:-10px">
+		<li>
+			<span class="btn small gray"><button type="button" id="withdrawal_btn">탈퇴</button></span>
+		</li>
+	</ul>
+	<div class="paging_navigation">{pagin}</div>
+</div>
+</form>
+<!-- 페이징 -->
+
+<div>
+<iframe name="container" id="container" style="display:none;width:100%;" frameborder="0"></iframe>
+</div>
+
+
+<div id="excel_popup" class="hide"></div>
+<div id="grade_form_popup" class="hide">
+
+	<form name="gradeForm" id="gradeForm" method="post" target="actionFrame" action="../batch_process/set_grade">
+	<input type="hidden" name="mode" value="" />
+	<input type="hidden" name="serialize" id="serialize" value=""/>
+	<input type="hidden" name="mcount" value="0">
+	<input type="hidden" name="member" value="search">
+	<input type="hidden" name="searchSelect" value="search">
+	<input type="hidden" name="selectMember" value="">
+	<input type="hidden" name="wheres" value="status=hold"/>
+	<input type="hidden" name="exceldown_mode" id="exceldown_mode">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" class="info_table_style">
+	<colgroup width="25%"><colgroup width="75%">
+	<tr>
+		<th class="its_th">일괄수정 선택</th>
+		<td class="its_td"><label><input type="radio" name="batch_mode" value="member_status" checked> 회원승인</label>
+			<label style="margin-left:15px"><input type="radio" name="batch_mode" value="member_grade"> 등급변경</label>
+		</td>
+	</tr>
+	<tr>
+		<th class="its_th">대상회원(검색)</th>
+		<td class="its_td"><span id="searchSelectText">검색된</span> 회원 (<span id="search_member" class='bold'>0</span>명 <span class="hand" id="downloadMemberBtn"><img src="../images/common/btn_img_ex.gif" align="absmiddle" />엑셀다운로드</span>)
+		<span class="btn small"><button type="button" id="searchMemberBtn" callpage="status">회원검색</button></span>
+		</td>
+	</tr>
+	<tr>
+		<th class="its_th process_title">회원승인</th>
+		<td class="its_td process_cont">
+			<div class="member_status_cont">
+			<input type="hidden" name="member_status" value="y">
+			검색된 회원을 <span class="bold">승인</span> 처리 합니다.
+			</div>
+			<div class="member_grade_cont hide">
+			검색된 
+				<input type="text" name="member_old_grade_name" size="7" readonly disabled title="">
+				<input type="hidden" name="member_old_grade" size="3" readonly >
+			등급회원을 
+				<select name="member_new_grade" style="width:80px;">
+				<option value="">등급선택</option>
+				{@ group_arr }
+				<option value="{.group_seq}" {?sc.grade==.group_seq}selected{/}>{.group_name}</option>
+				{ / }
+				</select> 등급으로 변경합니다.
+			</div>
+		</td>
+	</tr>
+	</form>
+	</table>
+	<div style="text-align:center; padding-top:20px;">
+		<span class="btn large cyanblue"><button type="button" id="grade_submit">일괄변경</button></span>
+	</div>
+</div>
+
+{#member_download_info}
+
+<!-- 기본검색설정 -->
+<script type="text/javascript" src="/app/javascript/js/admin-searchDefaultConfig.js"></script>
+
+{ #layout_footer }

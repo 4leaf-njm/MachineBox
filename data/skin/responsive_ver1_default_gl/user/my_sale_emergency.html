@@ -1,0 +1,227 @@
+<div class="container-fluid top-pt">
+    <div class="container pt-5">
+        <div class="row">
+                <div class="col-md-2 col-sm-12">
+                    {# mypage_menu}
+                </div>
+            
+                <div class="col-md-10 col-sm-12">
+
+                    <h1 class="wrap-title wrap-title-02 txt-bold mb-2">긴급판매 신청</h1>
+    
+                    <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">판매대기&nbsp<i class="accent-txt">{= count(wait_list)}</i>&nbsp건</h5>
+                    <div class="scroll-wrap ad-sale-wrap scroll-y">
+                        <!-- {@ wait_list } -->
+                        <div class="my-service border">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">등록번호: {.sales_no}</h5>
+                            <ul class="pt-2 pb-2 my-list">
+                                <li class="my-normal-txt spacing-072 list-100">등록 신청일 : {.sales_date}</li>
+                                <li class="my-normal-txt spacing-072 list-100">판매희망 금액 : {=number_format(.hope_price)} 원</li>
+                                <li class="my-normal-txt spacing-072 list-100">승인여부 : {.state}</li>
+                                <li class="my-normal-txt spacing-072 list-100">견적 진행상태 : 
+                                    {? .estimate_yn == 'n'}딜러 선택중
+                                    {: .estimate_yn == 'h'}견적 진행중
+                                    {: .estimate_yn == 'y'}견적 진행완료
+                                    {/}
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- {? .estimate_yn == 'y'} -->
+                        <div class="my-service border">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">견적서 작성 {= count(.dealer_list)}건</h5>
+                            <ul class="pt-2 pb-2 my-list">
+                                <!-- {@ .dealer_list} -->
+                                <li class="my-normal-txt spacing-072 list-50 txt-center">{..index_+1}.&nbsp;&nbsp;{..userid} {? ..select_yn == 'y'}(선택완료){/}</li>
+                                <li class="my-normal-txt spacing-072 list-50 txt-center">
+                                    <a href="javascript:show_estimate_form('{..estimate_seq}', 'view');" class="btn_style_01">견적서 확인</a>
+                                    <a href="javascript:go_dealer_meet('{..estimate_seq}', '{..info_seq}', '{..userid}', '{..select_yn}');" class="btn_style_01">딜러 선택</a>
+                                </li>
+                                <!-- {/} -->
+                            </ul>
+                        </div>
+                        <!-- {/} -->
+                        <div class="my-service border">
+                            <ul class="pt-2 pb-2 my-list">
+                                <li class="my-normal-txt spacing-072 list-100 txt-center">
+                                    <a href="/sale/{.type}_reg/{.info_seq}/emergency/{.type}" class="d-block txt-bold">등록정보 수정</a> 
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- {:} -->
+                        <div class="default-box small">
+                            <p class="default-message">긴급판매 판매대기 내역이 없습니다.</p>
+                        </div>
+                        <!-- {/} -->
+                    </div>
+                        
+                   <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">판매 중&nbsp<i class="accent-txt">{= count(ing_list)}</i>&nbsp건</h5>
+                   <div class="scroll-wrap ad-sale-wrap scroll-y">
+                        <!-- {@ ing_list } -->
+                        <div class="product-wrap-01">
+                            <div class="scroll-div">
+                                <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                                    <div class="product-row-01 normal-machine-row">
+                                        <div class="product-machine-desc product-row-01">
+                                            <img class="product-machine-img" src="{.path}" height="115"/>
+                                            <div class="scroll-desc">
+                                                <div class="product-row-01">
+                                                    <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                                    <a href="/sale/{.type}_reg/{.info_seq}/emergency/{.type}" class="btn small mr-2">등록정보 수정</a>
+                                                    <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                                                    <span class="btn-type-01">입찰진행</span>
+                                                    <!-- {/} -->
+                                                    <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                                                    <span class="btn-type-01">입찰마감</span>
+                                                    <!-- {/} -->
+                                                    <!-- {? .price_proposal != 0} -->
+                                                    <span class="btn-type-01">가격제안</span>
+                                                    <!-- {/} -->
+                                                </div>
+                                                <span>{= str_replace('년', '', .model_year)}년형</span>
+                                                <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                                <span>{.area_name}</span>
+                                                <!--<span>기타사항</span>-->
+                                                <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                                                <div class="ad-sale-icon-row">
+                                                    <div>
+                                                        <img src="../images/custom/icon/ico-heart.png" alt="">
+                                                        <span>{.like_cnt}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="product-machine-info">
+                                            <!--<img class="product-profile-img" src='{.partner_profile_path}'/>-->
+                                            <p class="pb-1">{.userid}</p>
+                                            <span class="pb-1">
+                                                <!-- {? .grade == 0} -->
+                                                    <!-- {@ range(0, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {: .grade == 5} -->
+                                                    <!-- {@ range(0, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {:} -->
+                                                    <!-- {@ range(0, .grade-1)} -->
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                    <!-- {/} -->
+                                                    <!-- {@ range(.grade, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {/} -->
+                                                </span>
+                                            <span>평점 {.grade} 점&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;매매중 {.sale_ing_cnt} 건</span>
+                                            <span>평판 {.grade_cnt} 건&nbsp;&nbsp;매매완료 {.sale_finish_cnt} 건</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- {:} -->
+                        <div class="default-box small">
+                            <p class="default-message">긴급판매 판매중 내역이 없습니다.</p>
+                        </div>
+                        <!-- {/} -->
+                    </div>
+                       
+                    <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">판매 완료&nbsp<i class="accent-txt">{= count(finish_list)}</i>&nbsp건</h5>
+                    <div class="scroll-wrap ad-sale-wrap scroll-y">
+                        <!-- {@ finish_list } -->
+                        <div class="product-wrap-01">
+                            <div class="scroll-div">
+                                <a href="/sch/mch_detail/{.type}/{.info_seq}">
+                                    <div class="product-row-01 normal-machine-row">
+                                        <div class="product-machine-desc product-row-01">
+                                            <img class="product-machine-img" src="{.path}" height="115"/>
+                                            <div class="scroll-desc">
+                                                <div class="product-row-01">
+                                                    <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                                    <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
+                                                    <span class="btn-type-01">입찰진행</span>
+                                                    <!-- {/} -->
+                                                    <!-- {? .method == '입찰' && .bid_yn == 'y'} -->
+                                                    <span class="btn-type-01">입찰마감</span>
+                                                    <!-- {/} -->
+                                                    <!-- {? .price_proposal != 0} -->
+                                                    <span class="btn-type-01">가격제안</span>
+                                                    <!-- {/} -->
+                                                </div>
+                                                <span>{= str_replace('년', '', .model_year)}년형</span>
+                                                <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                                <span>{.area_name}</span>
+                                                <!--<span>기타사항</span>-->
+                                                <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                                                <div class="ad-sale-icon-row">
+                                                    <div>
+                                                        <img src="../images/custom/icon/ico-heart.png" alt="">
+                                                        <span>{.like_cnt}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="product-machine-info">
+                                            <!--<img class="product-profile-img" src='{.partner_profile_path}'/>-->
+                                            <p class="pb-1">{.userid}</p>
+                                            <span class="pb-1">
+                                                <!-- {? .grade == 0} -->
+                                                    <!-- {@ range(0, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {: .grade == 5} -->
+                                                    <!-- {@ range(0, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {:} -->
+                                                    <!-- {@ range(0, .grade-1)} -->
+                                                        <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                                    <!-- {/} -->
+                                                    <!-- {@ range(.grade, 4)} -->
+                                                        <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                                    <!-- {/} -->
+                                                <!-- {/} -->
+                                                </span>
+                                            <span>평점 {.grade} 점&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;매매중 {.sale_ing_cnt} 건</span>
+                                            <span>평판 {.grade_cnt} 건&nbsp;&nbsp;매매완료 {.sale_finish_cnt} 건</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- {:} -->
+                        <div class="default-box small">
+                            <p class="default-message">긴급판매 판매완료 내역이 없습니다.</p>
+                       </div>
+                        <!-- {/} -->
+                   </div>
+                       <div class="mb-5"></div>
+                    <script>
+                        (function($){
+                            $(".ad-sale-wrap.scroll-y").mCustomScrollbar({
+                                theme: "rounded-dark",
+                                scrollbarPosition: "outside",
+                                advanced:{
+                                    autoExpandHorizontalScroll:true
+                                }
+                            });
+                        })(jQuery);
+                    </script>
+                        
+            </div>
+        </div>
+    </div>
+</div>
+            
+<script>
+function go_dealer_meet(estimate_seq, info_seq, userid, select_yn) {
+    if(select_yn == 'y') {
+        alert('이미 ' + userid + '님과의 현장미팅을 진행하였습니다.');
+        return;
+    }
+    if(confirm(userid + '님이 작성한 견적서를 선택하시겠습니까 ?\n해당 딜러와의 현장미팅이 필요합니다.\n현장미팅 예약 페이지로 이동합니다.')) {
+        location.href = "/sch/visit/emergency/" + info_seq + "/" + estimate_seq;
+    }
+}
+</script>
+
+

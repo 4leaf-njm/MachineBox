@@ -1,0 +1,158 @@
+<div class="container-fluid top-pt wrap-bg-gray">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-5 pt-5 pb-5">
+                <h1 class="wrap-title txt-center txt-bold mb-2">외주 업무 의뢰 정보를 입력해주세요.</h1>
+                <p class="wrap-title-sub">귀사의 업무를 성공적으로 수행할 좋은 파트너를 찾을 수 있습니다. 별도의 비용발생없이 등록만으로 파트너기업의 지원, 협의, 계약, 분쟁조정을 ONE-STOP으로 서비스를 제공합니다. </p>
+            </div>
+        </div>
+        <form action="/mch/osc_process" method="post" id="frm_osc" enctype="multipart/form-data">
+            <input type="hidden" name="osc_seq" value="{info.osc_seq}" />
+            <input type="hidden" name="page_type" value="{page_type}" />
+            <input type="hidden" name="file_cnt" />
+            <input type="hidden" name="osc_tech" />
+            <div class="row">
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">카테고리</p>
+                            <input type="hidden" name="cate_seq" />
+                            <select type="text" name="sel_cate" class="input-style input-lg select-style" onchange="change_cate_sub()">
+                                <option>카테고리</option>
+                                <!-- {@ cate_list} -->
+                                <option data-seq="{.cate_seq}" {? info.cate_seq == .cate_seq }selected{/}>{.cate_name}</option>
+                                <!-- {/} -->
+                            </select>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                        <p class="form-title-type-02">세부 카테고리</p>
+                        <input type="text" name="cate_sub" class="input-style input-border-none input-lg" placeholder="기계부품, 전기부품, 컨트롤러, 베어링가공, CNC선반 해체 ..." value="{info.cate_sub}">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                        <p class="form-title-type-02">외주명</p>
+                        <input type="text" name="osc_name" class="input-style input-border-none input-lg" placeholder="정확한 업무 명칭을 입력하세요" value="{info.osc_name}">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                        <p class="form-title-type-02">예상기간</p>
+                        <input type="text" name="expect_date" class="input-style input-border-none input-lg" placeholder="ex) 30일" value="{info.expect_date}">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                        <p class="form-title-type-02">지출예산</p>
+                        <input type="text" name="budget" class="input-style input-border-none input-lg" placeholder="단위 : 만원" value="{= substr(info.budget, 0, -4)}">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                        <p class="form-title-type-02">외주업무 지역</p>
+                        <input type="hidden" name="area_seq" />
+                        <select type="text" name="sel_area" class="input-style input-lg select-style">
+                            <option>지역을 선택해주세요.</option>
+                            <!-- {@ area_list} -->
+                            <option data-seq="{.area_seq}" {? info.area_seq == .area_seq }selected{/}>{.area_name}</option>
+                            <!-- {/} -->
+                        </select>
+                    </div>
+                    <div class="col-12 mb-5">
+                            <p class="form-title-type-02">외주업무 내용</p>
+                        <textarea name="osc_content" class="input-style input-border-none input-lg textarea-style" cols="30" rows="10" placeholder="외주업무 내용을 적어주세요.">{info.osc_content}</textarea>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                        <p class="form-title-type-02">관련 기술</p>
+                        <input type="text" id="option-03" class="input-style input-border-none input-lg" placeholder="엔터를 입력하여 관련 기술을 추가해주세요.">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                        <p class="form-title-type-02 invisible">.</p>
+                        <div class="form-row-02 pt-1" id="option-03-append">
+                            <!-- {@ info.tech_list} -->
+                                <div class="options-div mr-2 mb-1">
+                                    <input type="hidden" name="option_03_arr[]" value="{.value_}"/>
+                                    <pre class="options-txt">{.value_}</pre>
+                                    <i class="options-delete-btn"></i>
+                                </div>
+                            <!-- {/} -->
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">모집마감일</p>
+                        <input type="text" name="osc_end_date" class="input-style input-border-none input-lg pickadate" value="{info.osc_end_date}">
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-5">
+                            <p class="form-title-type-02">업무시작 예상일</p>
+                            <input type="text" name="start_expect_date" class="input-style input-border-none input-lg pickadate" value="{info.start_expect_date}">
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                            <p class="form-title-type-02">관련자료</p>
+                            <div class="file-box input-style input-border-none input-lg pre-style mb-3">
+                                <span class="place-holder">사진을 올려주세요.</span>
+                                <label for="pofol-add-1-1" class="input-file-label" id="pofol-label">추가</label>
+                            </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 mb-4 pofol-picture-div">
+                        <p class="form-title-type-02 invisible">.</p>
+                        <div class="form-row-02">
+                            <!-- {? count(info.picture_list) == 0} -->
+                                <!-- {@ range(1, 4)} -->
+                                    <div class="preview-div">
+                                        <div class="preview-back" id="pofol-file-{.value_}">
+                                            <input type="file" name="pofol_picture_{.value_}[]" class="input-file" id="pofol-add-1-{.value_}">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                    </div>
+                                <!-- {/} -->
+                            <!-- {: count(info.picture_list) == 4} -->
+                                <!-- {@ range(1, count(info.picture_list))} -->
+                                    <div class="preview-div">
+                                        <div class="preview-back" id="pofol-file-{.value_}" style="background-image: url('{info.picture_list[.index_].path}');">
+                                            <input type="file" name="pofol_picture_{.value_}[]" class="input-file" id="pofol-add-1-{.value_}">
+                                            <i class="preview-delete-btn preview-delete-btn-active" data-target="{.value_}"></i>
+                                            <input type="hidden" name="picture_seq_arr[]" value="{info.picture_list[.index_].picture_seq}" class="target_{.value_}"/>
+                                            <input type="hidden" name="picture_path_arr[]" value="{info.picture_list[.index_].path}" class="target_{.value_}"/>
+                                        </div>
+                                    </div>
+                                <!-- {/} -->
+                            <!-- {: count(info.picture_list) > 0 && count(info.picture_list) < 4} -->
+                                <!-- {@ range(1, count(info.picture_list))} -->
+                                    <div class="preview-div">
+                                        <div class="preview-back" id="pofol-file-{.value_}" style="background-image: url('{info.picture_list[.index_].path}');">
+                                            <input type="file" name="pofol_picture_{.value_}[]" class="input-file" id="pofol-add-1-{.value_}">
+                                            <i class="preview-delete-btn preview-delete-btn-active" data-target="{.value_}"></i>
+                                            <input type="hidden" name="picture_seq_arr[]" value="{info.picture_list[.index_].picture_seq}" class="target_{.value_}"/>
+                                            <input type="hidden" name="picture_path_arr[]" value="{info.picture_list[.index_].path}" class="target_{.value_}"/>
+                                        </div>
+                                    </div>
+                                <!-- {/} -->
+                                <!-- {@ range(count(info.picture_list)+1, 4)} -->
+                                    <div class="preview-div">
+                                        <div class="preview-back" id="pofol-file-{.value_}">
+                                            <input type="file" name="pofol_picture_{.value_}[]" class="input-file" id="pofol-add-1-{.value_}">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                    </div>
+                                <!-- {/} -->
+                            <!-- {:} -->
+                                <!-- {@ range(1, 4)} -->
+                                    <div class="preview-div">
+                                        <div class="preview-back" id="pofol-file-{.value_}">
+                                            <input type="file" name="pofol_picture_{.value_}[]" class="input-file" id="pofol-add-1-{.value_}">
+                                            <i class="preview-delete-btn"></i>
+                                        </div>
+                                    </div>
+                                <!-- {/} -->
+                            <!-- {/} -->
+                        </div>
+                    </div>
+                    <div class="col-12 mb-3 pt-2 txt-right">
+                        {? !info.osc_seq}<button type="button" class="btn-type-01 btn-sm" onclick="osc_temp_save()">임시저장</button>{/}
+                    </div> 
+                    <div class="col-12 mb-5 pt-5 txt-center">
+                        <button type="button" class="btn-type-02 input-border-radius" onclick="go_osc_complete()">{? info.osc_seq}수정하기{:}등록하기{/}</button>
+                    </div> 
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        $(document).ready(function(){
+            if('{page_type}' == 'temp')
+                osc_load_data('{temp_seq}');
+            
+            default_osc_load_data('{= count(info.picture_list)+1}');
+        });
+    </script>
+</div>

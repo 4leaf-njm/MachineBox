@@ -1,0 +1,750 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"  xmlns:fb="http://ogp.me/ns/fb#"  xmlns:og="http://ogp.me/ns#">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# {? APP_NAMES && APP_TYPE }{APP_NAMES}{:}website{/}: {? APP_NAMES  && APP_TYPE }http://ogp.me/ns/fb/{APP_NAMES}{:}http://ogp.me/ns/fb/website{/}#">
+<meta charset="utf-8">
+
+{=metaHeaderWrite(add_meta_info)}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+    
+<meta name="naver-site-verification" content="f6a63a287b5a7f9e1fd22f8cc876fa2df74d0794"/>
+    
+<title>{shopTitle}</title>
+
+{? old_meta == 'Y'}
+	<!-- SEO 설정이 없을경우 -->
+	<!--{? !config_basic.metaTagUse }-->
+	<meta name="robots" content="noindex,nofollow">
+	<!--{ / }-->
+	<meta name="generator" content="{? meta.generator }{=htmlspecialchars(strip_tags(meta.generator))}{:}{=htmlspecialchars(strip_tags(config_basic.shopName))}{/}" />
+
+	<!--{ ? APP_USE == 'f' }-->
+	<meta name="title" content="{? goods.goods_name }{=htmlspecialchars(strip_tags(goods.goods_name))}{:}{? subject }{=htmlspecialchars(strip_tags(subject))}{:}{? shopTitle }{=htmlspecialchars(strip_tags(shopTitle))}{/}{/}{/}" />
+		<!--{? !goods.summary && goods.common_contents }-->
+		<meta name="description" content="{=htmlspecialchars(strip_tags(goods.common_contents))}" />
+		<!--{ : }-->
+		<meta name="description" content="{? goods.summary }{=htmlspecialchars(strip_tags(goods.summary))}{:}{? subject && contents}{=getstrcut(htmlspecialchars(strip_tags(contents)), 30)}{:}{? mete.description } - {=htmlspecialchars(strip_tags(mete.description))}{/}{? config_basic.metaTagDescription }{=htmlspecialchars(strip_tags(config_basic.metaTagDescription))}{:}{/}{/}{/}" />
+		<!--{/}-->
+	<!--{:}-->
+	<meta name="title" content="[{=htmlspecialchars(strip_tags(config_basic.shopName)) }]{? goods.goods_name }{=htmlspecialchars(strip_tags(goods.goods_name))} {:}{? subject }{=htmlspecialchars(strip_tags(subject))}{:}{? mete.description } - {=htmlspecialchars(strip_tags(mete.description))}{/}{? config_basic.metaTagDescription }{=htmlspecialchars(strip_tags(config_basic.metaTagDescription))}{:}{/}{/}{/}" />
+	<meta name="description" content="{? goods.summary }{=htmlspecialchars(strip_tags(goods.summary))}{:}{? subject && contents}{=getstrcut(htmlspecialchars(strip_tags(contents)), 30)}{:}{? mete.description } - {=htmlspecialchars(strip_tags(mete.description))}{/}{? config_basic.metaTagDescription }{=htmlspecialchars(strip_tags(config_basic.metaTagDescription))}{:}{/}{/}{/}" />
+	<!--{/}-->
+	<meta name="keywords" content="{? goods.summary }{=htmlspecialchars(strip_tags(goods.summary))}{/}{? config_basic.metaTagKeyword }{=htmlspecialchars(strip_tags(config_basic.metaTagKeyword))}{:}{/}" />
+{:}
+	<!-- SEO 설정이 있을경우 -->
+	{new_meta}
+{/}
+
+<meta property="og:url" content="{url}" />
+<meta property="og:site_name" content="{=htmlspecialchars(strip_tags(config_basic.shopName)) }" />
+<meta property="og:title" content="{? goods.goods_name }{=htmlspecialchars(strip_tags(goods.goods_name))}{:}{? subject }{=htmlspecialchars(strip_tags(subject))}{:}{? shopTitle }{=htmlspecialchars(strip_tags(shopTitle))}{/}{/}{/}" />
+<!--{? !goods.summary && goods.common_contents }-->
+	<meta property="og:description" content="{=htmlspecialchars(strip_tags(goods.common_contents))}" />
+<!--{ : }-->
+	<meta property="og:description" content="{? goods.summary }{=htmlspecialchars(strip_tags(goods.summary))}{:}{? subject && contents}{=getstrcut(htmlspecialchars(strip_tags(contents)), 30)}{:}{? mete.description } - {=htmlspecialchars(strip_tags(mete.description))}{/}{? config_basic.metaTagDescription }{=htmlspecialchars(strip_tags(config_basic.metaTagDescription))}{:}{/}{/}{/}" />
+<!--{ / }-->
+
+<!--{ ? APP_USE == 'f' }-->
+	<meta property="fb:app_id" content="{APP_ID}" />
+	<!--{ ? APP_NAMES =='fammerce_plus' && APP_TYPE =='item' }-->
+		<meta property="og:type" content="{? APP_TYPE }{APP_NAMES}:{APP_TYPE}{:}website{/}" />
+	<!--{ : }-->
+		<meta property="og:type" content="{? APP_TYPE }{APP_TYPE}{:}website{/}" />
+	<!--{ / }-->
+	 <!--{ ? APP_NAMES  && goods.goods_seq}-->
+			<!--{ ? APP_NAMES =='fammerce_plus' && APP_TYPE =='item' }-->
+			<!--{? goods.string_price_use }-->
+				<meta property="{APP_NAMES}:price"    content="{=htmlspecialchars(strip_tags(goods.string_price))}" />
+			<!--{ : }-->
+				<!--{ ? goods.consumer_price > 0 }-->
+					<meta property="{APP_NAMES}:price"    content="{=number_format(goods.consumer_price)}원 →{=number_format(goods.price)}원 ({=number_format(goods.consumer_price-goods.price)}원 할인)" />
+				<!--{ : }-->
+				<meta property="{APP_NAMES}:price"    content="{=number_format(goods.price)}원" />
+				<!--{ / }-->
+			<!--{ / }-->
+			  <meta property="{APP_NAMES}:url"      content="{url}" />
+			  <meta property="{APP_NAMES}:category" content="{=htmlspecialchars(strip_tags(fbcategory_title))}" />
+		<!--{ : }-->
+				<!--{? goods.string_price_use }-->
+					<meta property="{APP_TYPE}:price:amount"    content="{=htmlspecialchars(strip_tags(goods.string_price))}" />
+				<!--{ : }-->
+					<!--{ ? goods.consumer_price > 0 }-->
+						<meta property="{APP_TYPE}:price:amount"    content="{=(goods.price)}" />
+					<!--{ : }-->
+					<meta property="{APP_TYPE}:price:amount"    content="{goods.price}" />
+					<!--{ / }-->
+				<!--{ / }-->
+
+				<!--{? goods.brand }-->
+				 <meta property="{APP_TYPE}:brand" content="{=strip_tags(view_brand)}" />
+				<!--{ / }-->
+				  <meta property="{APP_TYPE}:price:currency"    content="KRW" />
+				  <meta property="{APP_TYPE}:product_link"      content="{url}" />
+				  <meta property="{APP_TYPE}:category" content="{=htmlspecialchars(strip_tags(fbcategory_title))}" />
+		<!--{ / }-->
+	<!--{ / }-->
+	<!--{ ? APP_IMG }-->
+		<!--{ ? preg_match('/http/',APP_IMG)}-->
+			<meta property="og:image" content="{APP_IMG}"  />
+			<link rel="image_src" href="{APP_IMG}"/>
+		<!--{ : }-->
+			{? _SERVER.HTTPS == 'on'}
+			<meta property="og:image" content="https://{_SERVER.HTTP_HOST}/{APP_IMG}"  />
+			<link rel="image_src" href="https://{_SERVER.HTTP_HOST}/{APP_IMG}"/>
+			{:}
+			<meta property="og:image" content="http://{_SERVER.HTTP_HOST}/{APP_IMG}"  />
+			<link rel="image_src" href="http://{_SERVER.HTTP_HOST}/{APP_IMG}"/>
+			{/}
+		<!--{ / }-->
+	<!--{ / }-->
+<!--{ : }-->
+<meta property="og:type" content="website" />
+	<!--{ ? APP_IMG }-->
+		<!--{ ? preg_match('/http/',APP_IMG)}-->
+			<meta property="og:image" content="{APP_IMG}"  />
+			<link rel="image_src" href="{APP_IMG}"/>
+		<!--{ : }-->
+			{? _SERVER.HTTPS == 'on'}
+			<meta property="og:image" content="https://{_SERVER.HTTP_HOST}/{APP_IMG}"  />
+			<link rel="image_src" href="https://{_SERVER.HTTP_HOST}/{APP_IMG}"/>
+			{:}
+			<meta property="og:image" content="http://{_SERVER.HTTP_HOST}/{APP_IMG}"  />
+			<link rel="image_src" href="http://{_SERVER.HTTP_HOST}/{APP_IMG}"/>
+			{/}
+		<!--{ / }-->
+	<!--{ / }-->
+<!--{ / }-->
+
+<!--{ ? !APP_IMG && SNSLOGO }-->
+{? _SERVER.HTTPS == 'on'}
+<meta property="og:image" content="https://{_SERVER.HTTP_HOST}/{SNSLOGO}"  />
+<link rel="image_src" href="https://{_SERVER.HTTP_HOST}/{SNSLOGO}"/>
+{:}
+<meta property="og:image" content="http://{_SERVER.HTTP_HOST}/{SNSLOGO}"  />
+<link rel="image_src" href="http://{_SERVER.HTTP_HOST}/{SNSLOGO}"/>
+{/}
+<!--{ / }-->
+
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="/data/font/font.css" />
+
+<!-- 구글 웹폰트 -->
+<link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:100,300,400,500,700&amp;subset=korean" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+
+<link rel="stylesheet" type="text/css" href="../../css/jqueryui/black-tie/jquery-ui-1.8.16.custom.css" />
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/mCustomScrollbar/jquery.mCustomScrollbar.css">
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/dialogify/dialogify.css">
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/pickadate/classic.css">
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/pickadate/classic.date.css">
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/pickadate/classic.time.css">
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/slick/slick.css"><!-- 반응형 슬라이드 -->
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/magnific-popup/magnific-popup.css">
+<link rel="stylesheet" type="text/css" href="/data/design/goods_info_style.css"><!-- 상품정보 CSS -->
+<!--<link rel="stylesheet" type="text/css" href="/data/design/goods_info_user.css">--><!-- 상품정보 CSS : 자동 업데이트 안되는 CSS -->
+    <link rel="stylesheet" type="text/css" href="../../css/lib.css" />
+<link rel="stylesheet" type="text/css" href="../../css/common.css" />
+<link rel="stylesheet" type="text/css" href="../../css/board.css" />
+<link rel="stylesheet" type="text/css" href="../../css/buttons.css" />
+<link rel="stylesheet" type="text/css" href="../../css/mobile_pagination.css" />
+<!-- link rel="stylesheet" type="text/css" href="../../css/quick_design.css" / -->
+<link rel="stylesheet" type="text/css" href="../../css/user.css" />
+<link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+<link rel="stylesheet" type="text/css" href="../../css/responsive.css" />
+    
+<!-- 부트스트랩 반응형 -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap-grid.min.css" crossorigin="anonymous">
+    
+<!--{ ? ISADMIN || writeditorjs }-->
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/editor/css/editor.css" />
+<!--{ / }-->
+<!--{ ? config_system.favicon }-->
+<!-- 파비콘 -->
+{? _SERVER.HTTPS == 'on'}
+<link rel="shortcut icon" href="https://{_SERVER.HTTP_HOST}/{config_system.favicon}" />
+{:}
+<link rel="shortcut icon" href="http://{_SERVER.HTTP_HOST}/{config_system.favicon}" />
+{/}
+<!--{ / }-->
+<link rel="stylesheet" href="/app/javascript/plugin/touchSlider/swiper-4.5.0.css" />
+<!--{ ? config_system.androidicon || config_system.iphoneicon }-->
+<!-- 바로가기아이콘 -->
+<link rel="apple-touch-icon" href="http{? _SERVER.HTTPS=='on'}s{/}://{_SERVER.HTTP_HOST}{=config_system.iphoneicon}" />
+<link rel="shortcut icon" href="http{? _SERVER.HTTPS=='on'}s{/}://{_SERVER.HTTP_HOST}{=config_system.androidicon}" />
+<!--{ / }-->
+<!-- /CSS -->
+
+<!-- 자바스크립트 -->
+<script src="/app/javascript/jquery/jquery.min.js"></script>
+<script src="/app/javascript/jquery/jquery-ui.min.js"></script>
+<script src="/app/javascript/plugin/jquery.poshytip.min.js"></script>
+<script src="/app/javascript/plugin/jquery.activity-indicator-1.0.0.min.js"></script>
+<script src="/app/javascript/plugin/jquery.cookie.js"></script>
+<script src="/app/javascript/plugin/jquery.slides.min.js"></script>
+<script src="/app/javascript/plugin/jquery.placeholder.js"></script>
+<script src="/app/javascript/plugin/custom-select-box.js"></script>
+<script src="/app/javascript/plugin/custom-mobile-pagination.js"></script>
+<!--{? (ISADMIN || writeditorjs) && !_GET.mobileAjaxCall }-->
+<script src="/app/javascript/plugin/editor/js/editor_loader.js"></script>
+<script src="/app/javascript/plugin/editor/js/daum_editor_loader.js?file_use={=manager.file_use}"></script>
+<!--{ / }-->
+<script src="/app/javascript/plugin/validate/jquery.validate.js"  charset="utf-8"></script>
+<script src="/app/javascript/js/dev-tools.js"></script>
+<script src="/app/javascript/js/design.js"></script>
+<script src="/data/js/language/L10n_{config_system.language}.js?dummy={=date('YmdHis')}"></script>
+<script src="/app/javascript/js/common.js"></script>
+<script src="/app/javascript/js/common-mobile.js"></script>
+<script src="/app/javascript/js/front-layout.js"></script>
+<script src="/app/javascript/js/base64.js"></script>
+<script src="/app/javascript/plugin/ezmark/js/jquery.ezmark.min.js"></script>
+<script src="/app/javascript/plugin/slick/slick.min.js" charset="utf-8"></script><!-- slick slider( 반응형 ) -->
+<script src="../../common/script.js"></script>
+<script src="../../common/jquery.touchSlider.js"></script>
+<script src="../../common/jquery.event.drag-1.5.min.js"></script>
+<script src="../../common/responsive.js"></script><!-- 반응형 관련 프론트 js -->
+<!--{? mobileMode || storemobileMode || ISMOBILE_AGENT}-->
+<script src="/app/javascript/js/goods-display_mobile.js?dummy={=date('YmdHis')}"></script>
+<!--{:}-->
+<script src="/app/javascript/js/goods-display.js?dummy={=date('YmdHis')}"></script>
+<!--{/}-->
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/jquery_swipe/jquery_swipe.css" />
+<script src="/app/javascript/plugin/jquery_swipe/jquery.event.swipe.js"></script>
+<script src="/app/javascript/plugin/touchSlider/swiper-4.5.0.js"></script>
+<script src="/app/javascript/plugin/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/app/javascript/plugin/pickadate/picker.js"></script>
+<script src="/app/javascript/plugin/pickadate/picker.date.js"></script>
+<script src="/app/javascript/plugin/pickadate/picker.time.js"></script>
+<script src="/app/javascript/plugin/pickadate/legacy.js"></script>
+<script src="/app/javascript/plugin/dialogify/dialogify.min.js"></script>
+<script src="/app/javascript/plugin/magnific-popup/magnific-popup.min.js">
+</script>
+<script type="text/javascript" src="../../common/search_ver2.js"></script><!-- 반응형 관련 프론트 js : 검색, 자동검색어 최근본상품 -->
+<script src="../../js/common.js"></script>
+<script src="../../js/sale.js"></script>
+<script src="../../js/sch.js"></script>
+<script src="../../js/mch.js"></script>
+<script>
+var gl_mobile_mode						= {?mobileMode||storemobileMode||ISMOBILE_AGENT}3{:}0{/};
+var gl_set_mode							= '{designSetMode}';
+var gl_language							= '{=config_system.language}';
+var gl_basic_currency					= "{=config_system.basic_currency}";
+var gl_skin_currency					= "{=config_system.basic_currency}";
+var gl_basic_currency_symbol			= "{=config_currency[basic_currency]['currency_symbol']}";
+var gl_basic_currency_symbol_position	= "{=config_currency[basic_currency]['currency_symbol_position']}";
+var gl_operation_type					= "{=config_system.operation_type}";
+
+var REQURL = '{_SERVER.REQUEST_URI}';
+var WINDOWWIDTH = window.innerWidth;
+
+
+$(function(){
+	{?!ISADMIN}
+		{?config_system.protectMouseRight}
+			if($("#layout_body").length){
+				$("#layout_body").bind('contextmenu',function(){return false;});
+			}else{
+				$(window).bind('contextmenu',function(){return false;});
+			}
+		{/}
+		{?config_system.protectMouseDragcopy}
+			var excludeTags=["input","textarea","select"];
+			$(document).bind('selectstart',function(event){
+				if(excludeTags.indexOf(event.target.tagName.toLowerCase())==-1) return false;
+			});
+		{/}
+	{/}
+
+});
+</script>
+
+ <!--{ ? APP_USE == 'f'  && is_file_facebook }-->
+<script>
+ var is_user = false;
+ { ? defined('__ISUSER__') }
+ is_user = {=defined('__ISUSER__')};
+ { / }
+ var plus_app_id = '{APP_ID}';
+ var fammercemode = '{fammercemode}';
+ var mbpage = false;
+ {? login || register }
+ mbpage = true;
+ {/}
+
+ var orderpage = false;
+ {? cartpage || settlepage }
+	orderpage = true;
+ {/}
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '{APP_ID}', //App ID
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      xfbml      : true,  // parse XFBML,
+      oauth      : true,
+      version    : 'v{APP_VER}'
+    });
+
+	{ ? fammercemode }
+		FB.Canvas.setAutoGrow();
+	{/}
+
+	{? !(cartpage || settlepage) }
+		// like 이벤트가 발생할때 호출된다.
+		FB.Event.subscribe('edge.create', function(response) {
+			$.ajax({'url' : '../sns_process/facebooklikeck', 'type' : 'post', 'data' : {'mode':'like', 'product_url':response}});
+		});
+
+		// unlike 이벤트가 발생할때 호출된다.
+		FB.Event.subscribe('edge.remove', function(response) {
+			$.ajax({'url' : '../sns_process/facebooklikeck', 'type' : 'post', 'data' : {'mode':'unlike', 'product_url':response}});
+		});
+	{/}
+
+	// logout 이벤트가 발생할때 호출된다.
+	FB.Event.subscribe('auth.logout', function(response) {
+
+	});
+  };
+	$(document).ready(function() {
+		//기본 login
+		$(".fb-login-button").click(function(){
+			{? ( strstr(_SERVER.HTTP_HOST,'.firstmall.kr') || _SERVER.HTTP_HOST==APP_DOMAIN ) }
+				FB.login(handelStatusChange,{scope:'{fbuserauth}'});
+			{:}
+				document.location.href = 'http://m.{config_system.subDomain}{? strstr(_SERVER.REQUEST_URI,"?") }{_SERVER.REQUEST_URI}&handelStatusChange_autologin=1{:}{_SERVER.REQUEST_URI}?handelStatusChange_autologin=1{/}';
+			{/}
+		});
+		{? _GET.handelStatusChange_autologin }
+			FB.login(handelStatusChange,{scope:'{fbuserauth}'});
+		{/}
+
+		//기업회원 login
+		$(".fb-login-button-business").click(function(){
+			{? ( strstr(_SERVER.HTTP_HOST,'.firstmall.kr') || _SERVER.HTTP_HOST==APP_DOMAIN ) }
+				FB.login(handelStatusChangebiz,{scope:'{fbuserauth}'});
+			{:}
+				document.location.href = 'http://m.{config_system.subDomain}{? strstr(_SERVER.REQUEST_URI,"?") }{_SERVER.REQUEST_URI}&handelStatusChangebiz_autologin=1{:}{_SERVER.REQUEST_URI}?handelStatusChangebiz_autologin=1{/}';
+			{/}
+		});
+		{? _GET.handelStatusChangebiz_autologin }
+			FB.login(handelStatusChangebiz,{scope:'{fbuserauth}'});
+		{/}
+
+		//회원통합 로그인(이메일동일)
+		$(".fb-login-button-connect").click(function(){
+			{? ( strstr(_SERVER.HTTP_HOST,'.firstmall.kr') || _SERVER.HTTP_HOST==APP_DOMAIN ) }
+				FB.login(handelStatusChangeconnect,{scope:'{fbuserauth}'});
+			{:}
+				document.location.href = 'http://m.{config_system.subDomain}{? strstr(_SERVER.REQUEST_URI,"?") }{_SERVER.REQUEST_URI}&handelStatusChangeconnect_autologin=1{:}{_SERVER.REQUEST_URI}?handelStatusChangeconnect_autologin=1{/}';
+			{/}
+		});
+		{? _GET.handelStatusChangeconnect_autologin }
+			FB.login(handelStatusChangeconnect,{scope:'{fbuserauth}'});
+		{/}
+
+		//새로가입(이메일동일함)
+		$(".fb-login-button-noconnect").click(function(){
+			{? ( strstr(_SERVER.HTTP_HOST,'.firstmall.kr') || _SERVER.HTTP_HOST==APP_DOMAIN ) }
+				FB.login(handelStatusChangenoconnect,{scope:'{fbuserauth}'});
+			{:}
+				document.location.href = 'http://m.{config_system.subDomain}{? strstr(_SERVER.REQUEST_URI,"?") }{_SERVER.REQUEST_URI}&handelStatusChangenoconnect_autologin=1{:}{_SERVER.REQUEST_URI}?handelStatusChangenoconnect_autologin=1{/}';
+			{/}
+		});
+
+		{? _GET.handelStatusChangenoconnect_autologin }
+			FB.login(handelStatusChangenoconnect,{scope:'{fbuserauth}'});
+		{/}
+	});
+</script>
+<script>(function(d, s, id) {
+var js, fjs = d.getElementsByTagName(s)[0];
+if (d.getElementById(id)) return;
+js = d.createElement(s); js.id = id;
+js.src = "//connect.facebook.net/ko_KR/sdk.js";//#xfbml=1&appId={APP_ID}
+fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+ <script type="text/javascript">
+  var fbId = "";
+  var fbAccessToken = "";
+  var isLogin = false;
+  var isFirst = true;
+  var fbUid = "";
+  var fbName = "";
+	function handelStatusChange(response) {
+		if (response && response.status == 'connected') {
+		// 로그인
+		isLogin = true;
+		initializeFbTokenValues();
+		initializeFbUserValues();
+		fbId = response.authResponse.userID;
+		fbAccessToken = response.authResponse.accessToken;
+		FB.api('/me', function(response) {
+			 fbUid = response.email;
+			 fbName = response.name;
+			 if (fbName != "") {
+				{? !defined('__ISUSER__')}
+				loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+					$.ajax({
+					'url' : '../sns_process/facebookloginck',
+					'type' : 'post',
+					'dataType': 'json',
+					'success': function(res) {
+						if(res.result == 'emailck'){//이메일이 등록된 경우
+							//회원 통합하기  <span class='desc'>로그인해 주세요.</span>
+							openDialog(getAlert('mb237'), "member_facebook_connect", {"width":"470","height":"250"});
+						}else if(res.result == true){
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','180',function(){
+							{? _GET.return_url }
+								document.location.href='{_GET.return_url}';
+							{: login || register }
+								document.location.href=res.retururl;
+							{:}
+								document.location.reload();
+							{/}
+							});
+						}else{
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','140',function(){});
+						}
+					}
+					});
+				{/}
+			}
+		});
+	   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+		   //연결을 취소하셨습니다.
+			openDialogAlert(getAlert('mb238'),'400','160',function(){});
+			// 로그아웃된 경우
+			isLogin = false;
+			{? defined('__ISUSER__')}
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+				$.ajax({
+				'url' : '../sns_process/facebooklogout',
+				'dataType': 'json',
+				'success': function(res) {
+					if(res.result == true){
+						{? _GET.return_url }
+							document.location.href='{_GET.return_url}';
+						{: login || register }
+							document.location.href='../main/';
+						{:}
+							document.location.reload();
+						{/}
+					}else{
+						document.location.reload();
+					}
+				}
+				});
+
+			{/}
+			if (fbId != "")  initializeFbTokenValues();
+			if (fbUid != "") initializeFbUserValues();
+		}
+	}
+
+	function handelStatusChangebiz(response) {
+		if (response && response.status == 'connected') {
+		// 로그인
+		isLogin = true;
+		initializeFbTokenValues();
+		initializeFbUserValues();
+		fbId = response.authResponse.userID;
+		fbAccessToken = response.authResponse.accessToken;
+		FB.api('/me', function(response) {
+			 fbUid = response.email;
+			 fbName = response.name;
+			 if (fbName != "") {
+				{? !defined('__ISUSER__')}
+				loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+					$.ajax({
+					'url' : '../sns_process/facebookloginck',
+					'data' : {'mtype':'biz'},
+					'type' : 'post',
+					'dataType': 'json',
+					'success': function(res) {
+						if(res.result == 'emailck'){//이메일이 등된 경우
+							//회원 통합하기  <span class='desc'>로그인해 주세요.</span>
+							openDialog(getAlert('mb237'), "member_facebook_connect", {"width":"470","height":"250"});
+						}else if(res.result == true){
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','180',function(){
+							{? _GET.return_url }
+								document.location.href='{_GET.return_url}';
+							{: login || register }
+								document.location.href='/mypage/';
+							{:}
+								document.location.reload();
+							{/}
+							});
+						}else{
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','140',function(){});
+						}
+					}
+					});
+				{/}
+			}
+		});
+	   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+		   //연결을 취소하셨습니다.
+			openDialogAlert(getAlert('mb238'),'400','160',function(){});
+			// 로그아웃된 경우
+			isLogin = false;
+			{? defined('__ISUSER__')}
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+				$.ajax({
+				'url' : '../sns_process/facebooklogout',
+				'dataType': 'json',
+				'success': function(res) {
+					if(res.result == true){
+						{? _GET.return_url }
+							document.location.href='{_GET.return_url}';
+						{: login || register }
+							document.location.href='../main/';
+						{:}
+							document.location.reload();
+						{/}
+					}else{
+						document.location.reload();
+					}
+				}
+				});
+
+			{/}
+			if (fbId != "")  initializeFbTokenValues();
+			if (fbUid != "") initializeFbUserValues();
+		}
+	}
+
+	//회원통합을 위한 로그인
+	function handelStatusChangeconnect(response) {
+		if (response && response.status == 'connected') {
+		// 로그인
+		isLogin = true;
+		initializeFbTokenValues();
+		initializeFbUserValues();
+		fbId = response.authResponse.userID;
+		fbAccessToken = response.authResponse.accessToken;
+		FB.api('/me', function(response) {
+			 fbUid = response.email;
+			 fbName = response.name;
+			 if (fbName != "") {
+				{? !defined('__ISUSER__')}
+				loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+					var userid = $("#facebook_userid").val();
+					var password = $("#facebook_password").val();
+					$.ajax({
+					'url' : '../sns_process/facebookloginck',
+					'data' : {'facebooktype':'mbconnect','userid':userid, 'password':password},
+					'type' : 'post',
+					'dataType': 'json',
+					'success': function(res) {
+						if(res.result == true){
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','180',function(){
+							{? _GET.return_url }
+								document.location.href='{_GET.return_url}';
+							{: login || register }
+								document.location.href='/mypage/';
+							{:}
+								document.location.reload();
+							{/}
+							});
+						}else{
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','140',function(){});
+						}
+					}
+					});
+				{/}
+			}
+		});
+	   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+		   //연결을 취소하셨습니다.
+			openDialogAlert(getAlert('mb238'),'400','160',function(){});
+			// 로그아웃된 경우
+			isLogin = false;
+			{? defined('__ISUSER__')}
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+				$.ajax({
+				'url' : '../sns_process/facebooklogout',
+				'dataType': 'json',
+				'success': function(res) {
+					if(res.result == true){
+						{? _GET.return_url }
+							document.location.href='{_GET.return_url}';
+						{: login || register }
+							document.location.href='../main/';
+						{:}
+							document.location.reload();
+						{/}
+					}else{
+						document.location.reload();
+					}
+				}
+				});
+
+			{/}
+			if (fbId != "")  initializeFbTokenValues();
+			if (fbUid != "") initializeFbUserValues();
+		}
+	}
+
+	//회원통합하지 않고 가입하기
+	function handelStatusChangenoconnect(response) {
+		if (response && response.status == 'connected') {
+		// 로그인
+		isLogin = true;
+		initializeFbTokenValues();
+		initializeFbUserValues();
+		fbId = response.authResponse.userID;
+		fbAccessToken = response.authResponse.accessToken;
+		FB.api('/me', function(response) {
+			 fbUid = response.email;
+			 fbName = response.name;
+			 if (fbName != "") {
+				{? !defined('__ISUSER__')}
+				loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+					$.ajax({
+					'url' : '../sns_process/facebookloginck',
+					'data' : {'facebooktype':'noconnect'},
+					'type' : 'post',
+					'dataType': 'json',
+					'success': function(res) {
+						if(res.result == true){
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','180',function(){
+							{? _GET.return_url }
+								document.location.href='{_GET.return_url}';
+							{: login || register }
+								document.location.href='/mypage/';
+							{:}
+								document.location.reload();
+							{/}
+							});
+						}else{
+							loadingStop("body",true);
+							openDialogAlert(res.msg,'400','140',function(){});
+						}
+					}
+					});
+				{/}
+			}
+		});
+	   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+		   //연결을 취소하셨습니다.
+			openDialogAlert(getAlert('mb238'),'400','160',function(){});
+			// 로그아웃된 경우
+			isLogin = false;
+			{? defined('__ISUSER__')}
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+				$.ajax({
+				'url' : '../sns_process/facebooklogout',
+				'dataType': 'json',
+				'success': function(res) {
+					if(res.result == true){
+						{? _GET.return_url }
+							document.location.href='{_GET.return_url}';
+						{: login || register }
+							document.location.href='../main/';
+						{:}
+							document.location.reload();
+						{/}
+					}else{
+						document.location.reload();
+					}
+				}
+				});
+			{/}
+			if (fbId != "")  initializeFbTokenValues();
+			if (fbUid != "") initializeFbUserValues();
+		}
+	}
+
+	function initializeFbTokenValues() {
+		fbId = "";
+		fbAccessToken = "";
+	}
+	function initializeFbUserValues() {
+		fbUid = "";
+		fbName = "";
+	}
+	function logout(){
+		// 로그아웃된 경우
+		FB.logout();
+		isLogin = false;
+		{? defined('__ISUSER__')}
+		loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+			$.ajax({
+			'url' : '../sns_process/facebooklogout',
+			'dataType': 'json',
+			'success': function(res) {
+				if(res.result == true){
+					{? _GET.return_url }
+						document.location.href='{_GET.return_url}';
+					{: login || register }
+						document.location.href='../main/';
+					{:}
+						document.location.reload();
+					{/}
+				}else{
+					document.location.reload();
+				}
+			}
+			});
+		{/}
+		if (fbId != "")  initializeFbTokenValues();
+		if (fbUid != "") initializeFbUserValues();
+	}
+ </script>
+<!--{ / }-->
+
+<style type="text/css">
+
+/* 레이아웃설정 폰트 적용 */
+#layout_body body,
+#layout_body table,
+#layout_body div,
+#layout_body input,
+#layout_body textarea,
+#layout_body select,
+#layout_body span
+{
+	<!--{?layout_config.font}-->		font-family:"{layout_config.font}" !important; <!--{/}-->
+}
+
+/* 레이아웃설정 스크롤바색상 적용 */
+<!--{?layout_config.scrollbarColor}-->
+html, body, div, textarea {
+	scrollbar-base-color:#ffffff;
+	scrollbar-arrow-color:{layout_config.scrollbarColor};
+	scrollbar-shadow-color:{layout_config.scrollbarColor};
+	scrollbar-3dlight-color:#ffffff;
+	scrollbar-highlight-color:{layout_config.scrollbarColor};
+	scrollbar-darkshadow-color:#ffffff;
+	scrollbar-face-color:#ffffff;
+}
+<!--{/}-->
+</style>
+
+<!--{ ? config_basic.naver_wcs_use=='y' && !_GET.popup && !_GET.iframe }-->
+<!--[ 네이버 공통유입 스크립트 ]-->
+{=naverWcsScript()}
+<!--{ / }-->
+
+<!-- /자바스크립트 -->
+</head>
+
+<body scroll="auto">
+
+ <!--{ ? APP_USE == 'f'  && is_file_facebook }-->
+<!--facebook area-->
+<div id="fb-root"></div>
+<!--facebook area end-->
+<!--{ / }-->

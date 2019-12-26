@@ -1,0 +1,86 @@
+<div class="container-fluid top-pt">
+    <div class="container pt-5">
+        <div class="row">
+            <div class="col-md-9 col-sm-12 work-detail-wrap">
+                <div class="work-detail-title">
+                    <h1 class="txt-bold">{info.osc_name}</h1>
+                    <p class="accent-txt">{= number_format(info.budget)}<span class="txt-light">원</span></p>
+                </div>
+                <div class="scroll-desc form-row-02 work-detail-desc mt-2 pb-4 mb-3">
+                    <span class="txt-demi-light">등록일 : {= date('Y.m.d', strtotime(info.reg_date))}</span>
+                    <span class="txt-demi-light">예상일 : {= date('Y.m.d', strtotime(info.start_expect_date))}</span>
+                    <div>
+                        <span class="txt-medium">마감일 <i class="txt-demi-light">{= date('Y.m.d', strtotime(info.osc_end_date))}</i></span>
+                        <span class="txt-medium">지원자 <i class="txt-demi-light">{info.apply_cnt}명</i></span>
+                    </div>
+                </div>
+                <p style="font-size: 0.7778rem;">{= nl2br(info.osc_content)}</p>
+                <div class="product-row-01 mt-4 mb-5">
+                    <p>지역 : {info.area_name}</p>
+                    <p>관련기술 : 
+                    <!-- {@ info.tech_list} -->
+                    <span class="btn-type-01">{.value_}</span>
+                    <!-- {:} -->없음
+                    <!-- {/} -->
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-12 mb-5 txt-center">
+                <div class="scroll-div work-detail-info mb-3">
+                    <!-- {? info.isPartner == 'true'} -->
+                    <img src="{info.profile_path}"/>
+                    <h4>{info.userid}</h4>
+                    <div class="review-info">
+                        <span>
+                            <!-- {? info.grade == 0} -->
+                                <!-- {@ range(0, 4)} -->
+                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                <!-- {/} -->
+                            <!-- {: info.grade == 5} -->
+                                <!-- {@ range(0, 4)} -->
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                <!-- {/} -->
+                            <!-- {:} -->
+                                <!-- {@ range(0, info.grade-1)} -->
+                                    <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                <!-- {/} -->
+                                <!-- {@ range(info.grade, 4)} -->
+                                    <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                <!-- {/} -->
+                            <!-- {/} -->
+                        </span>
+                    </div>
+                    <span>{info.main_service}</span>
+                    <p class="mt-3">
+                        <span>평점: <i>{info.grade_origin}</i></span>
+                        <span>평가: <i>{info.grade_cnt}개</i></span>
+                        <span>프로젝트 <i>{info.finish_cnt}건</i></span>
+                    </p>
+                    <!-- {:} -->
+                    <img src="/data/uploads/common/no-image.png"/>
+                    <h4>{info.userid}</h4>
+                    <div class="review-info">
+                        <span>
+                            <!-- {@ range(0, 4)} -->
+                                <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                            <!-- {/} -->
+                        </span>
+                    </div>
+                    <span>정보 없음</span>
+                    <p class="mt-3">
+                        <span>평점: <i>0</i></span>
+                        <span>평가: <i>0개</i></span>
+                        <span>프로젝트 <i>{info.finish_cnt}건</i></span>
+                    </p>
+                    <!-- {/} -->
+                </div>
+                <button type="button" class="btn-type-02 input-border-radius" onclick="go_osc_apply()">수주 지원하기</button>
+                
+                <form action="/mch/osc_apply_process" method="post" id="frm_osc_apply">
+                    <input type="hidden" name="osc_seq" value="{info.osc_seq}" />
+                    <input type="hidden" name="state" value="{info.state}" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

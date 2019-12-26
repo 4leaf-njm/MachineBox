@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+<!--{ ? meta_title }-->
+<title>{meta_title}</title>
+<!--{ : }-->
+<title>{config_basic.shopName}{ ? !preg_match('/order_print/',_SERVER.REDIRECT_QUERY_STRING)} 관리자환경 :: 퍼스트몰, 오직 운영자만을 생각한 가장 앞선 쇼핑몰입니다.{ / }</title>
+<!--{ / }-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/editor/css/editor.css" />
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/dialogify/dialogify.css">
+
+<!--{ ? config_system.favicon }-->
+<!-- 파비콘 -->
+<link rel="shortcut icon" href="{ config_system.favicon}" />
+<!--{ / }-->
+<!-- 자바스크립트 [순서변경하지마세요] -->
+<!--{? preg_match('/category\/catalog/',_SERVER.REQUEST_URI) }-->
+<script type="text/javascript" src="/app/javascript/jquery/jquery.min.1.6.4.js"></script>
+<!--{ : }-->
+<script type="text/javascript" src="/app/javascript/jquery/jquery.min.js"></script>
+<!--{ / }-->
+<script type="text/javascript" src="/app/javascript/jquery/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.hotkeys.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.poshytip.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.activity-indicator-1.0.0.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.cookie.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-select-box.js"></script>
+<script type="text/javascript" src="/app/javascript/js/dev-tools.js"></script>
+<script type="text/javascript" src="/data/js/language/L10n_{config_system.language}.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/js/common.js?dummy={=date('YmdHis')}"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-layout.js?dummy={=date('YmdHis')}&krdomain=http://{config_system.subDomain}"></script>
+<script type="text/javascript" src="../../js/custom.js"></script>
+<script src="/app/javascript/plugin/dialogify/dialogify.min.js"></script>
+<!--[if lt IE 9]>
+<script type="text/javascript" src="/app/javascript/jquery/html5shiv.js"></script>
+<script type="text/javascript" src="/app/javascript/jquery/respond.min.js"></script>
+<![endif]-->
+
+{ ? video_use }
+<script type="text/javascript">
+var video_use = 'Y';//동영상설정여부
+</script>
+{ / }
+{ ? _GET.id }
+<script type="text/javascript">
+//<![CDATA[
+var board_id = '{_GET.id}';
+//]]>
+</script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js?dummy={=date('Ymd')}"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js?dummy={=date('Ymd')}"></script>
+{ / }
+<script type="text/javascript" src="/app/javascript/plugin/validate/jquery.validate.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+var isAdminpage = true;
+
+//한글도메인체크@2013-03-12
+var fdomain = document.domain;
+var krdomain = 'http://{config_system.subDomain}';
+var kordomainck = false;
+for(i=0; i<fdomain.length; i++){
+ if (((fdomain.charCodeAt(i) > 0x3130 && fdomain.charCodeAt(i) < 0x318F) || (fdomain.charCodeAt(i) >= 0xAC00 && fdomain.charCodeAt(i) <= 0xD7A3)))
+{
+	kordomainck = true;
+	break;
+}
+}
+if( !kordomainck ){
+krdomain = '';
+}
+var gl_operation_type					= '{=config_system.operation_type}';
+var gl_basic_currency					= '{=basic_currency}';
+var gl_skin_currency					= '{=skin_currency}';
+var gl_basic_currency_symbol			= '{=config_system.basic_currency_info.default_currency_symbol}';
+var gl_basic_currency_symbol_position	= '{=config_system.basic_currency_info.currency_symbol_position}';
+
+var gl_amout_list						= new Array();
+{@ config_system.basic_amout }
+gl_amout_list['{.key_}'] = '{.value_}';
+{ / }
+var gl_currency_exchange = "{=config_currency[basic_currency]['currency_exchange']}";
+
+//]]>
+</script>
+</head>

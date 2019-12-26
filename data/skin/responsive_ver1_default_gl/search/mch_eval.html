@@ -1,0 +1,73 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-5 pt-2 pb-5">
+                    <h1 class="wrap-title txt-center txt-bold mb-2">“{info.model_name}” 평가하기</h1>
+                    <p class="wrap-title-sub">해당 모델을 평가해주세요.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid wrap-title-bg-02">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 pt-4 pb-4">
+                <p class="wrap-title-sub">
+                    1. 평가자료를 보시고 해당 모델에 대한 평가를 남겨주세요. <br/>
+                    2  별표를 클릭하여 모델을 평가할 수 있습니다. 각 항목별 평점은 별 1개~별 5개까지 가능합니다.<br/>
+                    3. 평가는 수정이 불가능합니다. 신중하게 작성해주세요.<br/>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="container">
+        <div class="row">
+            <h2 class="col-12 form-title-type-01 form-title-03 mt-5">“{info.model_name}” 평가자료</h2>
+            <div class="col-sm-12 mb-3">
+                <div class="default-box">
+                    <p class="default-message">측정된 데이터가 없습니다.</p>
+                </div>
+            </div>
+            <h3 class="col-12 form-title-type-01 form-title-04 mt-5 mb-2">이용자들의 평가</h3>
+           <div class="col-12 mb-5">
+                <div class="user-eval-wrap">
+                    <!-- {@ eval_list} -->
+                    <div class="user-eval-div">
+                        <div class="user-eval-top">
+                            <div class="col-md-6 col-sm-12 mt-1 mb-1">
+                                <p class="eval-date">{= date('Y.m.d', strtotime(.reg_date))}</p>
+                                <p class="eval-user">작성자<span>{.userid}</span></p>
+                            </div>
+                            <div class="col-md-6 col-sm-12 mt-1 mb-1">
+                                <p class="eval-star">평점
+                                    <span>
+                                        <!-- {@ range(1, .grade)} -->
+                                            <img src="../images/custom/icon/ico_star_fill.png" alt="">
+                                        <!-- {/} -->
+                                        <!-- {@ range(.grade, 4)} -->
+                                            <img src="../images/custom/icon/ico_star_empty.png" alt="">
+                                        <!-- {/} -->
+                                    </span>
+                                </p>
+                                <p class="eval-modify">
+                                    <button type="button" class="btn-type-01 btn-sm {?.isSame == 'false'}invisible{/}" id="btn_eval_modify" data-seq="{.meval_seq}">수정</button>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="user-eval-bottom textarea-wrapper">
+                                <textarea id="eval_content" class="input-style input-border-none input-lg textarea-style txt-light" cols="30" readonly>{.content}</textarea>
+                                <div class="textarea-clone"></div>
+                        </div>
+                    </div>
+                    <!-- {:} -->
+                        <p class="default-message">작성된 평가가 없습니다.</p>
+                    <!-- {/} -->
+               </div>
+            </div>    
+
+            <div class="col-12 mb-5 txt-right mob-center">
+                <button type="button" class="btn-type-02 btn-md input-border-radius  ml-1 mr-1 mb-2" onclick="location.href='/sch/mch_eval_form/{type}/{info_seq}'">평가하기</button>
+            </div>
+        </div>
+    </div>

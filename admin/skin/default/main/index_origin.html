@@ -1,0 +1,612 @@
+{ #layout_header }
+
+<script type="text/javascript" src="/app/javascript/js/admin-board.js?v=20140823"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/editor_loader.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/editor/js/daum_editor_loader.js"></script>
+<!--[if IE]><script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/excanvas.min.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/jquery.jqplot.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.barRenderer.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.pointLabels.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/plugin/jqplot/plugins/jqplot.donutRenderer.min.js"></script>
+<script language="javascript" type="text/javascript" src="/app/javascript/js/admin-main.js?dummy=20170124"></script>
+<link rel="stylesheet" type="text/css" href="/app/javascript/plugin/jqplot/jquery.jqplot.min.css" class="include" />
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" />
+<link rel="stylesheet" type="text/css" href="/admin/skin/default/css/main.css?dummy=20161211" media="screen" />
+<script type="text/javascript">
+	var last_reload	= '';
+	var gl_H_AD		= "{=serviceLimit('H_AD')}";
+	var gl_H_SC		= "{=serviceLimit('H_SC')}";
+	var gl_9ago		= "{=date('Y-m-d',strtotime('-9 days'))}";
+	var gl_today	= "{=date('Y-m-d')}";
+	var gl_shopSno	= "{config_system.shopSno}";
+
+
+	$(function(){
+		/* 주요지표 */
+		$(".seller_wrap .tab_menu li").click(function(){
+			$(".seller_wrap .tab_menu li").removeClass("active");
+			$(this).addClass("active");
+			var $boxVar = $(this).index() + 1;
+			$(".seller_wrap .tab_sub").hide();
+			$(".seller_wrap .tab_box"+$boxVar).show();
+		});
+		/* 매출 */
+		$(".stats_wrap .tab_menu li").click(function(){
+			$(".stats_wrap .tab_menu li").removeClass("active");
+			$(this).addClass("active");
+			var $boxVar = $(this).index() + 1;
+			$(".stats_wrap .tab_sub").hide();
+			$(".stats_wrap .tab_box"+$boxVar).show();
+		});
+
+		/* firstmall.kr 게시판 rss */
+		print_main_news_area('notice');
+		print_main_news_area('upgrade');
+		print_main_news_area('upgrade_news');
+		print_main_news_area('education');
+		print_main_stat();
+
+		/* sms ajax 호출 leewh 2014-07-31 */
+		get_sms_info();
+		/* kakaotalk ajax 호출 :: 2018-03-02 lwh */
+		get_kakao_info();
+		/* 주요 이슈사항 공지 호출 */
+		get_notify_info();
+		/* traffic ajax 호출 :: 2015-01-09 lwh */
+		reload_data('main','{this_admin_env.temp_domain}');
+		/* 요약통계 업데이트 */
+
+		$('#btn-main-reload').bind('click', function(){
+			var reload_status	= 'y';
+			if	(last_reload){
+				var now_datetime	= new Date().valueOf();
+				var diff_time		= now_datetime - last_reload;
+				if	(diff_time <= 60000){
+					reload_status	= 'n';
+				}
+			}
+			if	(reload_status == 'y'){
+				last_reload = new Date().valueOf();
+				//delete_main_stat(); 작동안함 18.09.07 kmj
+				$.ajax({
+					url			: 'main_stats_cach_delete',
+					dataType	: 'json',
+					success 	: function(data)
+					{
+						if( data.result =='OK' ) location.reload();
+					}
+				});
+			}else{
+				openDialogAlert("업데이트는 60초당 1회 가능합니다.<br/>운영쇼핑몰의 상세한 통계 데이터는 통계메뉴에 확인 해 주세요.",530,210,'');
+			}
+		});
+		<!--{ ? !cfg_reservation.update_date }-->
+			reservation_update();
+		<!--{ / }-->
+
+		<!--{ ? facebook_notice }-->
+			/*페이스북 관련 공지 18.02.28 kmj*/
+			var viewCheckYN = $.cookie('fb_notice_view_check');
+			if(viewCheckYN != "Y"){
+				openDialogNew(
+					'{facebook_notice.title}',
+					'facebookNotice',
+					{
+						'width' :'{facebook_notice.width}', 
+						'height':'{facebook_notice.height}'
+					},
+					function fb_close(){
+						var viewCheck = $('#fb_notice_view_check').is(':checked');
+						var date = new Date();
+						date.setTime(date.getTime() + ((3600 * 1000) * 24 * 7)); //1 week
+						if(viewCheck){
+							$.cookie('fb_notice_view_check', 'Y', { path: '/', expires: date }); 
+						}
+					}
+				);
+			}
+		<!--{ / }-->
+		
+		<!--{? config_basic.manual_view == 'N'}-->
+			openDialog("알림", "firstmallGlManualPopup", {"width":"850","height":"820","close":function(){manualEndClose();}});
+		<!--{ / }-->
+	});
+function manualEndClose(){
+	var manual_check = $("#manual_view_check").is(":checked");
+	if(manual_check){
+		$.ajax({
+			type: "post",
+			url: "../setting_process/manualViewClose",
+			data: "manual_check=Y",
+			dataType: 'json',
+			success: function(result){
+				if(result == "ok"){
+				}else if(result == "err"){
+				}
+			}
+		});
+	}
+}
+</script>
+
+<div id="main_wrap">
+	<h2 class="hide">메인영역</h2>
+	<div class="admin_wrap">
+		<dl>
+			<dt class="name">{this_admin_env.env_name}</dt>
+			<dd>
+				<!--{ ? this_admin_env.domain }-->
+				{this_admin_env.domain}
+				<!--{ : }-->
+				http://{this_admin_env.temp_domain} (기본)
+				<!--{ / }-->
+				<!--{?functionLimit}-->
+				<a href="javascript: servicedemoalert('use_f');" class="btn_gray {?usedSpacePercent>89}}expire{/}">추가</a>
+				<!--{:}-->
+				<a href="javascript: openDialog('쇼핑몰 추가','mallAdd',{'width':380, 'height':230});" title="쇼핑몰 추가" class="btn_gray {?usedSpacePercent>89}}expire{/}">추가</a>
+				<!--{/}-->
+			</dd>
+		</dl>
+		<dl>
+			<dt>타입</dt>
+			<dd>{service_name}</dd>
+		</dl>
+		<dl>
+			<dt>기간</dt>
+			<dd>
+				<!--{ ? solutionServiceCheck(1) }-->
+				<span>평생</span>
+				<span style="color:#a3a3a3; font-size:11px;">(단, 관리자 미접속 30일 차단, 60일 삭제)</span>
+				<!--{ : expireDay && (solutionServiceCheck(6790) || solutionServiceCheck(32) ||  (solutionServiceCheck(1304) &&  config_system.service.hosting_code != 'F_SH_X') ) }-->
+				{expireDay}
+				<span class="period">
+					<span class="icon">!</span>
+					{=number_format(remainExpireDay)}일 남음
+				</span>
+				<div id="hostingExpire" class="hide {service_code}">
+					<ul>
+						<li>
+							<span class="icon_extend"></span>
+							<strong>[기간 연장]</strong><br />
+							호스팅 만료일이 <span class="red">{=number_format(remainExpireDay)}일</span> 남았습니다.
+						</li>
+						<li><span class="btn large black"><a href="http://www.firstmall.kr/myshop" target="_blank">연장하기</a></span></li>
+					</ul>
+				</div>
+					<!--{?functionLimit}-->
+					<a href="javascript: servicedemoalert('use_f');" class="btn_gray">
+					<!--{:}-->
+						<!--{ ? remainExpireDay < 8 }-->
+						<a href="javascript: openDialog('알려드립니다!','hostingExpire',{'width':530, 'height':200});" target="_blank" title="새창열림"  class="btn_gray expire">
+						<!--{ : }-->
+						<a href="http://www.firstmall.kr/myshop "  target="_blank" title="새창열림"  class="btn_gray">
+						<!--{ / }-->
+					<!--{/}-->
+				연장
+				</a>
+				<!--{ : }-->
+				없음
+				<!--{ / }-->
+			</dd>
+		</dl>
+		<dl>
+			<dt>용량</dt>
+			<dd>
+				<!--{?functionLimit}-->
+				{usedDiskSpace} / {maxDiskSpace} ({usedSpacePercent}%) <a href="javascript: servicedemoalert('use_f');" class="btn_gray {?usedSpacePercent>89}}expire{/}">추가</a>
+				<!--{ : }-->
+					<!--{ ? solutionServiceCheck(1) ||  solutionServiceCheck(6790) || solutionServiceCheck(32) || (solutionServiceCheck(1304) && !preg_match("/^F_SH_/",config_system.service.hosting_code))}-->
+					{usedDiskSpace} / {maxDiskSpace} ({usedSpacePercent}%) <a href="http://www.firstmall.kr/myshop" target="_blank" title="새창열림" class="btn_gray {?usedSpacePercent>89}}expire{/}">추가</a>
+					<!--{ : }-->
+					없음
+					<!--{ / }-->
+				<!--{ / }-->
+			</dd>
+		</dl>
+		<dl>
+			<dt>트래픽</dt>
+			<dd>
+				<span id="traffic_area" >
+					<!--{ ? !serviceLimit('H_EXAD') }-->
+					무제한
+					<!--{ : config_system.service.hosting_code != 'F_SH_X' && config_system.service.traffic > 0 }-->
+						<b>{traffic.usages}</b> / {traffic.limits}(<b>{traffic.state}% 사용중</b>)
+					<!--{ : }-->
+					없음
+					<!--{ / }-->
+				</span>
+				<!--{?functionLimit}-->
+				<a href="javascript:servicedemoalert('use_f');" class="btn_gray {?traffic.state>89}}expire{/}">리셋</a>
+				<!--{ : }-->
+				<a href="http://www.firstmall.kr/myshop/index_service.php?domain={this_admin_env.temp_domain} " target="_blank" title="새창열림" class="btn_gray {?traffic.state>89}}expire{/}">리셋</a>
+				<!--{ / }-->
+			</dd>
+		</dl>
+		<dl>
+			<dt>대표자</dt>
+			<dd>
+				<!--{ ? config_system.service.hosting_code != 'F_SH_X' }-->
+				<!--{ ? config_system.mall_auth_yn!='y' }-->
+				실명인증 필요
+				<!--{ : }-->
+				실명인증 완료
+				<!--{ / }-->
+				 <a href="javascript:;"  onclick="mall_auth_alert();" class="btn_gray">안내</a>
+				<!--{ : }-->
+				없음
+				<!--{ / }-->
+			</dd>
+		</dl>
+	</div>
+	<!-- //관리자 정보 -->
+	<div class="summary_wrap">
+		<ul class="box_wrap">
+			<li>
+				<dl>
+					<dt>오늘 주문접수 <span>(건)</span></dt>
+					<dd class="icon first"></dd>
+					<dd id="today_order_count"></dd>
+				</dl>
+			</li>
+			<li>
+				<dl>
+					<dt>오늘 결제확인 <span>(건)</span></dt>
+					<dd class="icon second"></dd>
+					<dd id="today_deposit_count"></dd>
+				</dl>
+			</li>
+			<li class="sale">
+				<dl>
+					<dt>오늘 매출 <span>({config_system.basic_currency})</span></dt>
+					<dd class="icon third"></dd>
+					<dd id="today_deposit_price"></dd>
+				</dl>
+			</li>
+			<li>
+				<dl>
+					<dt>오늘 가입한 회원 <span>(명)</span></dt>
+					<dd class="icon four"></dd>
+					<dd id="today_member_count"></dd>
+				</dl>
+			</li>
+			<li>
+				<dl>
+					<dt>회원 <span>(명)</span></dt>
+					<dd class="icon five"></dd>
+					<dd id="total_member_count"></dd>
+				</dl>
+			</li>
+			<li>
+				<dl>
+					<dt>마일리지 <span>({config_system.basic_currency})</span></dt>
+					<dd class="icon six"></dd>
+					<dd id="total_emoney"></dd>
+				</dl>
+			</li>
+			<li>
+				<dl>
+					<dt>포인트 <span>(P)</span></dt>
+					<dd class="icon seven"></dd>
+					<dd id="total_point"></dd>
+				</dl>
+			</li>
+		</ul>
+	</div>
+	<!-- //요약 정보 -->
+	<div class="main_wrap">
+		<ul class="sub_left">
+			<li>
+				<div class="seller_wrap box_wrap">
+					<h3>주요지표  <span class="rank_priod"> (2016.10.11~2016.10.20)</span></h3>
+					<ul class="tab_menu">
+						<li class="active"><h3>판매상품</h3></li>
+						<li><h3>장바구니</h3></li>
+						<li class="wish"><h3>위시리스트</h3></li>
+						<li class="seller"><h3>{ ?serviceLimit('H_AD') }입점사{ : }검색어{ / }</h3></li>
+					</ul>
+					<div class="tab_sub tab_box1" id="rank_order">
+						<div class="nodata"><span class="icon_nodata"></span> 최근 10일동안<br/>판매된 상품이 없습니다.</div>
+						<!--{ ?serviceLimit('H_FR') }-->
+						<div class="free_upgrade">
+							<div class="nodata">
+								죄송합니다.<br/>
+								본 기능은 상위버전으로<br/>
+								업그레이드 후<br/>
+								이용 가능합니다.
+							</div>
+							<div class="pdt5 center">
+								<img class="hand" onclick="serviceUpgrade();" src="../images/common/btn_upgrade.gif" alt="upgrade">
+							</div>
+						</div>
+						<!--{ / }-->
+					</div>
+					<!--{ ? managerInfo.manager_yn != 'Y' }-->
+					<!--<div  class="noauth">
+						<div class="place">
+							<span class="icon_auth"></span> 권한이 없습니다.
+						</div>
+					</div>-->
+					<!--{ / }-->
+					<div class="tab_sub tab_box2" style="display:none;" id="rank_cart">
+						<div class="nodata"><span class="icon_nodata"></span> 최근 10일동안 장바구니에<br/>담긴 상품이 없습니다.</div>
+					</div>
+					<div class="tab_sub tab_box3" style="display:none;" id="rank_wish">
+						<div class="nodata"><span class="icon_nodata"></span> 최근 10일동안 위시리스트에<br/>담긴 상품이 없습니다.</div>
+					</div>
+					<div class="tab_sub tab_box4" style="display:none;" id="rank_provider">
+						<div class="nodata">
+							{ ?serviceLimit('H_AD') }
+							<span class="icon_nodata"></span> 최근 10일동안<br/>매출이 발생한 입점사가 없습니다.
+							{:}
+							<span class="icon_nodata"></span> 최근 10일동안<br/>검색한 내역이 없습니다.
+							{/}
+						</div>
+					</div>
+				</div>
+				<!-- //입점사 매출 상위 TOP 3 -->
+			</li>
+			<li>
+				<div class="box_wrap">
+					<h3>진행중인 이벤트</h3>
+					<div class="table_wrap">
+						<dl class="hand" onclick="location.href='../event/catalog?event_status%5B%5D=ing';">
+							<dt>할인</dt>
+							<dd>{eventCount}개</dd>
+						</dl>
+						<dl class="hand" onclick="location.href='../event/gift_catalog?event_status%5B%5D=ing';">
+							<dt>사은품</dt>
+							<dd>{giftCount}개</dd>
+						</dl>
+					</div>
+				</div>
+				<!-- //진행중인 이벤트 -->
+			</li>
+			<li>
+				<div class="box_wrap">
+					<h3>매출증빙 요청</h3>
+					<div class="table_wrap">
+						<dl class="wx100 hand" onclick="location.href='../order/sales?tstep%5B%5D=1';">
+							<dt>발급대기</dt>
+							<dd>{saleCount}개</dd>
+						</dl>
+					</div>
+				</div>
+				<!-- //매출증빙 요청 -->
+			</li>
+			<li>
+				<div class="box_wrap">
+					<h3>부가서비스</h3>
+					<div class="service_wrap">
+						<!--{ @ serviceHtml }-->
+						<dl>
+							<dt>{.name}</dt>
+							<dd><a href="{.link}">{.servicetxt}</a></dd>
+						</dl>
+						<!--{ / }-->
+					</div>
+				</div>
+				<!-- //부가서비스 -->
+			</li>
+		</ul>
+		<!-- //좌메뉴 -->
+		<div class="sub_cont">
+			<ul class="detail_wrap">
+				<li class="first">
+					<div class="box_wrap">
+						<h3>주문처리 <span>(최근 100일)</span><a id="btn-main-reload" class="reflash hand">리플레시</a></h3>
+						<div class="table_wrap" id="order_summary">	</div>
+					</div>
+					<!-- //주문처리 -->
+				</li>
+				<li class="second">
+					<div class="box_wrap">
+						<h3>게시글 현황</h3>
+						<div class="table_wrap board" id="board_summary">
+							<ul>
+								<li>구분</li>
+								<li>미처리</li>
+							</ul>
+						</div>
+					</div>
+					<!-- //게시글 현황 -->
+				</li>
+				<li class="third">
+					<div class="box_wrap">
+						<h3>상품 현황</h3>
+						<div class="table_wrap goods" id="goods_summary">
+							<ul>
+								<li>구분</li>
+								<li>실물</li>
+								<li>패키지</li>
+								<li>티켓</li>
+							</ul>
+						</div>
+					</div>
+					<!-- //상품 현황 -->
+				</li>
+				<!--{ ? serviceLimit('H_SC') }-->
+				<li class="four">
+					<div class="box_wrap">
+						<h3>재고관리</h3>
+						<div class="table_wrap board" id="scm_summary">
+							<ul>
+								<li>구분</li>
+								<li>항목</li>
+							</ul>
+						</div>
+					</div>
+					<!-- //재고관리 -->
+				</li>
+				<!--{ / }-->
+			</ul>
+			<!-- //상세정보 -->
+			<ul class="stats_wrap box_wrap">
+				<li>
+					<ul class="tab_menu">
+						<li class="active"><h3>매출<a href="../statistic_sales/sales_sales" class="more">더보기</a></h3></li>
+						<li><h3>회원<a href="../statistic_member/member_basic" class="more">더보기</a></h3></li>
+						<li><h3>방문<a href="../statistic_visitor/visitor_basic" class="more">더보기</a></h3></li>
+					</ul>
+					<div class="data rank_priod">(2016.10.11~2016.10.20)</div>
+					<div class="tab_sub tab_box1">
+						<div id="chart1">
+							<div class="nodata2">
+								<span class="icon_nodata"></span> 최근 10일동안<br/>판매된 상품이 없습니다.
+							</div>
+						</div>
+					</div>
+					<div class="tab_sub tab_box2">
+						<div id="chart2">
+							<div class="nodata2">
+								<span class="icon_nodata"></span>  최근 10일동안<br/>가입된 회원이 없습니다.
+							</div>
+						</div>
+					</div>
+					<div class="tab_sub tab_box3">
+						<div id="chart3">
+							<div class="nodata2">
+								<span class="icon_nodata"></span> 최근 10일동안<br/>쇼핑몰로 방문한 데이터가 없습니다.
+							</div>
+						</div>
+					</div>
+					<!--{ ? managerInfo.manager_yn != 'Y' }-->
+					<!--<div class="noauth2">
+						<div class="place">
+							<span class="icon_auth"></span> 권한이 없습니다.
+						</div>
+					</div>-->
+					<!--{ / }-->
+				</li>
+				<li>
+					<h3>유입경로</h3>
+					<div class="data rank_priod">(2016.10.11~2016.10.20)</div>
+					<div class="inflow">
+						<div id="chart4">
+							<div class="nodata2">
+								<span class="icon_nodata"></span> 최근 10일동안<br/>쇼핑몰로 유입된 데이터가 없습니다.
+							</div>
+						</div>
+					</div>
+					<!--{ ?serviceLimit('H_FR') }-->
+					<div class="free_upgrade2">
+						<div class="nodata2">
+							죄송합니다.<br/>
+							본 기능은 상위버전으로<br/>
+							업그레이드 후<br/>
+							이용 가능합니다.
+						</div>
+						<div class="pdt5 center">
+							<img class="hand" onclick="serviceUpgrade();" src="../images/common/btn_upgrade.gif" alt="upgrade">
+						</div>
+					</div>
+					<!--{ / }-->
+					<!--{ ? managerInfo.manager_yn!= 'Y' }-->
+					<!--<div class="noauth2">
+						<div class="place">
+							<span class="icon_auth"></span> 권한이 없습니다.
+						</div>
+					</div>-->
+					<!--{ / }-->
+				</li>
+			</ul>
+			<!-- //통계정보 -->
+			<ul class="board_wap">
+				<li>
+					<div class="box_wrap">
+						<h3>공지사항</h3>
+						<ul id="print_main_news_notice_area">
+						</ul>
+						<a href="http://www.firstmall.kr/ec_hosting/customer/notice.php" target="_blank" title="새창열림" class="more">더보기</a>
+					</div>
+				</li>
+				<li>
+					<div class="box_wrap">
+						<h3>패치리스트</h3>
+						<ul id="print_main_news_upgrade_area">
+						</ul>
+						<a href="http://www.firstmall.kr/ec_hosting/customer/patch.php" target="_blank" title="새창열림" class="more">더보기</a>
+					</div>
+				</li>
+				<li>
+					<div class="box_wrap">
+						<h3>패치소식</h3>
+						<ul id="print_main_news_upgrade_news_area">
+						</ul>
+						<a href="http://www.firstmall.kr/ec_hosting/addservice/update.php" target="_blank" title="새창열림" class="more">더보기</a>
+					</div>
+				</li>
+				<li>
+					<div class="box_wrap">
+						<h3>창업교육</h3>
+						<ul class="edu" id="print_main_news_education_area">
+						</ul>
+						<a href="http://www.firstmall.kr/ec_hosting/education/index.php" target="_blank" title="새창열림" class="more">더보기</a>
+					</div>
+				</li>
+			</ul>
+			<!-- //게시판 -->
+		</div>
+		<!-- //우메인 -->
+	</div>
+	<!-- //메인영역 -->
+	{=getGabiaMainPannel()}
+	<!-- //배너 영역 -->
+</div>
+<!-- //메인 정보 -->
+
+<!-- 비밀번호 변경 -->
+<div id="popup_change_pass"></div>
+<!--{ ? is_change_pass_required }-->
+<script type="text/javascript">change_pass(true);</script>
+<!--{ : is_change_pass }-->
+<script type="text/javascript">change_pass();</script>
+<!--{ / }-->
+<!-- 주요 이슈사항 공지 -->
+<div id="notify_popup" style="padding:0px;"></div>
+
+<div id="smsMyFirstmallInfo" class="hide">
+	<img src="https://interface.firstmall.kr/firstmall_plus/images/sms/sms_aimg01.jpg" usemap="#smsFirstmallMap">
+</div>
+
+<div class="hide" id="mallAdd">
+	<div>
+	쇼핑몰을 추가하여 단일한 관리자 화면으로 한국어, <br/>
+	영어 등 다국어 쇼핑몰 혹은 동일한 언어로 2개 <br/>
+	이상의 쇼핑몰을 운영할 수 있습니다. 추가를 원하시면 <br/>
+	“쇼핑몰 추가” 를 클릭해 주세요.
+	</div>
+	<div class="center pdt5">
+	<a href="https://firstmall.kr/myshop/index.php" target="_blank"><span class="btn large black"><button type="button">쇼핑몰 추가</button></span></a>
+	</div>
+</div>
+
+<div class="hide" id="facebookNotice">
+<!-- //페이스북 관련 공지 18.02.28 kmj -->
+{facebook_notice.content}
+<div style="position:absolute; right:10px;">
+	<input type="checkbox" id="fb_notice_view_check" /> <label for="fb_notice_view_check">일주일 동안 이 창을 열지 않음</label>
+</div>
+</div>
+
+{? config_basic.manual_view == 'N'}
+<div class="hide" id="firstmallGlManualPopup">
+	<div style="width:800px; height:700px;">
+		<iframe name="firstmall_manual" id="firstmall_manual" src="//interface.firstmall.kr/firstmall_manual/firstmall_gl_manual.php?service_code={service_code}" width="800px" height="800px" frameborder="0" allowTransparency="true"></iframe>
+	</div>
+	<div style="bottom:0px; width:800px; background:#666; text-indent:20px; color:#fff; line-height:30px;">
+		<input type="checkbox" id="manual_view_check" /> <label for="manual_view_check">다시 보지 않기</label>
+	</div>
+</div>
+{/}
+
+<map name="smsFirstmallMap">
+	<area shape="rect" coords="0,30,172,72" href="#" onclick="window.open('https://firstmall.kr/myshop/sms/sms_send_phone.php?num={config_system.shopSno}');" title="" target="_blank"/>
+</map>
+
+<!-- 메인 팝업 : START -->
+{ main_popup }
+<!-- 메인 팝업 : END -->
+
+{ #layout_footer }

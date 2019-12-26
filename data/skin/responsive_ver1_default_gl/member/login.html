@@ -1,0 +1,674 @@
+{is_file_kakao_tag}
+
+
+<div class="title_container" style="display:none;">
+	<!--{ ? _GET.order_auth }-->
+	<h2><span designElement="text">주문배송조회</span></h2>
+	<!--{ : mode }-->
+	<h2><span designElement="text">주문</span></h2>
+	<!--{ : }-->
+	<h2><span designElement="text">로그인</span></h2>
+	<!--{ / }-->
+</div>
+
+<!-- 탭 -->
+<div class="resp_login_wrap">
+	<div id="loginTab" class="tab_basic fullsize Pt20">
+		<ul>
+			<li class="on"><a href="javascript:void(0)" data-tab="member"><span designElement="text">회원</span></a></li>
+			<li><a href="javascript:void(0)" data-tab="nonmember"><span designElement="text">비회원</span></a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- +++++++++++ 회원 +++++++++++ -->
+<div id="member" class="loginTabContetns resp_login_wrap Mt0">
+	<form name="loginForm" target="actionFrame" method="post" action="{=sslAction('../login_process/login')}" onsubmit="return submitLoginForm(this)">
+	<input type="hidden" name="return_url" value="{return_url}"/>
+	<input type="hidden" name="order_auth" value="{_GET.order_auth}"/>
+		<fieldset>
+			<ul class="login_real_area">
+				<li class="input_area">
+					<input type="text" name="userid" id="userid" class="box_id" value="{? idsavechecked }{idsavechecked}{/}" placeholder="아이디" required="required" />
+					<input type="password" name="password" id="password" class="box_pw" placeholder="비밀번호" password="password" required="required" />
+				</li>
+				<li>
+					<label class="id_save"><input type="checkbox" name="idsave" id="idsave" value="checked"  {? idsavechecked } checked="checked" {/} /> <span designElement="text">아이디 저장</span></label>
+				</li>
+				<li>
+					<button type="submit" class="btn_resp size_login1"><span designElement="text">로그인</span></button>
+				</li>
+				<li class="find_join">
+					<a href="../member/find?mode=findid" designElement="text">아이디 찾기</a> &nbsp;|&nbsp;
+					<a href="../member/find?mode=findpw" designElement="text">비밀번호 찾기</a> &nbsp;|&nbsp;
+					<a href="../member/agreement" class="Fw500 gray_01" designElement="text">회원가입</a>
+				</li>
+			</ul>
+
+			<!-- SNS 가입폼 -->
+			<!--{? count(joinform.use_sns) > 0 }-->
+			<h3 class="title_sub3 v3"><span designElement="text">또는 SNS 로그인</span></h3>
+			<ul class="sns_login_ul">
+				<!--{@ joinform.use_sns }-->
+				{? .key_ }<li class="sns-login-button" snstype="{=.key_}"><div class="img"><img src="../images/design/sns_icon_{=.key_}.png" alt="{=.key_} 로그인" title="{=.value_['nm']} 로그인"/></div></li>{/}
+				<!--{ / }-->
+			</ul>
+			<!--{/}-->
+
+			<!--{ ? mode == 'settle' }-->
+			<div class="Pt40"><button type="button" class="btn_resp size_c color4 Wmax"  onclick="document.location.href='{_GET.return_url}';"><span designElement="text">비회원으로 주문하기</span></button></div>
+			<!--{ : mode }-->
+			<div class="Pt40"><button type="button" class="btn_resp size_c color4 Wmax" onclick="document.location.href='../order/cart';"/><span designElement="text">비회원으로 주문하기</span></button></div>
+			<!--{ / }-->
+		</fieldset>
+	</form>
+</div>
+<!-- +++++++++++ //회원 +++++++++++ -->
+
+
+<!-- +++++++++++ 비회원 +++++++++++ -->
+<div id="nonmember" class="loginTabContetns resp_login_wrap Mt0" style="display:none;">
+	<form name="order_auth_form" target="actionFrame" method="post" action="{=sslAction('../mypage_process/order_auth')}">
+	<input type="hidden" name="return_url" value="{return_url}"/>
+		<ul class="login_real_area">
+			<li class="input_area">
+				<input type="text" name="order_seq" value="" class="box_order" placeholder="주문번호" />
+				<input type="text" name="order_email" value="" class="box_order" placeholder="주문자 이메일" />
+			</li>
+			<li class="desc_area">
+				<p designElement="text">비회원은 주문번호와 이메일로 주문을 조회할 수 있습니다.</p>
+			</li>
+			<li>
+				<button type="submit" class="btn_resp size_login1"><span designElement="text">주문조회</span></button>
+			</li>
+		</ul>
+	</form>
+</div>
+<!-- +++++++++++ //비회원 +++++++++++ -->
+
+
+
+
+<script type="text/javascript">
+function submitLoginForm(frm){
+	if($("input[name='save_id']").is(":checked")){
+		$.cookie('save_userid',$("input[name='userid']",frm).val(),{'expires':30,'path':'/'});
+	}else{
+		$.cookie('save_userid','',{'expires':-1,'path':'/'});
+	}
+	if($("input[name='save_pw']").is(":checked")){
+		$.cookie('save_password',$("input[name='password']",frm).val(),{'expires':30,'path':'/'});
+	}else{
+		$.cookie('save_password','',{'expires':-1,'path':'/'});
+	}
+	return true;
+}
+
+$(document).ready(function() {
+	// 로딩시 ID 인풋박스 포커스
+	$("form[name='loginForm'] input[name='userid']").focus();
+
+	//기본 login
+	$(".sns-login-button").click(function(){
+		var snstype = $(this).attr('snstype');
+		loginwindowopen(snstype);
+	});
+
+	// 회원가입 로그인 탭UI 190208 - sjg
+	$('#loginTab a').on('click', function() {
+		var tab_name = $(this).data('tab');
+		$('.loginTabContetns').hide();
+		$('#' + tab_name).show();
+		$('#loginTab li').removeClass('on');
+		$(this).closest('li').addClass('on');
+	});
+});
+
+function loginwindowopen(sns) {
+	var w;var h;
+	switch(sns) {
+		case 'twitter':
+			w = 810;h = 550;
+			break;
+		case 'me2day':
+			w = 900;h = 500;
+			break;
+		case 'yozm':
+			w = 600;h = 450;
+			break;
+		case 'cyworld':
+			w = 430;h = 560;
+			break;
+		case 'naver':
+			w = 460;h = 517;
+			break;
+		case 'kakao':
+			loginWithKakao();
+			return false;
+		break;
+		case 'daum':
+			w = 650;h = 517;
+		break;
+		case 'instagram':
+			w = 500;h = 530;
+			break;
+		default:
+			w = 800;h=400;
+	}
+	{? _SERVER.HTTP_HOST == APP_DOMAIN  }
+		if(sns == 'facebook' ) {//경고문구창사이즈
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+			FB.login(handelStatusChange,{scope:'{fbuserauth}'});
+		}else{
+			loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+			snsloginck(sns);
+		}
+	{:}
+		if(sns == 'me2day' || sns == 'cyworld' || sns == 'naver' || sns == 'daum' ) {//경고문구창사이즈
+			{? sns == 'cyworld' && TW_APP_ID == 'ifHWJYpPA2ZGYDrdc5wQ' }
+				window.open('http://m.{config_system.domain}/member/register_sns_form?popup=1&formtype=login&firstmallcartid={firstmallcartid}&return_url={return_url}&snstype='+sns+'&snsreferer={_SERVER.HTTP_HOST}','snspopup','width=410px,height=150px,statusbar=no,scrollbars=no,toolbar=no');
+			{:}
+				snsloginck(sns);
+			{/}
+		}else{
+			window.open('http://m.{config_system.subDomain}/member/register_sns_form?popup=1&formtype=login&firstmallcartid={firstmallcartid}&return_url={return_url}&snstype='+sns+'&snsreferer={_SERVER.HTTP_HOST}','snspopup','width='+w+'px,height='+h+'px,statusbar=no,scrollbars=no,toolbar=no');
+		}
+	{/}
+}
+
+//기본 facebook 로그인 //
+function handelStatusChange(response) {
+	if (response && response.status == 'connected') {
+	// 로그인
+	isLogin = true;
+	initializeFbTokenValues();
+	initializeFbUserValues();
+	if(response.authResponse){
+		fbId = response.authResponse.userID;
+		fbAccessToken = response.authResponse.accessToken;
+	}
+	FB.api('/me', function(response) {
+		 fbUid = response.email;
+		 fbName = response.name;
+		 if (fbName != "") {
+				$.ajax({
+				'url' : '../sns_process/facebookloginck',
+				'data' : {'facebooktype':'login'},
+				'type' : 'post',
+				'dataType': 'json',
+				'success': function(res) {
+					if(res.result == true){
+						loadingStop("body",true);
+                        /*######################## 17.12.21 gcs yjy : 앱 처리(로그인) s */			
+		                loginCompleteSendNativeApp(res);	
+						/*######################## 17.12.21 gcs yjy : 앱 처리(로그인) e */
+						{?_GET.return_url }
+							document.location.href='{_GET.return_url}';
+						{: return_url }
+							document.location.href='{return_url}';
+						{:}
+							document.location.href='../main/index';
+						{/}
+					}else{
+						loadingStop("body",true);
+						openDialogAlert(res.msg,'400','160',function(){});
+					}
+				}
+				});
+		}
+	});
+   } else if (response.status == 'not_authorized' || response.status == 'unknown') {
+	   //연결을 취소하셨습니다.
+		openDialogAlert(getAlert('mb003'),'400','160',function(){});
+		// 로그아웃된 경우
+		isLogin = false;
+		{? defined('__ISUSER__')}
+			logoutajax('facebook');
+		{/}
+		if (fbId != "")  initializeFbTokenValues();
+		if (fbUid != "") initializeFbUserValues();
+		loadingStop("body",true);
+	}else{
+		openDialogAlert(getAlert('mb003'),'400','160',function(){});
+		// 로그아웃된 경우
+		isLogin = false;
+		{? defined('__ISUSER__')}
+			logoutajax('facebook');
+		{/}
+		if (fbId != "")  initializeFbTokenValues();
+		if (fbUid != "") initializeFbUserValues();
+		loadingStop("body",true);
+	}
+}
+
+//feed 권한추가 -> 로그인시키지
+function handelStatusChangepublish_stream(response) {
+	if (response && response.status == 'connected') {
+		document.location.href='../mypage/myinfo';
+   }else{
+		loadingStop("body",true);
+		openDialogAlert(getAlert('mb003'),'400','160',function(){});
+   }
+}
+
+
+//기본 SNS로그인//
+function snsloginck(sns) {
+	loadingStop("body",true);
+	var w;var h;
+	switch(sns) {
+		case 'twitter':
+			w = 810;h = 550;
+			break;
+		case 'me2day':
+			w = 900;h = 750;
+			break;
+		case 'cyworld':
+			w = 430;h = 560;
+			break;
+		case 'naver':
+			w = 460;h = 517;
+			break;
+		case 'daum':
+			w = 650;h = 517;
+		break;
+		case 'instagram':
+			w = 650;h = 517;
+		break;
+	}
+	var width_	= w;
+	var height_ = h;
+	var left_	= screen.width;
+	var top_	= screen.height;
+
+	left_		= left_/2 - (width_/2);
+	top_		= top_/2 - (height_/2);
+	{? _SERVER.HTTPS == 'on'}
+		var openurl = 'https://{_SERVER.HTTP_HOST}'
+	{:}
+		var openurl = 'http://{_SERVER.HTTP_HOST}'
+	{/}
+	var newWin  = window.open(openurl + "/sns_process/snsredirecturl?snsloginstart=1","_blank","height="+height_+",width="+width_+",status=yes,scrollbars=no,statusbar=no,resizable=no,left="+left_+",top="+top_+"");
+
+	if (newWin == null || typeof(newWin)=='undefined'){
+		//팝업이 차단되었습니다.<br/>차단된 팝업을 허용해 주세요.
+		openDialogAlert(getAlert('mb004'),'400','140',function(){});
+	}
+
+	$.ajax({
+	'url' : '../sns_process/' + sns + 'loginck',
+	'data' : {'mform':'login'},
+	'type' : 'post',
+	'dataType': 'json',
+	'success': function(res) {
+		if(res.result == true) {
+			newWin.location = res.loginurl;
+			newWin.focus();
+		}else{
+			newWin.close();
+			openDialogAlert(res.msg,'400','140',function(){});
+		}
+	}
+	});
+}
+
+
+//미투데이 쇼핑몰로그인
+function me2dayjoginlogin() {
+	$.ajax({
+	'url' : '../sns_process/me2daylogin',
+	'type' : 'post',
+	'dataType': 'json',
+	'success': function(res) {
+		if(res.result == true){
+			{? _GET.return_url }
+				document.location.href='{_GET.return_url}';
+			{: return_url }
+				document.location.href='{return_url}';
+			{:}
+				document.location.href='../main/index';
+			{/}
+		}else{
+			loadingStop("body",true);
+			openDialogAlert(res.msg,'400','140',function(){});
+		}
+	}
+	});
+}
+
+
+//cyworld 쇼핑몰로그인
+function cyworldjoginlogin() {
+	$.ajax({
+	'url' : '../sns_process/cyworldlogin',
+	'type' : 'post',
+	'dataType': 'json',
+	'success': function(res) {
+		if(res.result == true){
+			{? _GET.return_url }
+				document.location.href='{_GET.return_url}';
+			{: return_url }
+				document.location.href='{return_url}';
+			{:}
+				document.location.href='../main/index';
+			{/}
+		}else{
+			loadingStop("body",true);
+			openDialogAlert(res.msg,'400','140',function(){});
+		}
+	}
+	});
+}
+
+//naver 쇼핑몰로그인
+function naverjoinlogin() {
+	$.ajax({
+	'url' : '../sns_process/naverlogin',
+	'type' : 'post',
+	'dataType': 'json',
+	'success': function(res) {
+		if(res.result == true){
+            /*######################## 17.12.21 gcs yjy : 앱 처리(로그인) s */
+            loginCompleteSendNativeApp(res);	
+			/*######################## 17.12.21 gcs yjy : 앱 처리(로그인) e */
+			{?_GET.return_url }
+				document.location.href='{_GET.return_url}';
+			{: return_url }
+				document.location.href='{return_url}';
+			{:}
+				document.location.href='../main/index';
+			{/}
+		}else{
+			loadingStop("body",true);
+			openDialogAlert(res.msg,'400','140',function(){
+				if(res.callback){
+					location.href= res.callback;
+				}
+			});
+		}
+	}
+	});
+}
+
+
+/*######################## 18.04.13 gcs yjy : 앱 처리(자동로그인) s */
+//twitter login
+function twitterjoinlogin(json_params) {
+	//alert(send_params);
+	console.log("twitterjoinlogin");
+	//console.dir(json_data);
+
+	var send_params = JSON.stringify(json_params);
+
+	$.ajax({
+		'url' : '../sns_process/twitterlogincomplete',
+		'type' : 'post',
+		'data' : {'send_params':send_params},
+		'dataType': 'json',
+		'success': function(res) {            
+			if(res.result == true){
+		
+		
+                loginCompleteSendNativeApp(res);	
+			
+				{?_GET.return_url }
+					document.location.href='{_GET.return_url}';
+				{: return_url }
+					document.location.href='{return_url}';
+				{:}
+					document.location.href='../main/index';
+				{/}
+			}else{
+				loadingStop("body",true);
+				if(res.dormany_auth){
+					location.href= res.dormany_auth;
+				}else{
+					openDialogAlert(res.msg,'400','160',function(){
+						if(res.callback){
+							location.href= res.callback;
+						}
+					});
+				}
+			}
+		}
+	});
+}
+/*######################## 18.04.13 gcs yjy : 앱 처리(자동로그인) e */
+
+//daum login
+function daumaccess(str){
+
+	loadingStart("body",{segments: 12, width: 15.5, space: 6, length: 13, color: '#000000', speed: 1.5});
+
+	str = encodeURIComponent(str);
+
+	$.ajax({
+	'url' : '../sns_process/daumuserinfo',
+	'type' : 'post',
+	'data' : {'str':str},
+	'dataType': 'json',
+	'success': function(res) {
+		if(res.result == true){
+			daumjoinlogin();
+		}else{
+			alert(res.message);
+		}
+	}});
+}
+
+function daumjoinlogin() {
+
+	$.ajax({
+	'url' : '../sns_process/daumlogin',
+	'type' : 'post',
+	'dataType': 'json',
+	'success': function(res) {
+		if(res.result == true){
+			{?_GET.return_url }
+				document.location.href='{_GET.return_url}';
+			{: return_url }
+				document.location.href='{return_url}';
+			{:}
+				document.location.href='../main/index';
+			{/}
+		}else{
+			loadingStop("body",true);
+			openDialogAlert(res.msg,'400','140',function(){});
+		}
+	},'error': function(res){
+		debug('error : ');
+		debug(res);
+	}
+	});
+}
+
+//kakao login start
+{? array_key_exists('kakao',joinform.use_sns) }
+	function loginWithKakao() {
+		
+		var IEIndex = navigator.appVersion.indexOf("MSIE");         // MSIE를 찾고 인덱스를 리턴
+		var IE8Over = navigator.userAgent.indexOf("Trident");		// MS IE 8이상 버전 체크
+
+		if( IEIndex > 0 && IE8Over < 0 )  {
+			//카카오 로그인을 지원하지 않는 브라우저 버전입니다.\nInternet Explorer 8 버전 이상 사용해 주세요.
+			alert(getAlert('mb005'));
+		}else{
+
+			// 로그인 창을 띄웁니다.
+			Kakao.Auth.login({
+				success: function(authObj) {
+					var aaccess_token	= authObj.access_token;
+
+					if(authObj.access_token){
+						Kakao.API.request({
+							url: '/v1/user/me',
+							success: function(userObj) {
+								var kakaoObj		= $.extend(authObj,userObj);
+								kakaojoinlogin(kakaoObj);
+							}
+
+						});
+					}else{
+						//잘못된 접근입니다.
+						alert(getAlert('mb006'));
+						return false;
+					}
+				},fail: function(res){
+					alert(getAlert('mb006'));
+					//JSON.stringify(res);
+				}
+			});
+		}
+	};
+
+	function kakaoAPI(kakaoKey){ Kakao.init(kakaoKey); }
+
+	$.ajax({
+		'url' : '../sns_process/kakaokeys',
+		'dataType': 'json',
+		'success': function(res) {
+			if(res.result == true){
+				kakaoAPI(res.keys);
+			}
+		}
+	});
+
+	function kakaojoinlogin(kakaoObj) {
+		$.ajax({
+		'url' : '../sns_process/kakaologin',
+		'type' : 'post',
+		'dataType': 'json',
+		'data': kakaoObj,
+		'success': function(res) {
+			if(res.result == true){
+				loadingStop("body",true);
+				/*######################## 17.12.21 gcs yjy : 앱 처리(로그인) s */
+				loginCompleteSendNativeApp(res);
+				/*######################## 17.12.21 gcs yjy : 앱 처리(로그인) e */
+				if	(res.msg){
+					openDialogAlert(res.msg,'400','180',function(){
+					{?_GET.return_url }
+						document.location.href='{_GET.return_url}';
+					{: return_url }
+						document.location.href='{return_url}';
+					{:}
+						document.location.href='../main/index';
+					{/}
+					});
+				}else{
+					{?_GET.return_url }
+					document.location.href='{_GET.return_url}';
+				{: return_url }
+					document.location.href='{return_url}';
+				{:}
+					document.location.href='../main/index';
+				{/}
+				}
+			}else{
+				loadingStop("body",true);
+				if(res.dormany_auth){
+					location.href= res.dormany_auth;
+				}else{
+				openDialogAlert(res.msg,'400','140',function(){});
+			}
+		}
+		}
+		});
+	}
+{ / }
+//kakao login end
+
+//회원정보 초기화 시키기..
+function logoutajax(sns){
+	$.ajax({
+	'url' : '../sns_process/'+sns+'logout',
+	'dataType': 'json',
+	'success': function(res) {
+		if(res.result == true){
+			{? return_url }
+				document.location.href='{return_url}';
+			{:}
+				document.location.href='../main/index';
+			{/}
+		}else{
+			loadingStop("body",true);
+			openDialogAlert(res.msg,'400','140',function(){});
+		}
+	}
+	});
+}
+
+//instagram login
+function instagramjoinlogin() {
+	$.ajax({
+	'url' : '../sns_process/instagramlogin',
+	'type' : 'post',
+	'dataType': 'json',
+	'success': function(res) {
+		if(res.result == true){
+			loadingStop("body",true);
+            /*######################## 17.12.21 gcs yjy : 앱 처리(로그인) s */
+            loginCompleteSendNativeApp(res);	
+			/*######################## 17.12.21 gcs yjy : 앱 처리(로그인) e */
+			if	(res.msg){
+				openDialogAlert(res.msg,'400','180',function(){
+			{?_GET.return_url }
+				document.location.href='{_GET.return_url}';
+			{: return_url }
+				document.location.href='{return_url}';
+			{:}
+				document.location.href='../main/index';
+			{/}
+					});
+				}else{
+					{?_GET.return_url }
+						document.location.href='{_GET.return_url}';
+					{: return_url }
+						document.location.href='{return_url}';
+					{:}
+						document.location.href='../main/index';
+					{/}
+				}
+		}else{
+			loadingStop("body",true);
+			if(res.dormany_auth){
+				location.href= res.dormany_auth;
+			}else{
+				openDialogAlert(res.msg,'400','160',function(){});
+			}
+		}
+
+	}
+	});
+}
+// 18-04-25 사용자앱 byuncs  ###############################################
+function loginCompleteSendNativeApp(res)
+{
+    /*var chk = 0;//navigator.userAgent.indexOf("user.firstmall.kr");            
+    if( chk >= 0 ) {
+        var param = {'member_seq' : res.send_params.member_seq, 'user_id' : res.send_params.userid, 'user_name' : res.send_params.user_name, 'session_id' : res.send_params.session_id, 'channel' : res.send_params.channel, 'reserve' : res.send_params.reserve, 'balance' : res.send_params.balance, 'coupon' : res.send_params.coupon, 'auto_login' : res.send_params.auto_login, 'key' : res.send_params.key };
+        var strParam = JSON.stringify(param);
+        var dataStr = "MemberInfo" + "?" + strParam;
+
+        chk = navigator.userAgent.indexOf("Android");
+        alert(navigator.userAgent + "=" + chk);
+        if( chk >= 0) {                    
+            CSharp.postMessage(dataStr);
+        }else {                    
+            window.webkit.messageHandlers.CSharp.postMessage(dataStr);
+        }
+    }*/
+    
+	{? mobileapp == "Y" }
+			var param = {'member_seq' : res.send_params.member_seq, 'user_id' : res.send_params.userid, 'user_name' : res.send_params.user_name, 'session_id' : res.send_params.session_id, 'channel' : res.send_params.channel, 'reserve' : res.send_params.reserve, 'balance' : res.send_params.balance, 'coupon' : res.send_params.coupon, 'auto_login' : res.send_params.auto_login, 'key' : res.send_params.key };
+			var strParam = JSON.stringify(param);
+			var dataStr = "MemberInfo" + "?" + strParam;
+		{? m_device =='iphone' }
+			window.webkit.messageHandlers.CSharp.postMessage(dataStr);
+		{ : }
+			CSharp.postMessage(dataStr);
+		{ / }
+	{ / }
+}
+//################################################ 18-04-25 사용자앱 byuncs 
+</script>

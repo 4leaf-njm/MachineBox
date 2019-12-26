@@ -1,0 +1,98 @@
+<div class="container-fluid top-pt">
+    <div class="container pt-5">
+        <div class="row">
+                <div class="col-md-2 col-sm-12">
+                    {# mypage_menu}
+                </div>
+            
+                <div class="col-md-10 col-sm-12">
+
+                    <h1 class="wrap-title wrap-title-02 txt-bold mb-2">견적제품</h1>
+                    <p class="wrap-title-sub txt-demi-light mb-4 txt-left">관리자로부터 입찰참여 요청이오면, 기계정보를 확인하시고, 매입 견적서를 작성하시기 바랍니다.</p>
+                    
+                    <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">견적대기&nbsp<i class="accent-txt">{= count(wait_list)}</i>&nbsp건</h5>
+                    <div class="scroll-wrap ad-sale-wrap scroll-y">
+                        <!-- {@ wait_list } -->
+                        <div class="my-service border">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">등록번호: <a href="/sch/mch_detail/{.type}/{.info_seq}/est">{.sales_no}</a></h5>
+                            <ul class="pt-2 pb-2 my-list">
+                                <li class="my-normal-txt spacing-072 list-100">견적 신청일 : {.reg_date}</li>
+                                <li class="my-normal-txt spacing-072 list-100">판매자 : {.sale_userid}</li>
+                                <li class="my-normal-txt spacing-072 list-100">상태 : {.state}</li>
+                            </ul>
+                        </div>
+                        <div class="my-service border">
+                            <ul class="pt-2 pb-2 my-list">
+                                <li class="my-normal-txt spacing-072 list-50 txt-center">
+                                    <a href="javascript:show_estimate_form('{.estimate_seq}', 'regist')" class="d-block txt-bold">입찰 참여</a> 
+                                </li>
+                                <li class="my-normal-txt spacing-072 list-50 txt-center">
+                                    <a href="javascript:go_estimate_cancel('{.estimate_seq}')" class="d-block txt-bold">입찰 거절</a> 
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- {:} -->
+                        <div class="default-box">
+                            <p class="default-message">견적서 작성대기 내역이 없습니다.</p>
+                        </div>
+                        <!-- {/} -->
+                    </div>
+                        
+                   <h5 class="wrap-title-sub txt-left mt-4 mb-2 spacing-072 txt-bold">견적완료&nbsp<i class="accent-txt">{= count(finish_list)}</i>&nbsp건</h5>
+                   <div class="scroll-wrap ad-sale-wrap scroll-y">
+                        <!-- {@ finish_list } -->
+                        <div class="my-service border">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">등록번호: <a href="/sch/mch_detail/{.type}/{.info_seq}/est">{.sales_no}</a></h5>
+                            <ul class="pt-2 pb-2 my-list">
+                                <li class="my-normal-txt spacing-072 list-100">견적 신청일 : {.reg_date}</li>
+                                <li class="my-normal-txt spacing-072 list-100">판매자 : {.sale_userid}</li>
+                                <li class="my-normal-txt spacing-072 list-100">상태 : {.state}</li>
+                            </ul>
+                        </div>
+                        <div class="my-service border">
+                            <ul class="pt-2 pb-2 my-list">
+                                <li class="my-normal-txt spacing-072 list-100 txt-center">
+                                    <!-- {? .state == '작성완료'} -->
+                                    <a href="javascript:show_estimate_form('{.estimate_seq}', 'view')" class="d-block txt-bold">견적서 보기</a> 
+                                    <!-- {: .state == '입찰거절'} -->
+                                    거절됨
+                                    <!-- {/} -->
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- {:} -->
+                        <div class="default-box">
+                            <p class="default-message">견적서 작성완료 내역이 없습니다.</p>
+                        </div>
+                        <!-- {/} -->
+                    </div>
+                    
+                   <div class="mb-5"></div>
+                    <script>
+                        (function($){
+                            $(".ad-sale-wrap.scroll-y").mCustomScrollbar({
+                                theme: "rounded-dark",
+                                scrollbarPosition: "outside",
+                                advanced:{
+                                    autoExpandHorizontalScroll:true
+                                }
+                            });
+                        })(jQuery);
+                    </script>
+            </div>
+        </div>
+    </div>
+</div>
+<form action="/user/estimate_cancel" method="post" id="frm_estimate" target="actionFrame">
+    <input type="hidden" name="estimate_seq" />
+</form>
+<script>
+    function go_estimate_cancel(estimate_seq) {
+        if(confirm('해당 견적제품의 입찰을 거절하시겠습니까 ?')) {
+            $('input[name=estimate_seq]').val(estimate_seq);
+            $('#frm_estimate').submit();
+        }
+    }
+</script>
+
+

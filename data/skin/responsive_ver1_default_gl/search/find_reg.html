@@ -1,0 +1,159 @@
+<form action="/sch/find_reg_process" method="post" id="frm_find">
+    <input type="hidden" name="find_cnt"/>
+    
+    <div class="container-fluid wrap-bg-gray pt-3 pb-3">
+        <div class="container pt-5 pb-5">
+            <div class="row">
+                <div class="col-12 mb-5 mt-5 pt-4 title-div">
+                    <h1 class="wrap-title txt-center txt-bold mb-1">“기계 찾아줘” 기계정보를 입력해주세요.</h1>
+                    <p class="wrap-title-sub">비슷한 사양의 기계를 복수로 입력하시면 더 빨리 찾을 수 있습니다.</p>
+                </div>
+                <div class="col-12">
+                    <div class="regi-form txt-right">
+                        <button type="button" class="btn-type-01 btn-sm btn-turnkey-add" onclick="find_add()">추가하기</button>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">기계종류</p>
+                        <input type="hidden" name="kind_no" />
+                        <input type="hidden" name="kind_seq" />
+                        <select type="text" name="sel_kind" class="input-style input-lg select-style select-active">
+                            <option>기계종류를 선택해주세요.</option>
+                            <!-- {@ kind_map} -->
+                            <optgroup label="{.kind_type}" data-no="{.kind_no}">
+                                <!-- {@ .kind_list} -->
+                                <option data-seq="{..kind_seq}" {? ..kind_seq == kind_seq }selected{/}>{..kind_name}</option>
+                                <!-- {/} -->
+                            </optgroup>
+                            <!-- {/} -->
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">제조사</p>
+                        <input type="hidden" name="mnf_seq" />
+                        <select type="text" name="sel_mnf" class="input-style input-lg select-style" data-id="input-mnf" data-none="none">
+                            <option>제조사를 선택해주세요.</option>
+                            <option data-mode="input">직접입력</option>
+                            <option data-val="선택안함">선택안함</option>
+                            <!-- {@ mnf_list} -->
+                            <option data-seq="{.mnf_seq}" {? .mnf_seq == mnf_seq }selected{/}>{.mnf_name}</option>
+                            <!-- {/} -->
+                        </select>
+                        <input type="hidden" name="input_mnf" />
+                        <input type="text" name="txt_mnf" class="input-style input-border-none input-lg d-none mt-2" placeholder="제조사 입력" id="input-mnf" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">모델</p>
+                        <input type="hidden" name="model_seq" />
+                        <select type="text" name="sel_model" class="input-style input-lg select-style" data-id="input-model">
+                            <option>모델을 선택해주세요.</option>
+                            <option data-mode="input">직접입력</option>
+                        </select>
+                        <input type="hidden" name="input_model" />
+                        <input type="text" name="txt_model" class="input-style input-border-none input-lg d-none mt-2" placeholder="모델 입력" id="input-model" />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="regi-form mb-2">
+                        <p class="form-title-type-02">연식</p>
+                        <select name="sel_year" class="input-style input-md select-style" data-target="model_year_01">
+                            <option>이상</option>
+                            <option data-val="0">직접입력</option>
+                        </select>
+                        <select name="sel_year" class="input-style input-md select-style" data-target="model_year_02">
+                            <option>이하</option>
+                            <option data-val="0">직접입력</option>
+                        </select>
+                    </div>
+                    <div class="regi-form d-none" id="year-div">
+                        <input type="text" id="model_year_01" class="input-style input-border-none input-md invisible" placeholder="연식을 입력해주세요." />
+                        <input type="text" id="model_year_02" class="input-style input-border-none input-md invisible" placeholder="연식을 입력해주세요." />
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">가격대</p>
+                        <select name="sel_price" class="input-style input-lg select-style" data-id="hope-price-div">
+                            <option data-val="0">희망 가격대 선택</option>
+                            <option data-mode="input">직접입력</option>
+                            <option>1000만원이하</option>
+                            <option>2000만원이하</option>
+                            <option>3000만원이하</option>
+                            <option>4000만원이하</option>
+                            <option>5000만원이하</option>
+                            <option>6000만원이하</option>
+                            <option>7000만원이하</option>
+                            <option>8000만원이하</option>
+                            <option>9000만원이하</option>
+                            <option>1억이하</option>
+                            <option>1억 1000만원이하</option>
+                            <option>1억 2000만원이하</option>
+                            <option>1억 3000만원이하</option>
+                            <option>1억 4000만원이하</option>
+                            <option>1억 5000만원이하</option>
+                            <option>1억 6000만원이하</option>
+                            <option>1억 7000만원이하</option>
+                            <option>1억 8000만원이하</option>
+                            <option>1억 9000만원이하</option>
+                            <option>2억이하</option>
+                            <option>2억이상</option>
+                        </select>
+                    </div>
+                    <div class="regi-form d-none" id="hope-price-div">
+                        <p class="form-title-type-02">가격대 입력</p>
+                        <input type="text" name="hope_price" class="input-style input-border-none input-lg">
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">지역</p>
+                        <select type="text" name="sel_area" class="input-style input-lg select-style mb-1" id="sel_area_option">
+                            <option>지역을 선택해주세요.</option>
+                            <option>상관없음</option>
+                            <!-- {@ area_list} -->
+                            <option data-seq="{.area_seq}">{.area_name}</option>
+                            <!-- {/} -->
+                        </select>
+                    </div>
+                    <div class="form-row-02" id="option-append" style="position: relative; bottom: 20px;"></div>
+                </div>
+                <div class="col-12">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">옵션사항 및 요청사항</p>
+                        <textarea type="text" name="option" class="input-style input-border-none input-lg textarea-style"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">구입 예정 일정</p>
+                        <input type="text" name="buy_expect_date" class="input-style input-border-none input-lg pickadate">
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="regi-form">
+                        <p class="form-title-type-02">머신박스 배송 대행서비스 신청</p>
+                        <div class="form-row-01 deliver-service-div">
+                            <input type="hidden" name="deliver_service" value="상차" />
+                            <button type="button" class="input-style input-sm-5 pre-style btn-type-02-active">상차</button>
+                            <button type="button" class="input-style input-sm-5 pre-style">하차</button>
+                            <button type="button" class="input-style input-sm-5 pre-style">배송</button>
+                            <button type="button" class="input-style input-sm-5 pre-style">해체/설치</button>
+                            <button type="button" class="input-style input-sm-5 pre-style">신청안함</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 mt-3 mb-5" id="find-list"></div>
+                
+                <div class="col-12 txt-center mt-3">
+                    <button type="button" class="btn-type-02 btn-radius" onclick="find_complete()">기계찾아줘</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

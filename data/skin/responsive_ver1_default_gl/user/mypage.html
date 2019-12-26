@@ -1,0 +1,316 @@
+<div class="container-fluid top-pt">
+        <div class="container pt-5">
+            <div class="row">
+                <div class="col-md-2 col-sm-12">
+                    {# mypage_menu}
+                </div>
+
+                <div class="col-md-10 col-sm-12">
+                    <h1 class="wrap-title wrap-title-02 txt-bold mb-2"><a href="/user/mypage">마이페이지</a></h1>
+                    <p class="wrap-title-sub mb-3 txt-left spacing-072">{userInfo.userid}님은 <i class="accent-txt">{userInfo.gubun}</i>입니다.</p>
+                    <div class="form-row-01 my-info-row mb-5 border-t border-b" style="justify-content: space-around">
+                        <p class="wrap-title-sub"><b>회원정보:</b> {? userInfo.mtype == 'member'}미인증<a href="/user/my_info_modify/change" class="btn small ml-1">전환</a>{: userInfo.bpermit_yn == 'n'}미인증(승인대기){: userInfo.bpermit_yn == 'y'}인증{/}</p>
+                        <p class="wrap-title-sub"><b>휴대전화:</b> {? userInfo.cellphone != '--'}{userInfo.cellphone}{:}미입력{/}</p>
+                        <p class="wrap-title-sub"><b>전화:</b> {? userInfo.phone != '--'}{userInfo.phone}{:}미입력{/}</p>
+                        <p class="wrap-title-sub"><b>이메일:</b> {? userInfo.email}{userInfo.email}{:}미입력{/}</p>
+                    </div>
+                    <h5 class="wrap-title-sub txt-left mb-2 spacing-072 txt-bold">이용중인 서비스</h5>
+                    
+                    <!-- {@ service_list} -->
+                    <div class="my-service border mb-3">
+                        <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b spacing-072 txt-bold">{.key_} <i class="accent-txt">{= count(.value_)}</i>건</h5>
+                        <ol class="pt-2 pb-2">
+                            <!-- {@ .value_} -->
+                            <li class="my-normal-txt spacing-072"><a href="/user/my_using_service">{..index_+1}) {= date('Y.m.d', strtotime(..sales_date))} ({..sales_no})</a></li>
+                            <!-- {/} -->
+                        </ol>
+                    </div>
+                    <!-- {:} -->
+                    <div class="my-service border-t border-b mb-3">
+                        <h5 class="wrap-title-sub txt-center pt-4 pb-4 spacing-072 txt-medium">이용중인 서비스가 없습니다.</h5>
+                    </div>
+                    <!-- {/} -->
+                    
+                    <h5 class="wrap-title-sub txt-left mt-4 mb-2 pt-3 spacing-072 txt-bold">구매기계 관리</h5>
+                    <div class="border mb-5">
+                        <ol class="p-2 pl-3">
+                            <li class="my-normal-txt mb-1 spacing-072"><a href="/user/my_mch_service">배송대행·수리 서비스 신청 / 이용내역</a></li>
+                        </ol>
+                    </div>
+                    <!-- 탭 버튼 -->
+                    <div class="form-row-02 tab-btn-row mb-2">
+                        <a href="#" class="tab-btn active-tab-btn" data-target="tab-01">기계</a>
+                        <a href="#" class="tab-btn" data-target="tab-02">외주</a>
+                    </div>
+                    <!-- 기계 탭 -->
+                    <!-- tab-wrap이 display none 되있고 active-tab 클래스를 줌 -->
+                    <div class="form-row-02 tab-wrap mb-5 active-tab" id="tab-01">
+                        <!-- 내 기계 구매  -->
+                        <div class="border tab-div">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b border-2 spacing-072 txt-bold">내 기계 구매</h5>
+                            <div class="border-b border-2 p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left spacing-072 txt-bold">최근 본 기계 &nbsp<i class="accent-txt">{= count(recent_sale_list)}</i>&nbsp대</h5>
+                                    <a href="/user/my_buy_recent" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <div class="form-row-02">
+                                    <!-- {? count(recent_sale_list) <= 3} -->
+                                        <!-- {@ recent_sale_list} -->
+                                        <div class="my-page-machine">
+                                            <img src="{.path}" alt="" height="115">
+                                            <h4 class="sm-txt-14 txt-medium ellipsis">{.model_name}</h4>
+                                            <p class="sm-desc txt-light">{.model_year}년형</p>
+                                        </div>
+                                        <!-- { / } -->
+                                    <!-- { : } -->
+                                        <!-- {@ range(0, 2)} -->
+                                        <div class="my-page-machine">
+                                            <img src="{recent_sale_list[.key_].path}" alt="">
+                                            <h4 class="sm-txt-14 txt-medium">{recent_sale_list[.key_].model_name}</h4>
+                                            <p class="sm-desc txt-light">{recent_sale_list[.key_].model_year}년형</p>
+                                        </div>
+                                        <!-- { / } -->
+                                    <!-- { / } -->
+                                </div>
+                            </div>
+                            <div class="border-b border-2 p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left spacing-072 txt-bold">기계검사 참여 &nbsp<i class="accent-txt">0</i>&nbsp대</h5>
+                                    <a href="#" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <div class="form-row-02">
+                                    <!--
+                                    <div class="my-page-machine">
+                                        <img src="../images/custom/product.JPG" alt="">
+                                        <h4 class="sm-txt-14 mt-2 mt-1 txt-medium">CY2-52MB</h4>
+                                        <p class="sm-desc txt-light">2017년형</p>
+                                    </div>
+                                    <div class="my-page-machine">
+                                        <img src="../images/custom/product.JPG" alt="">
+                                        <h4 class="sm-txt-14 mt-2 mt-1 txt-medium">CY2-52MB</h4>
+                                        <p class="sm-desc txt-light">2017년형</p>
+                                    </div>
+                                    -->
+                                </div>
+                            </div>
+                            <div class="border-b border-2 p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left txt-bold spacing-072">구매중{? new_buy_ing == 'true'}<span class="txt_new">new</span>{/}</h5>
+                                    <a href="/user/my_buy_ing_more" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <p class="sm-txt-14 mb-1 spacing-072">가격제안 &nbsp;<i class="accent-txt">{= count(prop_list)}</i> 대{? new_buy_ing_prop == 'true'}<span class="txt_new">new</span>{/}</p>
+                                <p class="sm-txt-14 mb-1 spacing-072">입찰참여 &nbsp;<i class="accent-txt">{sales_count.bid_buy_ing_cnt}</i> 대{? new_buy_ing_bid == 'true'}<span class="txt_new">new</span>{/}</p>
+                                <p class="sm-txt-14 mb-1 spacing-072">견적제품 &nbsp;<i class="accent-txt">{sales_count.estimate_cnt}</i> 대 (전용 딜러){? new_sale_estimate == 'true'}<span class="txt_new">new</span>{/}</p>
+                            </div>
+                            <div class="p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left txt-bold spacing-072">완료{? new_buy_finish == 'true'}<span class="txt_new">new</span>{/}</h5>
+                                    <a href="/user/my_buy_finish" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <p class="sm-txt-14 mb-2 spacing-072">고정가격구매완료 &nbsp;<i class="accent-txt">{sales_count.fix_buy_finish_cnt}</i> 대</p>
+                                <div class="form-row-01">
+                                    <div class="my-div-3 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">입찰</h4>
+                                        <p class="sm-txt-14 pt-1 pb-1 txt-center spacing-072"><i class="accent-txt">{sales_count.bid_buy_finish_cnt_02 + sales_count.bid_buy_finish_cnt_03}</i> 대</p>
+                                    </div>
+                                    <div class="my-div-3 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">낙찰</h4>
+                                        <p class="sm-txt-14 pt-1 pb-1 txt-center spacing-072"><i class="accent-txt">{sales_count.bid_buy_finish_cnt_02}</i> 대{? new_buy_finish_bid_y == 'true'}<span class="txt_new">new</span>{/}</p>
+                                    </div>
+                                    <div class="my-div-3 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">유찰</h4>
+                                        <p class="sm-txt-14 pt-1 pb-1 txt-center spacing-072"><i class="accent-txt">{sales_count.bid_buy_finish_cnt_03}</i> 대{? new_buy_finish_bid_x == 'true'}<span class="txt_new">new</span>{/}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 내 기계 판매  -->
+                        <div class="border tab-div" style="height: max-content;">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b border-2 txt-bold spacing-072">내 기계 판매</h5>
+                            <div class="border-b border-2 p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left txt-bold spacing-072">판매중{? new_sale_ing == 'true'}<span class="txt_new">new</span>{/}</h5>
+                                    <a href="/user/my_sale_ing" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <p class="sm-txt-14 mb-1 spacing-072">고정가격 &nbsp;<i class="accent-txt">{sales_count.fixed_cnt}</i> 대{? new_sale_ing_fixed == 'true'}<span class="txt_new">new</span>{/}</p>
+                                <p class="sm-txt-14 mb-1 spacing-072">경매진행 &nbsp;<i class="accent-txt">{sales_count.bid_cnt}</i> 대{? new_sale_ing_bid == 'true'}<span class="txt_new">new</span>{/}</p>
+                                <p class="sm-txt-14 mb-1 spacing-072">머박다이렉트 &nbsp;<i class="accent-txt">{sales_count.direct_cnt}</i> 대{? new_sale_ing_direct == 'true'}<span class="txt_new">new</span>{/}</p>
+                            </div>
+                            <div class="p-2 pl-3 border-b border-2">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left txt-bold spacing-072 pr-2">판매 기계 관리</h5>
+                                    <a href="/user/my_sale_wait" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <div class="form-row-02">
+                                    <div class="my-div-3 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">대기</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">임시저장 &nbsp;<i class="accent-txt" id="sale-temp-data-count"></i> 대</p>
+                                    </div>
+                                    <div class="my-div-3 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">삭제</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">취소 &nbsp;<i class="accent-txt">{sales_count.cancel_cnt}</i> 대</p>
+                                    </div>
+                                    <div class="my-div-3 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">완료</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">판매 &nbsp;<i class="accent-txt">{sales_count.complete_cnt}</i> 대</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left txt-bold spacing-072">긴급판매{? new_sale_emergency == 'true'}<span class="txt_new">new</span>{/}</h5>
+                                    <a href="/user/my_sale_emergency" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <!-- {? emergency_list} -->
+                                <div class="form-row-02">
+                                    <div class="my-div-2 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">신청일</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">{= date('Y.m.d', strtotime(emergency_list.sales_date))}</p>
+                                    </div>
+                                    <div class="my-div-2 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">진행상황</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">
+                                            <!-- {? emergency_list.sales_yn == 'y'} -->
+                                            판매완료
+                                            <!-- {: emergency_list.select_yn == 'y'} -->
+                                            딜러사 현장미팅
+                                            <!-- {: emergency_list.estimate_yn == 'y'} -->
+                                            견적 진행완료
+                                            <!-- {: emergency_list.estimate_yn == 'h'} -->
+                                            견적 진행중
+                                            <!-- {: emergency_list.estimate_yn == 'n'} -->
+                                            딜러 선택중
+                                            <!-- {/} -->
+                                        </p>
+                                        <!--<p class="sm-txt-14 pb-2 txt-center spacing-072">판매완료(취소)</p>-->
+                                    </div>
+                                </div>
+                                <!-- {:} -->
+                                <div class="form-row-02">
+                                    <div class="my-div-2 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">신청일</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">-</p>
+                                    </div>
+                                    <div class="my-div-2 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">진행상황</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">-</p>
+                                    </div>
+                                </div>
+                                <!-- {/} -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 외주 탭-->
+                    <div class="form-row-02 tab-wrap mb-5" id="tab-02">
+                        <!-- 외주 -->
+                        <div class="border tab-div">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b border-2 txt-bold spacing-072">외주</h5>
+                            <div class="border-b border-2 p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left mb-2 txt-bold spacing-072">외주중{? new_osc_ing == 'true' || new_osc_end == 'true'}<span class="txt_new">new</span>{/}</h5>
+                                    <a href="/user/my_osc_ing_more" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <p class="sm-txt-14 mb-1 spacing-072">의뢰 중 &nbsp;<i class="accent-txt">{osc_count.osc_reg_cnt}</i> 건{? new_osc_ing == 'true'}<span class="txt_new">new</span>{/}</p>
+                                <p class="sm-txt-14 mb-1 spacing-072">진행 중 &nbsp;<i class="accent-txt">{osc_count.osc_ing_cnt}</i> 건{? new_osc_end == 'true'}<span class="txt_new">new</span>{/}</p>
+                            </div>
+                            <div class="p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left mb-2 txt-bold spacing-072">내외주관리</h5>
+                                    <a href="/user/my_osc_wait" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <div class="form-row-02">
+                                    <div class="my-div-3 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">대기</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">임시저장 <i class="accent-txt" id="osc-temp-data-count"></i> 건</p>
+                                    </div>
+                                    <div class="my-div-3 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">삭제</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">직접삭제 <i class="accent-txt">0</i> 건</p>
+                                    </div>
+                                    <div class="my-div-3 border">
+                                        <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">완료</h4>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">외주완료 <i class="accent-txt">{osc_count.osc_finish_cnt}</i> 건</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 수주 -->
+                        <div class="border tab-div">
+                            <h5 class="wrap-title-sub txt-left p-2 pl-3 border-b border-2 txt-bold spacing-072">수주</h5>
+                            <div class="pt-2 pl-3 pr-2 pb-3 border-b border-2">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left txt-bold spacing-072">최근에 본 수주 <i class="accent-txt">{= count(recent_osc_list)}</i>건</h5>
+                                    <a href="/user/my_ptn_recent" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <div class="form-row-02">
+                                    <!-- {? count(recent_osc_list) <= 3} -->
+                                        <!-- {@ recent_osc_list} -->
+                                        <div class="my-div-3 border p-2">
+                                            <h4 class="sm-txt-14 pb-1 txt-medium spacing-072 ellipsis-2">{.osc_name}</h4>
+                                            <p class="sm-txt-14 pb-1 accent-txt">{= number_format(.budget)}원</p>
+                                            <p class="sm-desc pb-1">마감일 {= date('Y.m.d', strtotime(.osc_end_date))}</p>
+                                            <p class="sm-desc">지원자 {.apply_cnt}명</p>
+                                        </div>
+                                        <!-- { / } -->
+                                    <!-- {:} -->
+                                        <!-- {@ range(0, 2)} -->
+                                        <div class="my-div-3 border p-2">
+                                            <h4 class="sm-txt-14 pb-1 txt-medium spacing-072">{recent_osc_list[.key_].osc_name}</h4>
+                                            <p class="sm-txt-14 pb-1 accent-txt">{= number_format(recent_osc_list[.key_].budget)}원</p>
+                                            <p class="sm-desc pb-1">마감일 {= date('Y.m.d', strtotime(recent_osc_list[.key_].osc_end_date))}</p>
+                                            <p class="sm-desc">지원자 {recent_osc_list[.key_].apply_cnt}명</p>
+                                        </div>
+                                        <!-- { / } -->
+                                    <!-- {/} -->
+                                </div>
+                            </div>
+                            <div class="border-b border-2 p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left mb-2 txt-bold spacing-072">수주중{? new_ptn_wait == 'true' || new_ptn_ing == 'true'}<span class="txt_new">new</span>{/}</h5>
+                                    <a href="/user/my_ptn_ing_more" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <p class="sm-txt-14 mb-1">지원 중 &nbsp;<i class="accent-txt">{osc_count.ptn_wait_cnt}</i> 건{? new_ptn_wait == 'true'}<span class="txt_new">new</span>{/}</p>
+                                <p class="sm-txt-14 mb-1">진행 중 &nbsp;<i class="accent-txt">{osc_count.ptn_ing_cnt}</i> 건{? new_ptn_ing == 'true'}<span class="txt_new">new</span>{/}</p>
+                            </div>
+                            <div class="p-2 pl-3">
+                                <div class="form-row-01 mb-2">
+                                    <h5 class="wrap-title-sub txt-left mb-2 txt-bold spacing-072">수주완료</h5>
+                                    <a href="/user/my_ptn_finish" class="sm-txt-12 spacing-072 pr-2">더보기</a>
+                                </div>
+                                <p class="sm-txt-14 mb-1">수주 완료 &nbsp;<i class="accent-txt">{osc_count.ptn_finish_cnt}</i> 건</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    $('.tab-btn-row .tab-btn').on('click', function(e) {
+        e.preventDefault();
+        var target = $(this).data('target');
+        $('.tab-wrap').removeClass('active-tab');
+        $('#' + target).addClass('active-tab');
+        
+        $('.tab-btn-row .tab-btn').removeClass('active-tab-btn');
+        $(this).addClass('active-tab-btn');
+    });
+    
+    var sale_temp_list = JSON.parse(localStorage.getItem('sale_temp_list'));
+    var sale_temp_data_count = 0;
+    
+    if(sale_temp_list != null) {
+        sale_temp_data_count = sale_temp_list.length;
+    }
+    $('#sale-temp-data-count').text(sale_temp_data_count);
+    
+    var osc_temp_list = JSON.parse(localStorage.getItem('osc_temp_list'));
+    var osc_temp_data_count = 0;
+    
+    if(osc_temp_list != null) {
+        osc_temp_data_count = osc_temp_list.length;
+    }
+    var count = osc_temp_data_count + parseInt('{osc_count.osc_wait_cnt}');
+    $('#osc-temp-data-count').text(count);
+</script>

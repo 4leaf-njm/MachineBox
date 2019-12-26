@@ -1,0 +1,44 @@
+<div class="subpage_wrap">
+
+	<!-- +++++ mypage LNB ++++ -->
+	<div id="subpageLNB" class="subpage_lnb"></div>
+	<!-- +++++ //mypage LNB ++++ -->
+
+	<!-- +++++ mypage contents ++++ -->
+	<div class="subpage_container">
+		<!-- 전체 메뉴 -->
+		<a id="subAllButton" class="btn_sub_all" href="javascript:void(0)">전체<br />메뉴</a>
+
+		<!-- 타이틀 -->
+		<div class="title_container">
+			<a class="btn_history back" href="javascript:history.back();"><img src="../images/design/arw_prev.gif" alt="히스토리 뒤로" /></a>
+			<h2>회원정보 수정</h2>
+			<a class="btn_history forward" href="javascript:history.forward();"><img src="../images/design/arw_next.gif" alt="히스토리 앞으로" /></a>
+		</div>
+
+		<div class="mypage_greeting gray_06">
+			회원님의 정보 보호를 위해 비밀번호 재확인 후 회원정보를 수정할 수 있습니다.
+		</div>
+
+		<form name="registFrm" id="registFrm" target="actionFrame" method="post" action="{=sslAction('../member_process/myinfo_pwchk')}">
+			<div class="member_pw_confirm_area">
+				<label class="pw_confirm_label">
+					<span class="title">비밀번호 확인</span>
+					<input type="password" name="pwchk" value="" class="eng_only" />
+				</label>
+			</div>
+			<div class="btn_area_c">
+				<button type="submit" class="btn_resp size_c color2">확인</button>
+				<button type="button" class="btn_resp size_c" onclick="javascript:history.back(-1);">취소</button>
+			</div>
+		</form>
+
+	</div>
+	<!-- +++++ //mypage contents ++++ -->
+
+</div>
+
+<script type="text/javascript" src="../common/mypage_ui.js"></script><!-- mypage ui 공통 -->
+
+
+

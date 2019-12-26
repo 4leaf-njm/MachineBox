@@ -1,0 +1,90 @@
+<div class="container-fluid top-pt wrap-title-bg-01">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-5 pt-4 pb-5 txt-center">
+                <h1 class="wrap-title txt-center txt-bold mb-1">등록기계</h1>
+                <p class="wrap-title-sub mb-4">등록된 기계에서 추천기계를 선택하세요. 추천기계가 없으신가요? 신규등록을 선택하세요.</p>
+                <a href="/sale/self_intro" class="accent-txt">신규등록 하러가기 ></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12 mb-5">
+            <h4 class="wrap-title-03 mb-4">총 <i class="accent-txt">{= count(my_list)}</i>대</h4>
+
+             <!-- {@ my_list } -->
+            <div class="form-row-01 mb-3">
+                <div class="my-work-check-box">
+                    <input type="radio" name="recommend" id="recommend{.index_+1}">
+                </div>
+               
+                <label for="recommend{.index_+1}" class="scroll-wrap my-work-wrap">
+                    <div class="scroll-div" data-price="{.sort_price}" data-seq="{.info_seq}">
+                        <div class="product-row-01 normal-machine-row">
+                            <div class="product-machine-desc product-row-01">
+                                <img class="product-machine-img" src="{.path}"/>
+                                <div class="scroll-desc">
+                                    <div class="product-row-01">
+                                        <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                    </div>
+                                    <span>{= str_replace('년', '', .model_year)}년형</span>
+                                    <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
+                                    <span>{.area_name}</span>
+                                    <!--<span>기타사항</span>-->
+                                    <p><span class="accent-txt">{= number_format(.sort_price)}</span>원</p>
+                                    <div class="ad-sale-icon-row">
+                                        <div>
+                                            <img src="../images/custom/icon/ico-heart.png" alt="">
+                                            <span>{.like_cnt}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-machine-info">
+                                <img class="product-profile-img" src='{.partner_profile_path}'/>
+                                <p>{.userid}</p>
+                                <span>{= date('Y.m.d', strtotime(.partner_reg_date))}</span>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+            </div>
+            <!-- {:} -->
+            <div class="default-box">
+                <p class="default-message">내가 등록한 기계가 없습니다.</p>
+            </div>
+            <!-- {/} -->
+        </div>
+        <div class="col-12 mb-5">
+            <div class="found-price-wrap">
+                    <div class="found-price-row-01">
+                        <div>
+                            <input type="radio" name="rec_type" id="rec_type_01">
+                            <label for="rec_type_01">추천기계 판매금액 변경하기</label>
+                        </div>
+                        <div>
+                            <p>현재 판매 금액</p> <i id="current-price">0원</i>
+                        </div>
+                        <div>
+                            <p class="pr-3">선택기계 변경 금액</p> <input type="text" class="input-style input-gray input-md input-border-none" id="modify-price">
+                        </div>
+                    </div>
+
+                    <div>
+                        <input type="radio" name="rec_type" id="rec_type_02">
+                        <label for="rec_type_02">현재금액으로 추천하기</label>
+                    </div>
+            </div>
+        </div>
+        <div class="col-12 mb-5 txt-center">
+            <button type="button" class="btn-type-02 input-border-radius" onclick="go_find_rec()">추천하기</button>
+        </div>
+        <form action="/sch/find_rec_process" method="post" id="frm_find_rec">
+            <input type="hidden" name="find_seq" value="{find_seq}" />
+            <input type="hidden" name="info_seq" value="{info_seq}" />
+            <input type="hidden" name="price" />
+        </form>
+    </div>
+</div>

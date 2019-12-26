@@ -1,0 +1,225 @@
+<div class="page">
+    <div class="subpage">
+        <div class="estimate_wrap">
+            <form action="/user/estimate_form_regist" method="post" id="frm_estimate" target="actionFrame">
+                <input type="hidden" name="estimate_seq" value="{model_info.estimate_seq}" />
+                <h1 class="form-title">견 적 서<a href="/sch/mch_detail/{model_info.type}/{model_info.info_seq}/est" target="_blank" class="print_hide">기계보기</a></h1>
+                <div class="section-01">
+                    <h2 class="section-title">1. 기업정보</h2>
+                    <div class="flex-row">
+                        <div>
+                            <h3 class="tbl-title">판&nbsp;&nbsp;&nbsp;매&nbsp;&nbsp;&nbsp;자</h3>
+                            <table>
+                                <tr>
+                                    <th>아&nbsp;&nbsp;&nbsp;이&nbsp;&nbsp;&nbsp;디</th>
+                                    <td><input type="text" name="sale_userid" value="{sale_info.userid}" /></td>
+                                </tr>
+                                <tr>
+                                    <th>소&nbsp;&nbsp;&nbsp;재&nbsp;&nbsp;&nbsp;지</th>
+                                    <td><input type="text" name="sale_baddress" /></td>
+                                </tr>
+                                <tr>
+                                    <th>사업자번호</th>
+                                    <td><input type="text" name="sale_bno"/></td>
+                                </tr>
+                                <tr>
+                                    <th>연&nbsp;&nbsp;&nbsp;락&nbsp;&nbsp;&nbsp;처</th>
+                                    <td><input type="text" name="sale_phone" /></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <h3 class="tbl-title">구&nbsp;&nbsp;&nbsp;매&nbsp;&nbsp;&nbsp;자</h3>
+                            <table>
+                                <tr>
+                                    <th>아&nbsp;&nbsp;&nbsp;이&nbsp;&nbsp;&nbsp;디</th>
+                                    <td><input type="text" name="buy_userid" value="{buy_info.userid}" /></td>
+                                </tr>
+                                <tr>
+                                    <th>소&nbsp;&nbsp;&nbsp;재&nbsp;&nbsp;&nbsp;지</th>
+                                    <td><input type="text" name="buy_baddress" /></td>
+                                </tr>
+                                <tr>
+                                    <th>사업자번호</th>
+                                    <td><input type="text" name="buy_bno" /></td>
+                                </tr>
+                                <tr>
+                                    <th>연&nbsp;&nbsp;&nbsp;락&nbsp;&nbsp;&nbsp;처</th>
+                                    <td><input type="text" name="buy_phone" /></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-02">
+                    <h2 class="section-title">2. 기본정보</h2>
+                    <h3 class="info-title">(긴급판매) {model_info.model_name} {model_info.mnf_name} 구매 견적서 제출</h3>
+                    <table>
+                        <tr>
+                            <th>기계분류</th>
+                            <td><input type="text" name="kind_type" value="{model_info.kind_type}" /></td>
+                            <th>기계종류</th>
+                            <td><input type="text" name="kind_name" value="{model_info.kind_name}" /></td>
+                        </tr>
+                        <tr>
+                            <th>제조사</th>
+                            <td><input type="text" name="mnf_name" value="{model_info.mnf_name}" /></td>
+                            <th>모델명</th>
+                            <td><input type="text" name="model_name" value="{model_info.model_name}"  /></td>
+                        </tr>
+                        <tr>
+                            <th>제조년월</th>
+                            <td><input type="text" name="model_year" value="{= str_replace('년', '', model_info.model_year)}년" /></td>
+                            <th>시리얼넘버</th>
+                            <td><input type="text" name="serial_num" value="{model_info.serial_num}" /></td>
+                        </tr>
+                        <tr>
+                            <th>옵&nbsp;&nbsp;션</th>
+                            <td colspan="3"><input type="text" name="option_list" value="{model_info.option_list}" /></td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="section-03">
+                    <h2 class="section-title">3. 견적정보</h2>
+                    <table>
+                        <tr>
+                            <th>견적일</th>
+                            <td><input type="text" value="{? mode == 'regist'}{= date('Y. m. d')}{:}{= date('Y. m. d', strtotime(estimate_info.reg_date))}{/}" /></td>
+                        </tr>
+                        <tr>
+                            <th>총 계<br/>(부가세포함)</th>
+                            <td><input type="text" value="{? mode == 'regist'}0{/}" id="estimate_total" /></td>
+                        </tr>
+                        <tr>
+                            <th>구매금액</th>
+                            <td><input type="text" name="estimate_price" id="estimate_price"  numberonly="true" placeholder="매입금액을 입력하세요." /></td>
+                        </tr>
+                        <tr>
+                            <th>부가가치세</th>
+                            <td><input type="text" id="estimate_fee" value="{? mode == 'regist'}0{/}" /></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="section-footer">
+                    <p class="mt-4 mb-3 pt-2 pb-3">머신박스에 정식으로 등록된 상기 기계설비에 대해 위와 같이 견적합니다.</p>
+                    <p>{? mode == 'regist'}{= date('Y 년  m 월  d 일')}{:}{= date('Y 년  m 월  d 일', strtotime(estimate_info.reg_date))}{/}</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="estimate_btn print_hide">
+    <!-- {? mode == 'regist'} -->
+    <button type="button" class="btn large" onclick="go_estimate_regist()">작성완료</button>
+    <!-- {: mode == 'view'} -->
+    <button type="button" class="btn large" onclick="go_estimate_print()">출력하기</button>
+    <!-- {/} -->
+</div>
+<script>
+    if('{mode}' == 'regist') {
+        if('{is_admin}' == 'y') {
+            $('.estimate_wrap input').prop('readonly', false);
+        } else {
+            $('.estimate_wrap input').prop('readonly', true);
+            $('#estimate_price').prop('readonly', false);
+        }
+    } else if('{mode}' == 'view') {
+        $('.estimate_wrap input').prop('readonly', true);
+        change_estimate_info('{estimate_info.estimate_price}');
+    }
+    var sale_baddress = '{sale_info.baddress}';
+    var buy_baddress = '{buy_info.baddress}';
+    
+    var sale_bno = '{sale_info.bno}';
+    var buy_bno = '{buy_info.bno}';
+    
+    var sale_phone = '{sale_info.bcellphone}';
+    var buy_phone = '{buy_info.bcellphone}';
+    
+    sale_baddress = sale_baddress.split(' ');
+    var sale_addr_arr = new Array();
+    sale_addr_arr[0] = sale_baddress[0];
+    sale_addr_arr[1] = sale_baddress[1];
+    sale_addr_arr[2] = sale_baddress[2];
+    sale_baddress = sale_addr_arr.join(' ');
+    
+    buy_baddress = buy_baddress.split(' ');
+    var buy_addr_arr = new Array();
+    buy_addr_arr[0] = buy_baddress[0];
+    buy_addr_arr[1] = buy_baddress[1];
+    buy_addr_arr[2] = buy_baddress[2];
+    buy_baddress = buy_addr_arr.join(' ');
+    
+    sale_baddress = sale_baddress.lastIndexOf('군') != -1 ? sale_baddress.substring(0, sale_baddress.lastIndexOf('군')+1) : sale_baddress.substring(0, sale_baddress.lastIndexOf('시')+1);
+    buy_baddress = buy_baddress.lastIndexOf('군') != -1 ? buy_baddress.substring(0, buy_baddress.lastIndexOf('군')+1) : buy_baddress.substring(0, buy_baddress.lastIndexOf('시')+1);
+   
+    
+    sale_bno = sale_bno.slice(0, -5) + 'xxxxx';
+    buy_bno = buy_bno.slice(0, -5) + 'xxxxx';
+    
+    sale_phone = sale_phone.slice(0, -4) + 'xxxx';
+    buy_phone = buy_phone.slice(0, -4) + 'xxxx';
+    
+    $('input[name=sale_baddress]').val(sale_baddress);
+    $('input[name=buy_baddress]').val(buy_baddress);
+    
+    $('input[name=sale_bno]').val(sale_bno);
+    $('input[name=buy_bno]').val(buy_bno);
+    
+    $('input[name=sale_phone]').val(sale_phone);
+    $('input[name=buy_phone]').val(buy_phone);
+        
+    if('{mode}' == 'regist') {
+       $('#estimate_price').focus(function() {
+           //var price = $(this).val().replace('\\', '').replaceAll(',', '');
+            $(this).val('');
+       });
+        
+       $('#estimate_price').blur(function() {
+           var price = parseInt($(this).val() + '0000');
+           change_estimate_info(price);
+       });
+    }
+
+    function change_estimate_info(price) {
+        var fee = parseInt(price) * 10 / 100;
+        var total = parseInt(price) + fee;
+        if(!price || price == 0) {
+            price = "";
+            fee = "0";
+            total = "0";
+        } else {
+            price = '\\' + comma(price);
+            fee = '\\' + comma(fee);
+            total = '일금 ' + price_format_kor(String(total)) + ' 정 (KRW '+ comma(total) + ')';
+        }
+        $('#estimate_price').val(price);
+        $('#estimate_fee').val(fee);
+        $('#estimate_total').val(total);
+    }
+    
+    function go_estimate_regist() {
+        if($('#estimate_price').val() == '') {
+            alert('구매금액을 입력해주세요.');
+            $('#estimate_price').focus();
+            return;
+        }
+        
+        if(confirm('위의 입력한 금액으로 견적서를 제출하시겠습니까 ?')) {
+            $('#estimate_price').val($('#estimate_price').val().replace('\\', '').replaceAll(',', ''));
+            $('#frm_estimate').submit();
+        }
+    }
+    
+    function close_estimate_form() {
+        window.opener.location.reload();
+        self.close();
+    }
+    
+    function go_estimate_print() {
+        $('.print_hide').hide();
+        window.print();
+    }
+</script>

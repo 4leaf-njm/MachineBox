@@ -1,0 +1,161 @@
+{ #layout_header }
+
+<style style="text/css">
+	.btnhelp {display:inline-block; width:14px; height:14px; cursor:pointer; background:url('../images/common/bg_icon.png'); vertical-align:middle;margin-bottom:2px}
+</style>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.fmdomsaver.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.colorpicker.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+<script type="text/javascript" src="/app/javascript/js/scm.common.js"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsQuickRegist.js"></script>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>이용후기 관리</h2>
+		</div>
+
+		<!-- 좌측 버튼 -->
+		<ul class="page-buttons-left"></ul>
+
+		<!-- 우측 버튼 -->
+		<ul class="page-buttons-right"></ul>
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+<br style="line-height:30px;" />
+
+<div class="clearbox">
+	<ul class="left-btns">
+		<li>
+			<div class="left-btns-txt" id="search_count" class="hide">
+				총 <b>{= count(rev_list)}</b> 개
+			</div>
+		</li>
+	</ul>
+	
+	<ul class="right-btns">
+  	<li>
+			<span class="btn small black">
+				<button onclick="go_rev_insert()" class="btn_modify">등록</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn small deepblue">
+				<button onclick="go_rev_modify()" class="btn_modify">수정</button>
+			</span>
+		</li>
+		<li>
+			<span class="btn small red">
+				<button onclick="go_rev_delete_process()" class="btn_delete">삭제</button>
+			</span>
+		</li>
+	</ul>
+</div>
+
+<div style="max-height: 500px; margin-bottom: 40px; overflow: scroll;">
+	<!-- 신청리스트 테이블 : 시작 -->
+	<table class="list-table-style info-table-style" cellspacing="0">
+		<!-- 테이블 헤더 : 시작 -->
+		<colgroup>
+			<col width="40" /><!--선택-->
+			<col width="40" /><!--번호-->
+			<col width="120" /><!--작성일-->
+			<col width="100" /><!--작성자-->
+			<col width="100" /><!--판매사/수주사-->
+			<col width="60" /><!--후기사진-->
+			<col width="180" /><!--후기내용-->
+			<col width="300" /><!--후기내용-->
+			<col width="60" /><!--항목 1-->
+			<col width="60" /><!--항목 2-->
+			<col width="60" /><!--항목 3-->
+			<col width="60" /><!--항목 4-->
+			<col width="60" /><!--항목 5-->
+			<col width="80" /><!--후기유형-->
+		</colgroup>
+		<thead class="lth">
+		<tr>
+			<th>선택</th>
+			<th>번호</th>
+			<th>작성일</th>
+			<th>작성자</th>
+			<th>판매자<br/>수주사</th>
+			<th>후기사진</th>
+			<th>후기제목</th>
+			<th>후기내용</th>
+			<th>항목 1</th>
+			<th>항목 2</th>
+			<th>항목 3</th>
+			<th>항목 4</th>
+			<th>항목 5</th>
+			<th>후기유형</th>
+		</tr>
+		</thead>
+		<!-- 테이블 헤더 : 끝 -->
+	
+		<!-- 리스트 : 시작 -->
+		<tbody class="ltb">
+	<!--{? rev_list }-->
+		<!--{@ rev_list }-->
+			<tr class="list-row" style="height:70px;">
+				<td align="center"><input type="checkbox" class="chk chk_one" name="chk_rev_seq" value="{.rev_seq}" /></td>	
+				<td align="center" class="page_no">{.index_+1}</td>
+				<td align="center">{.reg_date}</td>
+				<td align="center"><a href="javascript:show_user_layer('{.userid}')">{.userid}</a></td>
+				<td align="center"><a href="javascript:show_user_layer('{.target_userid}')">{.target_userid}</a></td>
+				<td align="center"><img src="{.path}" width="50" height="58" /></td>
+				<td align="center">{.title}</td>
+				<td align="left">{= nl2br(.content)}</td>
+				<td align="center">{.grade_01}</td>
+				<td align="center">{.grade_02}</td>
+				<td align="center">{.grade_03}</td>
+				<td align="center">{.grade_04}</td>
+				<td align="center">{.grade_05}</td>
+				<td align="center">{? .type == 's'}기계{: .type == 'o'}외주{/}</td>
+			</tr>
+		<!--{ / }-->
+	<!--{ : }-->
+		<tr class="list-row">
+			<td align="center" colspan="13">작성된 이용후기가 없습니다.</td>
+		</tr>
+	<!--{ / }-->
+		</tbody>
+		<!-- 리스트 : 끝 -->
+	
+	</table>
+	<!-- 신청리스트 테이블 : 끝 -->
+</div>
+
+<form action="/admin/com/rev_delete_process" method="post" id="frm_delete" target="actionFrame">
+	<input type="hidden" name="rev_seq" />
+</form>
+
+<script>
+function go_rev_insert() {
+	location.href = "/admin/com/rev_regist?reg_mode=insert";
+}
+
+function go_rev_modify() {
+	var rev_seq = $('.chk_one:checked').val();
+	if(!rev_seq) {
+		alert('수정하실 후기를 선택해주세요.');
+		return;
+	}
+	location.href = "/admin/com/rev_regist?reg_mode=modify&seq=" + rev_seq;
+}
+
+function go_rev_delete_process() {
+	var rev_seq = $('.chk_one:checked').val();
+	if(!rev_seq) {
+		alert('삭제하실 후기를 선택해주세요.');
+		return;
+	}
+	if(confirm('삭제하신 데이터는 복구가 불가능합니다.\n정말 삭제하시겠습니까 ?')) {
+		$('#frm_delete input[name=rev_seq]').val(rev_seq);
+		$('#frm_delete').submit();
+	}
+}
+</script>
+{ #layout_footer }

@@ -1,0 +1,229 @@
+<!-- Channel Plugin Scripts -->
+<script>
+  (function() {
+    var w = window;
+    if (w.ChannelIO) {
+      return (window.console.error || window.console.log || function(){})('ChannelIO script included twice.');
+    }
+    var d = window.document;
+    var ch = function() {
+      ch.c(arguments);
+    };
+    ch.q = [];
+    ch.c = function(args) {
+      ch.q.push(args);
+    };
+    w.ChannelIO = ch;
+    function l() {
+      if (w.ChannelIOInitialized) {
+        return;
+      }
+      w.ChannelIOInitialized = true;
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
+      s.charset = 'UTF-8';
+      var x = document.getElementsByTagName('script')[0];
+      x.parentNode.insertBefore(s, x);
+    }
+    if (document.readyState === 'complete') {
+      l();
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', l);
+    } else {
+      window.addEventListener('DOMContentLoaded', l, false);
+      window.addEventListener('load', l, false);
+    }
+  })();
+  ChannelIO('boot', {
+    "pluginKey": "d6601686-b951-4d30-899a-c7ca59555b0c"
+  });
+</script>
+<!-- End Channel Plugin -->
+
+<!-- 상단영역 : 시작 -->
+<div id="layout_header" class="layout_header">
+	<div class="container-fluid header-bg{header_change}" id="header-bg"> 
+        <!-- header 색깔 변경 class header-bg1 -->
+        <div class="container header pt-4 pb-4 pt-md-3 pb-md-3">
+            <div class="row">
+                <!-- 사이드 모바일 메뉴 --> 
+                <div class="side_area d-block d-sm-block d-md-none">
+                    <button type="button" onclick="mobile_toggle_menu()" class="btn_side">
+                        <img src="../images/custom/icon/ico_bar_black.png" alt="메뉴바" />
+                    </button>
+                    <div class="mob-menu-wrap">
+                        <!--{? userInfo.member_seq}-->
+                        <div class="mob-login-join">
+                            <a href="/user/mypage">마이페이지</a> 
+                            <i style="margin-left: 3px; margin-right: 3px;">/</i>
+                            <a href="/user/logout" target="actionFrame">로그아웃</a> 
+                            <i class="mob-close-btn" onclick="mobile_close_menu()"> <img src="../images/custom/icon/ico_btn_close.png" alt=""></i>
+                        </div>
+                        <!--{:}-->
+                        <div class="mob-login-join">
+                            <a href="/user/login">로그인</a> 
+                            <i style="margin-left: 3px; margin-right: 3px;">/</i>
+                            <a href="/member/agreement">회원가입</a> 
+                            <i class="mob-close-btn" onclick="mobile_close_menu()"> <img src="../images/custom/icon/ico_btn_close.png" alt=""></i>
+                        </div>
+                        <!--{/}-->
+
+                        <ul class="mob-menu">
+                            <li>
+                                <a href="/sale/sale_index">내 기계 팔기</a>
+                                 <ul class="mob-sub-menu mob-sub-menu-block">
+                                    <li><a href="/sale/self_intro">셀프등록</a></li>
+                                    <li><a href="/sale/emergency_intro">긴급판매</a></li>
+                                    <li><a href="/sale/direct_intro">위탁판매</a></li>
+                                    <li><a href="/sale/turnkey_intro">턴키매각</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="/sch/mch_search">내 기계 찾기</a>
+                                 <ul class="mob-sub-menu mob-sub-menu-block">
+                                     <li><a href="/sch/mch_search">셀프찾기</a></li>
+                                     <li><a href="/sch/find_intro">기계찾아줘</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript:alert('서비스 준비중입니다.');">중고 기계 시세</a>
+                            </li>
+                            <li>
+                                <a href="javascript:alert('서비스 준비중입니다.');" class="mob-main-menu">머박 다이렉트</a>
+                                <ul class="mob-sub-menu mob-sub-menu-block">
+                                     <li><a href="javascript:alert('서비스 준비중입니다.');">스마트안전계약</a></li>
+                                     <li><a href="javascript:alert('서비스 준비중입니다.');">마케팅</a></li>
+                                     <li><a href="/mcb/dispute_intro">분쟁조정서비스</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="/mch/partner_sch">기계 서비스</a>
+                                 <ul class="mob-sub-menu mob-sub-menu-block">
+                                     <li><a href="/mch/partner_sch">파트너기업찾기</a></li>
+                                     <li><a href="/mch/osc_reg">외주의뢰하기</a></li>
+                                     <li><a href="/mch/osc_sch">수주업무찾기</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 로고 영역 -->
+                <div class="logo_area col-sm-12 col-md-2">
+                    <!-- 클릭 시, 메인으로 이동 -->
+                    <a href="/main" class="d-none d-sm-none d-md-inline-block logo-desktop">
+                        <img src="../images/custom/common/logo-1.png" alt="로고 이미지">
+                    </a>
+                    <a href="/main" class="d-inline-block d-sm-inline-block d-md-none logo-mobile">
+                        <img src="../images/custom/common/logo-2.png" alt="로고 이미지">
+                    </a>
+                </div>
+                <!-- 메뉴 영역 -->
+                <div class="gnb_area col-md-10 d-none d-sm-none d-md-flex">
+                    <div class="gnb_main">
+                        <a href="/sale/sale_index" class="page-link">내기계 팔기</a>
+                        <div class="gnb_sub">
+                            <a href="/sale/self_intro" class="page-link">셀프등록</a>
+                            <a href="/sale/emergency_intro" class="page-link">긴급판매</a>
+                            <a href="/sale/direct_intro" class="page-link">위탁판매</a>
+                            <a href="/sale/turnkey_intro" class="page-link">턴키매각</a>
+                        </div>
+                    </div>
+                    <div class="gnb_main">
+                        <a href="/sch/mch_search" class="page-link">내기계 찾기</a>
+                        <div class="gnb_sub">
+                            <a href="/sch/mch_search" class="page-link">셀프찾기</a>
+                            <a href="/sch/find_intro" class="page-link">기계찾아줘</a>
+                        </div>
+                    </div>
+                    <div class="gnb_main">
+                        <a href="javascript:alert('서비스 준비중입니다.');" class="page-link">중고기계 시세</a>
+                    </div>
+                    <div class="gnb_main">
+                        <a href="javascript:alert('서비스 준비중입니다.');" class="page-link">머박 서비스</a>
+                        <div class="gnb_sub">
+                            <a href="javascript:alert('서비스 준비중입니다.');" class="page-link">스마트안전계약</a>
+                            <a href="javascript:alert('서비스 준비중입니다.');" class="page-link">마케팅</a>
+                            <a href="/mcb/dispute_intro" class="page-link">분쟁조정서비스</a>
+                        </div>
+                    </div>
+                    <div class="gnb_main">
+                        <a href="/mch/partner_sch" class="page-link">기계 서비스</a>
+                        <div class="gnb_sub">
+                            <a href="/mch/partner_sch" class="page-link">파트너기업찾기</a>
+                            <a href="/mch/osc_reg" class="page-link">외주의뢰하기</a>
+                            <a href="/mch/osc_sch" class="page-link">수주업무찾기</a>
+                        </div>
+                    </div>
+                    <div class="user-login-box ml-4">
+                        <div class="user-button-group ml-2 pt-1 pb-2 pl-2 pr-2">
+                            <!--{? userInfo.member_seq}-->
+                            <a href="/user/mypage" class="page-link">마이페이지</a>
+                            <span>/</span>
+                            <a href="/user/logout" target="actionFrame" class="page-link">로그아웃</a>
+                            <!--{:}-->
+                            <a href="/user/login" class="page-link">로그인</a>
+                            <span>/</span>
+                            <a href="/member/agreement" class="page-link">회원가입</a>
+                            <!--{/}-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span id="template_path" class="d-none">{template_path}</span>
+        <span id="skin-path" class="d-none">/data/skin/responsive_ver1_default_gl</span>
+    </div>
+    <script>
+        // 디바이스에 따라 이미지 변경
+        $(document).ready(function(){
+            $(".header-bg .logo-desktop img").attr("src", '../images/custom/common/logo-2.png');
+            $(".header-bg .logo-mobile img").attr("src", '../images/custom/common/logo-2.png');
+            $(".header-bg-change .logo-desktop img").attr("src", '../images/custom/common/logo-1.png');
+            $(".header-bg-change .logo-mobile img").attr("src", '../images/custom/common/logo-2.png');
+            $(".header-bg-change .btn_side img").attr("src", '../images/custom/icon/ico_bar_black.png');        
+        });
+        
+        
+        $('.gnb_area').hover(function(){
+            $(this).find('.gnb_sub').css('visibility', 'visible');
+            $('#header-bg').stop().animate({height: '190'}, 500);
+            $('.header-bg').addClass('on');
+            $('.header-bg-change').addClass('on');
+        }, function() {
+            $(this).find('.gnb_sub').css('visibility', 'hidden');
+            $('#header-bg').stop().animate({height: '86'}, 500);
+            $('.header-bg').removeClass('on');
+            $('.header-bg-change').removeClass('on');
+        });
+        
+    /*
+        $('.gnb_main').hover(function() {
+            $(this).find('.gnb_sub').css('visibility', 'visible');
+            $(this).stop().animate({'height': '190'}, 500);
+        }, function() {
+            $(this).find('.gnb_sub').css('visibility', 'hidden');
+            $(this).stop().animate({'height': '40'}, 500);
+        });
+    */
+        
+        function mobile_toggle_menu() {
+            $('.mob-menu-wrap').toggleClass('active');
+            
+            if($('.mob-menu-wrap').hasClass('active')) {
+                $('.mob-menu-wrap').animate({left: '0'}, 500);
+            } else {
+                $('.mob-menu-wrap').animate({left: '-730px'}, 500);
+            }
+        }
+        
+        function mobile_close_menu() {
+            $('.mob-menu-wrap').removeClass('active');
+            $('.mob-menu-wrap').animate({left: '-730px'}, 500);
+        }
+    </script>
+</div>
+<!-- 상단영역 : 끝 -->
+

@@ -1,0 +1,817 @@
+		<!--[ 레이아웃 바디(본문) : 끝 ]-->
+		</div>
+	</div>
+
+	<iframe name="actionFrame" id="actionFrame" src="/main/blank" frameborder="0" width="100%" {?_GET.debug==1}height="600"{:}height="0"{/}></iframe>
+</div>
+
+<div id="main_demo" class="hide"></div>
+<div id="openDialogLayer" class="hide">
+	<div align="center" id="openDialogLayerMsg"></div>
+</div>
+
+<div id="goodsSelectDialog" class="hide"></div>
+
+<div id="ajaxLoadingLayer" class="hide"></div>
+
+<div id="qrcodeGuideLayer" class="hide" style="padding:10px;"></div>
+
+<div id="service_regist_layer" class="service_layer hide">
+	<form action="/admin/sale/service_regist_process" method="post" id="frm_service" target="actionFrame">
+		<input type="hidden" name="info_seq" />	
+		<div class="popup-item-title">프리미엄광고</div>
+		<div class="service-content">
+			<label><input type="checkbox" name="chk_service[]" value="하이라이트" data-price="100000">하이라이트존 (100,000원)</label>
+			<label><input type="checkbox" name="chk_service[]" value="딜러존" data-price="100000">딜러존 (100,000원)</label>
+			<label><input type="checkbox" name="chk_service[]" value="자동 업데이트" data-price="30000">자동 업데이트 (30,000원)</label>
+			<label><input type="checkbox" name="chk_service[]" value="핫마크" data-price="10000">핫마크 (10,000원)</label>
+		</div>
+		<div class="popup-item-title">성능검사</div>
+		<div class="service-content">
+			<label><input type="checkbox" name="chk_service[]" value="성능검사" data-price="150000">성능검사 (150,000원)</label>
+		</div>
+		<div class="popup-item-title">기계평가</div>
+		<div class="service-content">
+			<label><input type="checkbox" class="chk_one" name="chk_service[]" value="온라인 기계평가 3" data-price="30000">온라인 기계평가 3 (30,000원)</label>
+			<label><input type="checkbox" class="chk_one" name="chk_service[]" value="온라인 기계평가 5" data-price="50000">온라인 기계평가 5 (50,000원)</label>
+		</div>
+		<div style="text-align: center;">
+			<span class="btn large black"><button type="button" onclick="go_service_process()">신청하기</button></span>
+		</div>
+	</form>
+</div>
+
+<div id="service_cancel_layer" class="service_layer hide">
+	<form action="/admin/sale/service_cancel_process" method="post" id="frm_cancel_service" target="actionFrame">
+		<input type="hidden" name="info_seq" />	
+		<div class="popup-item-title">프리미엄광고</div>
+		<div class="service-content">
+			<label><input type="checkbox" name="chk_service[]" value="하이라이트" data-price="100000">하이라이트존 (100,000원)</label>
+			<label><input type="checkbox" name="chk_service[]" value="딜러존" data-price="100000">딜러존 (100,000원)</label>
+			<label><input type="checkbox" name="chk_service[]" value="자동 업데이트" data-price="30000">자동 업데이트 (30,000원)</label>
+			<label><input type="checkbox" name="chk_service[]" value="핫마크" data-price="10000">핫마크 (10,000원)</label>
+		</div>
+		<div class="popup-item-title">성능검사</div>
+		<div class="service-content">
+			<label><input type="checkbox" name="chk_service[]" value="성능검사" data-price="150000">성능검사 (150,000원)</label>
+		</div>
+		<div class="popup-item-title">기계평가</div>
+		<div class="service-content">
+			<label><input type="checkbox" class="chk_one" name="chk_service[]" value="온라인 기계평가 3" data-price="30000">온라인 기계평가 3 (30,000원)</label>
+			<label><input type="checkbox" class="chk_one" name="chk_service[]" value="온라인 기계평가 5" data-price="50000">온라인 기계평가 5 (50,000원)</label>
+		</div>
+		<div style="text-align: center;">
+			<span class="btn large black"><button type="button" onclick="go_service_cancel_process()">취소하기</button></span>
+		</div>
+	</form>
+</div>
+
+<div id="service_info_layer" class="hide">
+	<div class="popup-item-title">프리미엄광고 이용내역</div>
+	<div class="popup-item-sub">* 이용중인 서비스 : <span id="using_service"></span></div>
+	<div class="service-content">
+		<table class="list-table-style mb15" id="tbl-ad-info" style="width: 100%"></table>	
+		<div style="text-align: center;" class="mb20">
+			<span class="btn large black"><button type="button" onclick="show_ad_setting_layer()">이용일 설정</button></span>
+		</div>
+	</div>
+	<div class="popup-item-title">성능검사 이용내역</div>
+	<div class="popup-item-sub">* 이용중인 서비스 : <span id="using_perform"></span></div>
+	<div class="service-content">
+		<table class="list-table-style mb20" id="tbl-perform-info" style="width: 100%"></table>
+	</div>
+	<div class="popup-item-title">기계평가 이용내역</div>
+	<div class="popup-item-sub">* 이용중인 서비스 : <span id="using_eval"></span></div>
+	<div class="service-content">
+		<table class="list-table-style mb20" id="tbl-eval-info" style="width: 100%"></table>
+	</div>
+	<div style="text-align: center;" class="mb10">
+		<form action="/admin/sale/service_pay_check" method="post" id="frm_service_pay" target="actionFrame">
+			<input type="hidden" name="info_seq" />
+		</form>
+		<span class="btn large black"><button type="button" onclick="go_service_pay_check()">결제확인</button></span>
+		<span class="btn large"><button type="button" onclick="show_service_cancel_popup()">서비스 취소</button></span>
+	</div>
+</div>
+
+<div id="ad_setting_layer" class="hide">
+	<form action="/admin/sale/ad_setting_process" method="post" id="frm_ad_setting" target="actionFrame">
+		<input type="hidden" name="info_seq" />
+		<div class="popup-item-title">프리미엄광고 이용일 설정</div>
+		<div class="service-content">
+			<div class="mt10 mb10 ml10">이용중인 서비스 : <span id="using_service"></span></div>
+			<div class="mb10 ml10">시작일 <input type="text" name="start_date" class="datepicker ml25" /></div>
+			<div class="mb20 ml10">종료일 <input type="text" name="end_date" class="datepicker ml25" /></div>
+		</div>
+		<div style="text-align: center;" class="mb10">
+			<span class="btn large black"><button type="button" onclick="go_ad_setting()">설정하기</button></span>
+		</div>
+	</form>
+</div>
+
+<div id="estimate_info_popup" class="hide">
+	<div class="popup-item-title">견적서작성 딜러목록</div>
+	<div class="popup-item-sub">* 등록번호 <span id="sales_no"></span> 견적서</div>
+	<div class="popup-item-sub">&nbsp;&nbsp;- 견적서 작성상태 : <span id="estimate_state"></span></div>
+	<div style="overflow-y: scroll; height: 220px;" class="mb20">
+		<table class="list-table-style mt15" id="tbl-estimate-info" style="width: 100%"></table>	
+	</div>
+	<div style="text-align: center;" class="mb20">
+		<span class="btn large black"><button type="button" onclick="go_estimate_send()">견적서 전송</button></span>
+	</div>
+	<form action="/admin/sale/estimate_send_process" method="post" id="frm_estimate_send" target="actionFrame">
+		<input type="hidden" name="info_seq" />
+	</form>
+</div>
+
+<div id="user_info_popup" class="hide">
+	<div class="popup-item-title">회원정보</div>
+	<table class="list-table-style mt-2" style="width: 100%"></table>
+</div>
+
+<div id="osc_apply_layer" class="hide">
+	<div class="popup-item-title">지원현황</div>
+	<div class="popup-item-sub">* 지원자수 : <span id="apply_cnt"></span> 명</div>
+	<table class="list-table-style mt-2" style="width: 100%"></table>
+</div>
+
+<div id="ptn_finish_layer" class="hide">
+	<div class="popup-item-title">실적</div>
+	<table class="list-table-style mt-2" style="width: 100%"></table>
+</div>
+
+<div id="ptn_grade_layer" class="hide">
+	<div class="popup-item-title">평가</div>
+	<table class="list-table-style mt-2" style="width: 100%"></table>
+</div>
+
+<script>
+	function show_user_layer(userid) {
+		$.ajax({
+			type: 'post',
+			url: '/admin/main/ajax_user_data',
+			dataType: 'json',
+			data: {'userid': userid},
+			success: function(data) {
+				var th_data = '';
+				var td_data = '';
+				th_data += '<th width="70">승인</th>';
+				th_data += '<th width="80">유형</th>';
+				th_data += '<th width="150">아이디</th>';
+				th_data += '<th width="180">이름(닉네임)</th>';
+				th_data += '<th width="180">이메일</th>';
+				th_data += '<th width="160">핸드폰</th>';
+				th_data += '<th width="190">가입일</th>';
+				
+				var bpermit = '';
+				if(data.bpermit_yn == 'y')
+					bpermit = '승인';
+				else
+					bpermit = '미승인';
+				
+				var gubun = '';
+				var username = '';
+				if(data.type == '개인') {
+					gubun = '<img src="../../images/common/icon/icon_personal.gif" />';
+					username += data.user_name;
+				} else if(data.type == '기업') {
+					gubun = '<img src="../../images/common/icon/icon_besiness.gif" />';
+					username += data.bname;
+				}
+				gubun += data.gubun;
+				
+				if(username == 'null') 
+					username = '없음';
+				else {
+					if(!data.nickname == false)
+						username += '(' + data.nickname + ')';
+				}
+				
+				var email = '';
+				if(data.email && data.email != '--') {
+					email += data.email;
+				} else {
+					email += '없음';
+				}
+				
+				var cellphone = '';
+				if((data.bcellphone && data.bcellphone != '--') || (data.cellphone  && data.cellphone != '--')) {
+					cellphone += data.bcellphone ? data.bcellphone : data.cellphone;
+				} else {
+					cellphone += '없음';
+				}
+				td_data += '<tr class="list-row">';
+				td_data += '<td align="center">' + bpermit + '</td>';
+				td_data += '<td align="center">' + gubun + '</td>';
+				td_data += '<td align="center">' + data.userid + '</td>';
+				td_data += '<td align="center">' + username + '</td>';
+				td_data += '<td align="center">' + email + '</td>';
+				td_data += '<td align="center">' + cellphone + '</td>';
+				td_data += '<td align="center">' + data.regist_date + '<br/>' + data.lastlogin_date + '</td>';
+				td_data += '</tr>';
+				
+				var html = get_table_html(th_data, td_data);
+				$('#user_info_popup table').html(html);
+				openDialog("회원 정보", "user_info_popup", {"width":"1200","height":"250"});
+			},
+			error: function() {
+				console.log('error');
+			}
+		});
+	}
+</script>
+<style type="text/css">
+#addsaleGuideLayer .GuideTitle {height:40px;line-height:40px;font-size:14px;text-align:center;border:1px solid #aaaaaa;background-color:#f1f1f1;font-weight:bold;}
+#addsaleGuideLayer ul.addsaleGuideLayer li {padding-top:5px;font-size:11px;}
+table.info-table-style td.bgyellow {background-color:#fffeca;}
+
+.popup-item-title {	
+	background-image:url('/admin/skin/default/images/common/bullet_tit_m.gif');
+	background-repeat:no-repeat;
+	font-family:"돋움",Dotum,AppleGothic,sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	padding-left:20px; 
+	margin-bottom: 10px;
+	position: relative;
+}
+.popup-item-sub {
+    font-size: 13px;
+    font-weight: 500;
+    font-family: '나눔고딕';
+    margin: 5px 0;
+}
+.service_layer .service-content {
+	margin-bottom: 30px;
+}
+.service_layer .service-content label {
+	display: block;
+	margin: 10px 0;
+}
+</style>
+<div id="addsaleGuideLayer" class="hide">
+	<div class="GuideTitle">소비자에게 다양한 추가 혜택 제공으로 매출을 높이십시오.</div>
+	<div class="item-title">
+		<table width="100%" cellpadding="0" cellspacing="0">
+		<tr><td>추가 혜택 세팅</td></tr>
+		</table>
+	</div>
+	<div>
+		<table class="info-table-style" style="margin:auto;" width="100%">
+		<colgroup>
+			<col width="15%" />
+			<col width="30%" />
+			<col />
+			<col width="20%" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th class="its-th-align center">추가 혜택</th>
+			<th class="its-th-align center">세팅</th>
+			<th class="its-th-align center">조건</th>
+			<th class="its-th-align center">혜택</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<th class="its-th-align center">대량구매</th>
+			<td class="its-td-align left pdl5">상품 > <a href="../goods/catalog" target="_blank"><span class="highlight-link">상품리스트</span></a></td>
+			<td class="its-td-align left pdl5">한 상품을 여러 개를 구매하였을 때</td>
+			<td class="its-td-align left pdl5">추가 할인</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">이벤트</th>
+			<td class="its-td-align left pdl5">프로모션 > <a href="../event/catalog" target="_blank"><span class="highlight-link">할인 이벤트</span></a></td>
+			<td class="its-td-align left pdl5">이벤트 상품을 구매하였을 때</td>
+			<td class="its-td-align left pdl5">추가 할인 및 추가 적립</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">등급</th>
+			<td class="its-td-align left pdl5">설정 > 회원 > <a href="../setting/member" target="_blank"><span class="highlight-link">등급별 구매혜택</span></a></td>
+			<td class="its-td-align left pdl5">해당 등급이 구매하였을 때</td>
+			<td class="its-td-align left pdl5">추가 할인 및 추가 적립</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">모바일</th>
+			<td class="its-td-align left pdl5">설정 > <a href="../setting/config" target="_blank"><span class="highlight-link">판매환경</span></a></td>
+			<td class="its-td-align left pdl5">모바일에서 구매하였을 때</td>
+			<td class="its-td-align left pdl5">추가 할인 및 추가 적립</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">좋아요</th>
+			<td class="its-td-align left pdl5">설정 > <a href="../setting/snsconf" target="_blank"><span class="highlight-link">SNS/외부 연동</span></a></td>
+			<td class="its-td-align left pdl5">‘좋아요’한 상품을 구매하였을 때</td>
+			<td class="its-td-align left pdl5">추가 할인 및 추가 적립</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">쿠폰</th>
+			<td class="its-td-align left pdl5">프로모션 > <a href="../coupon/catalog" target="_blank"><span class="highlight-link">할인 쿠폰</span></a></td>
+			<td class="its-td-align left pdl5">할인 쿠폰을 사용하여 구매하였을 때</td>
+			<td class="its-td-align left pdl5">추가 할인 및 적립</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">코드</th>
+			<td class="its-td-align left pdl5">프로모션 > <a href="../promotion/catalog" target="_blank"><span class="highlight-link">할인 코드</span></a></td>
+			<td class="its-td-align left pdl5">할인 코드를 사용하여 구매하였을 때</td>
+			<td class="its-td-align left pdl5">추가 할인</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">유입경로</th>
+			<td class="its-td-align left pdl5">프로모션 > <a href="../referer/catalog" target="_blank"><span class="highlight-link">할인 유입경로</span></a></td>
+			<td class="its-td-align left pdl5">특정 유입경로로 접속하여 구매하였을 때 </td>
+			<td class="its-td-align left pdl5">추가 할인</td>
+		</tr>
+		</tbody>
+		</table>
+		<ul class="addsaleGuideLayer" >
+			<li>추가 혜택 세팅 시 혜택 적용 조건을 설정할 수 있습니다.</li>
+			<li>예를 들어 쿠폰의 경우 아래와 같이 혜택 적용 조건 설정이 가능합니다.</li>
+			<li>발급시작/중지, 다운로드기간/수량/등급, 유효기간, 제한금액, 최대할인, 중복할인, 타쿠폰동시사용, 모바일, 결제수단, 중복할인, 유입경로, 할인분담, 적용 상품</li>
+		</ul>
+	</div>
+
+	<br style="line-height:30px;" />
+
+	<div class="item-title">
+		<table width="100%" cellpadding="0" cellspacing="0">
+		<tr><td>추가 혜택 적용 페이지</td></tr>
+		</table>
+	</div>
+	<div>
+		<table class="info-table-style" style="margin:auto;" width="100%">
+		<colgroup>
+			<col />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th class="its-th-align center" rowspan="2">데스크탑/모바일</th>
+			<th class="its-th-align center" colspan="8">추가 혜택</th>
+		</tr>
+		<tr>
+			<th class="its-th-align center">대량구매</th>
+			<th class="its-th-align center">이벤트</th>
+			<th class="its-th-align center">등급</th>
+			<th class="its-th-align center">모바일</th>
+			<th class="its-th-align center">좋아요</th>
+			<th class="its-th-align center">쿠폰</th>
+			<th class="its-th-align center">코드</th>
+			<th class="its-th-align center">유입경로</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<th class="its-th-align center">위시리스트</th>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">최근 본 상품</th>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">검색 페이지</th>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">검색 자동 완성</th>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">최근 본 상품</th>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">스크롤 배너</th>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">리스트</th>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">상세</th>
+			<td class="its-td-align center bgyellow">△</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">△</td>
+			<td class="its-td-align center bgyellow">△</td>
+			<td class="its-td-align center bgyellow">△</td>
+			<td class="its-td-align center bgyellow">△</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">상세 - 관련상품</th>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">장바구니</th>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">주문</th>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+		</tr>
+		</tbody>
+		</table>
+		<ul class="addsaleGuideLayer" >
+			<li><font size="1.5">△</font> : 추가 혜택이 안내되어짐</li>
+			<li><font size="3">○</font> : 추가 혜택 금액이 계산되어 판매가에 적용됨</li>
+		</ul>
+	</div>
+
+	<br style="line-height:30px;" />
+
+	<div class="item-title">
+		<table width="100%" cellpadding="0" cellspacing="0">
+		<tr><td>추가 혜택 적용 페이지에서 상품옵션의 범위</td></tr>
+		</table>
+	</div>
+	<div>
+		<table class="info-table-style" style="margin:auto;" width="100%">
+		<colgroup>
+			<col />
+			<col width="15%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th class="its-th-align center" rowspan="2" colspan="2">데스크탑/모바일</th>
+			<th class="its-th-align center" colspan="8">추가 혜택</th>
+		</tr>
+		<tr>
+			<th class="its-th-align center">대량구매</th>
+			<th class="its-th-align center">이벤트</th>
+			<th class="its-th-align center">등급</th>
+			<th class="its-th-align center">모바일</th>
+			<th class="its-th-align center">좋아요</th>
+			<th class="its-th-align center">쿠폰</th>
+			<th class="its-th-align center">코드</th>
+			<th class="its-th-align center">유입경로</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<th class="its-th-align center" rowspan="2">필수 옵션<br/>(옷, 신발)</th>
+			<th class="its-th-align center">추가 할인</th>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">추가 마일리지/포인트</th>
+			<td class="its-td-align center">-</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">-</td>
+			<td class="its-td-align center">-</td>
+			<td class="its-td-align center">-</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center" rowspan="2">추가 구성 옵션<br/>(벨트, 깔창)</th>
+			<th class="its-th-align center">추가 할인</th>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+		</tr>
+		<tr>
+			<th class="its-th-align center">추가 마일리지/포인트</th>
+			<td class="its-td-align center">-</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center bgyellow">○</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">X</td>
+			<td class="its-td-align center">-</td>
+			<td class="its-td-align center">-</td>
+			<td class="its-td-align center">-</td>
+		</tr>
+		</tbody>
+		</table>
+	</div>
+
+	<br style="line-height:30px;" />
+
+</div>
+
+<script type="text/javascript" >
+	// 업그레이드 안내 :: 2016-12-07 lwh
+	function noProvideService(msg, width, height){
+		/*if(msg){
+			$("#noProvideService_msg").html(msg)
+		}
+		if(!width)	width	= 550;
+		if(!height)	height	= 440;
+
+		openDialog("무료몰 제한<span class='desc'></span>", "noProvideService", {"width":width,"height":height});*/
+
+		$.ajax({
+			type: "get",
+			url: "/admin/main/main_free",
+			success: function(result){
+				$("#main_demo").html(result);
+				openDialog("무료몰 제한", "main_demo", {"width":"700","height":"700","show" : "fade","hide" : "fade"});
+			}
+		});
+	}
+
+	// facebook config (무료몰인경우 연결 및 스킨설정
+	$('#freefacebookconfignone').bind('click', function() {
+		{=serviceLimit('A1')}
+	});
+
+	// onlyfacebook config (facebook전용인경우 설정불가
+	$('#onlyfacebooklinknone').bind('click', function() {
+		if($(this).attr("config")){
+			openDialog("PC, Mobile/Table 쇼핑몰 업그레이드 안내<span class='desc'></span>", "onlyfacebookService", {"width":600,"height":350});
+		}else{
+			openDialog("PC, Mobile/Table 쇼핑몰 안내<span class='desc'></span>", "onlyfacebookService", {"width":600,"height":350});
+		}
+	});
+
+	/* 추가 혜택 적용 범위 안내 */
+	$(".addsaleGuideBtn").live('click',function(){
+		openDialog("추가 혜택 적용 범위 안내","addsaleGuideLayer",{"width":720,"height":500});
+	});
+</script>
+<div id="freefacebookService" class="hide">
+<div>
+		<table width="100%">
+		<tr>
+		<td align="left">
+			무료몰 Plus+ : PC 및 Mobile/Tablet 쇼핑몰 운영이 가능합니다.<br />
+			Facebook PC 쇼핑몰 운영을 위해서는<br />
+			프리미엄몰 Plus+ 또는 독립몰 Plus+로 업그레이드 하시길 바랍니다.<br />
+		</td>
+		</tr>
+		<tr>
+			<td>
+				{#firstmallplusservice}
+			</td>
+		</tr>
+		<tr>
+		<td align="center"><br /><br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<img src="../../images/common/btn_upgrade.gif" class="hand" onclick="serviceUpgrade();" align="absmiddle" />
+		</td>
+		</tr>
+		</table>
+	</div>
+	<br style="line-height:20px;" />
+</div>
+
+<div id="onlyfacebookService" class="hide">
+<div>
+		<table width="100%">
+		<tr>
+		<td align="left">
+			페이머스 Plus+ : Facebook 쇼핑몰 운영이 가능합니다.<br />
+			PC, Mobile/Tablet  쇼핑몰 운영을 위해서는<br />
+			프리미엄몰 Plus+ 또는 독립몰 Plus+로 업그레이드 하시길 바랍니다.<br />
+		</td>
+		</tr>
+		<tr>
+			<td>
+				{#firstmallplusservice}
+			</td>
+		</tr>
+		<tr>
+		<td align="center"><br /><br />
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<img src="../../images/common/btn_upgrade.gif" class="hand" onclick="serviceUpgrade();" align="absmiddle" />
+		</td>
+		</tr>
+		</table>
+	</div>
+	<br style="line-height:20px;" />
+</div>
+
+<div id="noProvideService" class="hide">
+<div>
+		<table width="100%">
+		<tr>
+			<td class="pdt10" id="noProvideService_msg" align="center">
+				사용중이신 서비스에서는 해당기능이 지원되지 않습니다.<br/>
+				업그레이드 하시길 바랍니다.
+			</td>
+		</tr>
+		<tr>
+		<td class="pdt30" align="center">
+			<br/>
+			<img src="../../images/common/btn_upgrade.gif" class="hand" onclick="serviceUpgrade();" align="absmiddle" />
+		</td>
+		</tr>
+		</table>
+	</div>
+	<br style="line-height:20px;" />
+</div>
+
+<div id="nostorfreeServiceBigdata" class="hide">
+	<p>사용중이신 서비스에서는 해당기능이 지원되지 않습니다.</p>
+	<p>상위 버전으로 업그레이드 하시길 바랍니다.</p>
+	<br /><p class="center"> <빅데이터 큐레이션 기능 이용 안내> </p><br />
+	<table class="info-table-style" width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td class="its-th-align center">구분</td>
+			<td class="its-th-align center">서비스 상품</td>
+			<td class="its-th-align center">빅데이터 큐레이션</td>
+			<td class="its-th-align center">비고</td>
+		</tr>
+		<tr>
+			<td class="its-td-align center" rowspan="2">오픈마켓</td>
+			<td class="its-td-align center">입점몰 Plus</td>
+			<td class="its-td-align center">모든 기능 제한 없음</td>
+			<td class="its-td-align center">큐레이션당 최대 3개까지 복수 설정 가능</td>
+		</tr>
+		<tr>
+			<td class="its-td-align center">입점몰 Plus Lite</td>
+			<td class="its-td-align center">모든 기능 제한 없음</td>
+			<td class="its-td-align center">큐레이션당 최대 3개까지 복수 설정 가능</td>
+		</tr>
+		<tr>
+			<td class="its-td-align center" rowspan="3">일반 쇼핑몰</td>
+			<td class="its-td-align center">독립몰 Plus</td>
+			<td class="its-td-align center">모든 기능 제한 없음</td>
+			<td class="its-td-align center">큐레이션당 최대 3개까지 복수 설정 가능</td>
+		</tr>
+		<tr>
+			<td class="its-td-align center">프리미엄몰 Plus</td>
+			<td class="its-td-align center">모든 기능 제한 없음</td>
+			<td class="its-td-align center">큐레이션당 최대 3개까지 복수 설정 가능</td>
+		</tr>
+		<tr>
+			<td class="its-td-align center">무료몰 Plus</td>
+			<td class="its-td-align center">'관리자가 직접 지정'만 사용 가능</td>
+			<td class="its-td-align center">최대 1개 가능. 다른 조건으로 변경불가</td>
+		</tr>
+		<tr>
+			<td class="its-td-align center">O2O</td>
+			<td class="its-td-align center">홈페이지 Shop</td>
+			<td class="its-td-align center">모든 기능 제한 없음</td>
+			<td class="its-td-align center">큐레이션당 최대 3개까지 복수 설정 가능</td>
+		</tr>
+	</table>
+	<div class="center mt10">
+		<img align="absmiddle" class="hand" onclick="serviceUpgrade();" src="/admin/skin/default/images/common/btn_upgrade.gif">
+	</div>
+</div>
+
+{? autoLogout.auto_logout == "Y" && managerInfo}
+
+<script>
+	Lpad=function(str, len){
+		str = str + "";
+		while(str.length < len){
+			str = "0"+str;
+		}
+		return str;
+	}
+
+	// 자동로그아웃 시간 셋팅
+	var iMinute = "{autoLogout.until_time * 60}";
+	var noticeSecond = 1;
+
+	var iSecond = iMinute * 60 ;
+	var timerchecker = null;
+
+	initTimer=function(){
+		{? _GET.debug }
+		//timer.style.visibility='visible';  // 자동로그아웃 확인용
+		{/}
+
+		//이벤트 발생 체크
+		if(window.event){
+			iSecond = iMinute * 60 ;;
+			clearTimeout(timerchecker);
+		}
+		rMinute = parseInt(iSecond / 60);
+		rSecond = iSecond % 60;
+
+		if(iSecond > 0){
+		//지정한 시간동안 마우스, 키보드 이벤트가 발생되지 않았을 경우
+			timer.innerHTML =  "<font family=tahoma style='font-size:70;'>AUTO LOG OUT</font> </h1> <font color=red>" + Lpad(rMinute, 2)+":"+Lpad(rSecond, 2) ;
+			iSecond--;
+			timerchecker = setTimeout("initTimer()", 1000); // 1초 간격으로 체크
+		}else{
+			clearTimeout(timerchecker);
+			openDialog("관리자 자동 로그아웃 알림", "autoLogoutMsg", {"width":"600","height":"240", "noClose":true});
+			actionFrame.location.href = "../login_process/logout?mode=autoLogout"; // 로그아웃 처리
+		}
+	}
+	onload = initTimer;///현재 페이지 대기시간
+	document.onclick = initTimer; /// 현재 페이지의 사용자 마우스 클릭이벤트 캡춰
+	document.onkeypress = initTimer;/// 현재 페이지의 키보트 입력이벤트 캡춰
+</script>
+
+<!-- 자동로그아웃시까지 남은 시간을 보여주는 레이어-->
+<div id="timer" style="position:absolute; right:10px; bottom:20px; width:200px; visibility:hidden; border:0;  color:black; font-family:tahoma; font-size:150;font-weight:bold;text-align:center"></div>
+<div id="autoLogoutMsg" class="hide">
+<center><h2>자동으로 로그아웃 되었습니다.</h2></center>
+<div style="height:20px;"></div>
+- 안전한 관리를 위하여 {? autoLogout.until_time == "0.01"}36초{:}{autoLogout.until_time}시간{/} 동안 사용이 없어 자동로그아웃 되었습니다.
+<div style="height:5px;"></div>
+- 다시 로그인 하시려면 [로그인]버튼을 클릭하십시오.
+<div style="height:20px;"></div>
+<div align="center">
+<span class="btn large gray"><input type="button" value="로그인" onclick="location.href='../login/index'"></span>
+</div>
+</div>
+{/}
+
+</body>
+{ # warningScript }
+{ #common_html_footer }

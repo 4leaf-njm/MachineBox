@@ -1,0 +1,114 @@
+<div class="top-pt mb-5 pb-5">
+    <div class="title_container mt-5 pt-5 pb-3">
+        <h2><span designElement="text">회원가입</span></h2>
+    </div>
+    <div style="text-align: center;">
+        <p class="mypage_greeting gray_06" designElement="text" style="display: inline-block; text-align: left;">
+          - 개인회원 : 개인, 인증이 안 된 사업자회원으로 둘러보기는 가능, 기계등록 등 서비스 이용이 불가능한 회원<br/>
+          - 사업자회원 :  사업자 인증을 받은 회원으로 정상적인 서비스 이용이 가능한 회원<br/>
+          - 딜러회원 : 기계 매매업을 영위하는 사업자회원으로 별도의 승인을 거쳐 긴급판매 입찰 참여가 가능
+        </p>
+    </div>
+    <div class="resp_login_wrap">
+        <!-- 탭 -->
+        <div id="memberSelect" class="tab_basic fullsize">
+            <ul>
+                <!--{? joinform.join_type!='business_only'}-->
+                <li class="on"><a href="javascript:void(0)"><span designElement="text">개인회원</span></a></li>
+                <!--{ / }-->
+                <!--{? joinform.join_type!='member_only'}-->
+                <li><a href="javascript:void(0)"><span designElement="text">사업자회원</span></a></li>
+                <!--{ / }-->
+            </ul>
+        </div>
+    
+        <!--{? fb_invite }-->
+        <div class="join_fb_invite">
+            <span class="fb_name">{fb_invite.user_name}</span> 님으로부터 초대받으셨습니다.
+        </div>
+        <!--{ / }-->
+    
+        
+    
+        <!--{? joinform.join_type!='business_only'}-->
+        <div class="sub_page_tab_contents">
+            <p class="join_btns">
+                <button type="button" class="btn_resp size_c color2 Wmax" onclick="document.location.href='agreement?join_type=member'"><span designElement="text">회원가입</span></button>
+            </p>
+        </div>
+        <!--{ / }-->
+    
+        <!--{? joinform.join_type!='member_only'}-->
+        <div class="sub_page_tab_contents">
+            <p class="join_btns">
+                <button type="button" class="btn_resp size_c color2 Wmax" onclick="document.location.href='agreement?join_type=business'"><span designElement="text">회원가입</span></button>
+            </p>		
+        </div>
+        <!--{ / }-->
+    
+        <!--{? emoneyapp.emoneyJoin > 0 || emoneyapp.emoneyInvitees > 0 || couponmember.coupon_seq }-->
+        <h3 class="title_sub2 Mt50"><b class="Fw400"><span designElement="text">신규회원을 위한 혜택을 놓치지 마세요!</span></b></h3>
+        <div class="join_member_benefit_detail">
+            <!--{? emoneyapp.emoneyJoin > 0 }-->
+            <ul>
+                <li class="tt"><span designElement="text">마일리지</span></li>
+                <li class="dd">
+                    {=get_currency_price(emoneyapp.emoneyJoin, 2, '', '<span class="num">_str_price_</span>')}				
+                </li>
+            </ul>
+            <!--{ / }-->
+            <!--{? emoneyapp.emoneyInvitees > 0 && fb_invite}-->
+            <ul>
+                <li class="tt"><span designElement="text">추가 마일리지</span></li>
+                <li class="dd">
+                    {=get_currency_price(emoneyapp.emoneyInvitees, 2, '', '<span class="num">_str_price_</span>')}
+                </li>
+            </ul>
+            <!--{ / }-->
+            <!--{@ couponmemberarray }-->
+                <!--{? .type == 'member_shipping' }-->
+                <ul>
+                    <li class="tt"><span designElement="text">배송비 쿠폰</span></li>
+                    <li class="dd">
+                        <!--{? .shipping_type == 'free'}-->
+                            <!--{? .limit_goods_price_title}-->
+                            {.limit_goods_price_title}
+                            <!--{ / }--> 
+                            <span class="num">배송비무료</span>
+                            <p class="Fs14 gray_06">(최대{=get_currency_price(.max_percent_shipping_sale,2)})</p>
+                        <!--{ : }-->
+                            {=get_currency_price(.won_shipping_sale, 2, '', '<span class="num">_str_price_</span>')}
+                        <!--{ / }-->
+                    </li>
+                </ul>
+                <!--{ : }-->
+                <ul>
+                    <li class="tt"><span designElement="text">회원가입 쿠폰</span></li>
+                    <li class="dd">
+                        <!--{? .sale_type == 'percent' }-->
+                            <span class="num">{.percent_goods_sale}</span>%
+                        <!--{ : }-->
+                            {=get_currency_price(.won_goods_sale, 2, '', '<span class="num">_str_price_</span>')}
+                        <!--{ / }-->
+                    </li>
+                </ul>
+                <!--{ / }-->
+            <!--{ / }-->
+        </div>
+        <!--{ / }-->
+    
+    </div>
+</div>
+
+<script>
+$(function(){
+	// 탭 클릭시
+	$("#memberSelect li").each(function(i){
+		$(this).click(function(){
+			$("#memberSelect li").removeClass("on");
+			$(this).addClass("on");
+			$(".sub_page_tab_contents").hide().eq(i).show();
+		});
+	}).eq(0).click();
+});
+</script>

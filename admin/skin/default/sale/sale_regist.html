@@ -1,0 +1,1113 @@
+{ #layout_header }
+
+<style style="text/css">
+	.btnhelp {display:inline-block; width:14px; height:14px; cursor:pointer; background:url('../images/common/bg_icon.png'); vertical-align:middle;margin-bottom:2px}
+</style>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.fmdomsaver.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/jquery.colorpicker.min.js"></script>
+<script type="text/javascript" src="/app/javascript/plugin/custom-color-picker.js"></script>
+<script type="text/javascript" src="/app/javascript/js/scm.common.js"></script>
+<script type="text/javascript" src="/app/javascript/js/admin-goodsQuickRegist.js"></script>
+<script type="text/javascript" src="/app/javascript/js/batch.js"></script>
+
+<!-- 페이지 타이틀 바 : 시작 -->
+<div id="page-title-bar-area">
+	<div id="page-title-bar">
+		<!-- 타이틀 -->
+		<div class="page-title">
+			<h2>{? type == 'self'}셀프판매{: type == 'emergency'}긴급판매{: type == 'direct'}머박다이렉트{: type == 'turnkey'}턴키매각{/} {? reg_mode == 'insert'}등록{: reg_mode == 'modify'}수정{/}</h2>
+		</div>
+
+		<!-- 좌측 버튼 -->
+		<ul class="page-buttons-left"></ul>
+
+		<!-- 우측 버튼 -->
+		<ul class="page-buttons-right"></ul>
+	</div>
+</div>
+<!-- 페이지 타이틀 바 : 끝 -->
+<br style="line-height:30px;" />
+
+<form action="../sale/sale_regist_process" method="post" id="frm_regist" target="actionFrame" enctype="multipart/form-data">
+<input type="hidden" name="mode" value="" />
+<input type="hidden" name="serialize" id="serialize" value=""/>
+<input type="hidden" name="mcount" value="0">
+<input type="hidden" name="member" value="search">
+<input type="hidden" name="searchSelect" value="search">
+<input type="hidden" name="selectMember" value="">
+<input type="hidden" name="wheres" value=""/>
+	
+<input type="hidden" name="reg_mode" value="{reg_mode}" />
+<input type="hidden" name="type" value="{type}" />
+<input type="hidden" name="info_seq" value="{seq}" />
+<input type="hidden" name="sales_seq" />
+<input type="hidden" name="userid" />
+<input type="hidden" name="turnkey_seq" />
+
+<div class="clearbox">
+	<ul class="left-btns clearbox">
+		<li>
+			<span class="btn small black"><button type="button" onclick="go_sale_regist_process('{reg_mode}', '{type}')">{? reg_mode == 'insert'}등록{: reg_mode == 'modify'}수정{/}</button></span>
+		</li>
+		<li>
+			<span class="btn small"><button type="button" onclick="show_change_type_layer('{type}')">판매방식 변경</button></span>
+		</li>
+		<li>
+			<span class="btn small"><button type="button" id="searchMemberBtn" callpage="sale">선택</button></span>
+			(판매자 : <span class="txt_userid"></span>)
+		</li>
+	</ul>
+</div>
+
+<!-- {? type == 'self'} -->
+<table class="info-table-style quick-goods-regist-table" width="100%" style="margin-bottom: 40px;">
+<thead>
+<tr>
+	<th class="its-th-align center" width="180">사진</th>
+	<th class="its-th-align center" width="105">기계종류</th>
+	<th class="its-th-align center" width="105">제조사</th>
+	<th class="its-th-align center" width="105">모델명</th>
+	<th class="its-th-align center" width="70">판매지역</th>
+	<th class="its-th-align center" width="80">연식</th>
+	<th class="its-th-align center" width="80">시리얼넘버</th>
+	<th class="its-th-align center" width="160">기계크기</th>
+	<th class="its-th-align center" width="80">기계중량</th>
+	<th class="its-th-align center" width="80">컨트롤러</th>
+	<th class="its-th-align center" width="80">옵션</th>
+	<th class="its-th-align center" width="120">판매방법</th>
+</tr>
+</thead>
+<tbody class="quick-goods-regist-tbody">
+<tr class="option-rows" style="height: 50px;">
+	<td class="its-td-align left pdr5 seller-box" style="vertical-align:top;">
+		<div class="picture-list">
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">명판</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-1">
+	               <input type="hidden" name="part[]" value="명판">
+	               <input type="hidden" name="sort[]" value="1">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	           	   <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">정면 전체</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-2">
+	               <input type="hidden" name="part[]" value="정면 전체">
+	               <input type="hidden" name="sort[]" value="2">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">좌측</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-3">
+	               <input type="hidden" name="part[]" value="좌측">
+	               <input type="hidden" name="sort[]" value="3">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">우측</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-4">
+	               <input type="hidden" name="part[]" value="우측">
+	               <input type="hidden" name="sort[]" value="4">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">후면</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-5">
+	               <input type="hidden" name="part[]" value="후면">
+	               <input type="hidden" name="sort[]" value="5">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">내부</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-6">
+	               <input type="hidden" name="part[]" value="내부">
+	               <input type="hidden" name="sort[]" value="6">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">컨트롤러</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-7">
+	               <input type="hidden" name="part[]" value="컨트롤러">
+	               <input type="hidden" name="sort[]" value="7">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">옵션</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-8">
+	               <input type="hidden" name="part[]" value="옵션">
+	               <input type="hidden" name="sort[]" value="8">
+	           </label>
+	       </div>
+	   </div>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="kind_no" />
+		<input type="hidden" name="kind_seq" />
+		<select name="sel_kind" class="simple" style="width:100%;">
+			<option>선택</option>
+			<!-- {@ kind_map} -->
+      <optgroup label="{.kind_type}" data-no="{.kind_no}">
+          <!-- {@ .kind_list} -->
+          <option data-seq="{..kind_seq}">{..kind_name}</option>
+          <!-- {/} -->
+      </optgroup>
+      <!-- {/} -->
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="mnf_seq" />
+		<select name="sel_mnf" class="simple" style="width:100%;" data-id="input-mnf">
+		<option>선택</option>
+		<option data-mode="input">직접입력</option>
+			<!-- {@ mnf_list} -->
+      <option data-seq="{.mnf_seq}">{.mnf_name}</option>
+      <!-- {/} -->
+		</select>
+		<input type="hidden" name="input_mnf" />
+    <input type="text" name="txt_mnf" class="d-none mt5" placeholder="직접입력" id="input-mnf" style="position: absolute; left: 5px; top: 30px; width: 84%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="model_seq" />
+		<select name="sel_model" class="simple" style="width:100%;" data-id="input-model">
+			 <option>선택</option>		
+			 <option data-mode="input">직접입력</option>
+       <!-- {@ model_list} -->
+       <option data-seq="{.model_seq}">{.model_name}</option>
+       <!-- {/} -->
+		</select>
+		<input type="hidden" name="input_model" />
+    <input type="text" name="txt_model" class="d-none mt5" placeholder="직접입력" id="input-model" style="position: absolute; left: 5px; top: 30px; width: 84%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="area_seq" />
+		<select name="sel_area" class="simple" style="width:100%;">
+			<!-- {@ area_list} -->
+            <option data-seq="{.area_seq}">{.area_name}</option>
+            <!-- {/} -->
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="model_year" />
+		<select name="sel_year" class="simple" style="width:100%;" data-id="input-year"></select>
+		<input type="hidden" name="input_year" />
+    <input type="text" name="txt_year" class="d-none mt5" placeholder="직접입력" id="input-year" style="position: absolute; left: 5px; top: 30px; width: 78%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="11" name="serial_num" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="size" />
+		<input type="text" size="2" name="size_01" />
+		<span>x</span>
+		<input type="text" size="2" name="size_02"  />
+		<span>x</span>
+		<input type="text" size="2" name="size_03" />
+		<span>m</span>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="7" name="weight" /> kg
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="9" name="controller" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<div id="option_list">
+			<input type="text" size="9" name="option_arr[]" style="margin-bottom: 3px;"/>
+		</div>
+		<span class="btn small valign-middle" style="margin-top: 2px;"><input type="button" value="추가" class="btn_option_add"/></span>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="method" />
+		<select name="sel_method" class="simple" style="width:100%;">
+			<option data-val="고정가격판매" selected>고정가격판매</option>
+			<option data-val="입찰">입찰</option>
+		</select>
+	</td>
+</tr>
+</tbody>
+</table>
+
+<table class="info-table-style quick-goods-regist-table" width="100%" style="margin-bottom: 40px;" id="tbl_fix">
+<thead>
+<tr>
+	<th class="its-th-align center" width="350">고정가격 판매금액</th>
+	<th class="its-th-align center" width="300">구매자 가격제안 받기</th>
+	<th class="its-th-align center" width="*"></th>
+</tr>
+</thead>
+<tbody class="quick-goods-regist-tbody">
+<tr class="option-rows" style="height: 70px;">
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="fixed_price" /> 만원
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="price_proposal" />
+		<select name="sel_price_proposal" class="simple" style="width:100%;">
+			<option data-val="0" selected>받지않음</option>
+			<option data-val="5">5% 이내</option>
+			<option data-val="10">10% 이내</option>
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;"></td>
+</tr>
+</tbody>
+</table>
+
+<table class="info-table-style quick-goods-regist-table d-none" width="100%" style="margin-bottom: 40px;" id="tbl_bid">
+<thead>
+<tr>
+	<th class="its-th-align center" width="200">입찰판매 기간</th>
+	<th class="its-th-align center" width="200">시작가</th>
+	<th class="its-th-align center" width="200">즉시판매가</th>
+	<th class="its-th-align center" width="200">재입찰 가격 인하율</th>
+	<th class="its-th-align center" width="200">재입찰 반복횟수</th>
+	<th class="its-th-align center" width="*"></th>
+</tr>
+</thead>
+<tbody class="quick-goods-regist-tbody">
+<tr class="option-rows" style="height: 50px;">
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="bid_duration" />
+		<select name="sel_bid_duration" class="simple" style="width:100%;">
+			<option data-val="0" selected>3일</option>
+			<option data-val="5">5일</option>
+			<option data-val="7">7일</option>
+			<option data-val="10">10일</option>
+		</select> 
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="bid_start_price" /> 만원
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="bid_price" /> 만원
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="reduction_rate" />
+		<select name="sel_reduction_rate" class="simple" style="width:100%;" data-id="txt_reduction_rate">
+			<option data-val="10" selected>10%</option>
+			<option data-val="20">20%</option>
+			<option data-mode="input">임의설정</option>
+			<option data-val="0">없음</option>
+		</select>
+		<div class="d-none mt5" id="txt_reduction_rate">
+			<input type="text" name="txt_reduction_rate" />
+		</div>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="repeat_no" />
+		<select name="sel_repeat_no" class="simple" style="width:100%;" data-id="txt_repeat_no">
+			<option data-mode="input">1~10 임의설정</option>
+			<option data-val="0" selected>없음</option>
+		</select>
+		<div class="d-none mt5" id="txt_repeat_no">
+			<input type="text" name="txt_repeat_no" />
+		</div>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;"></td>
+</tr>
+</tbody>
+</table>
+<!-- {: type == 'emergency' || type == 'direct'} -->
+<table class="info-table-style quick-goods-regist-table" width="100%" style="margin-bottom: 40px;">
+<thead>
+<tr>
+	<th class="its-th-align center" width="210">사진</th>
+	<th class="its-th-align center" width="105">기계종류</th>
+	<th class="its-th-align center" width="105">제조사</th>
+	<th class="its-th-align center" width="105">모델명</th>
+	<th class="its-th-align center" width="70">판매지역</th>
+	<th class="its-th-align center" width="80">연식</th>
+	<th class="its-th-align center" width="80">시리얼넘버</th>
+	<th class="its-th-align center" width="160">기계크기</th>
+	<th class="its-th-align center" width="80">기계중량</th>
+	<th class="its-th-align center" width="80">컨트롤러</th>
+	<th class="its-th-align center" width="80">옵션</th>
+	<th class="its-th-align center" width="80">판매자<br/>인도조건</th>
+	<th class="its-th-align center" width="140">희망금액 - 판매금액</th>
+</tr>
+</thead>
+<tbody class="quick-goods-regist-tbody">
+<tr class="option-rows" style="height: 50px;">
+	<td class="its-td-align left pdr5 seller-box" style="vertical-align:top;">
+	   <div class="picture-list">
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">명판</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-1">
+	               <input type="hidden" name="part[]" value="명판">
+	               <input type="hidden" name="sort[]" value="1">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	           	   <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">정면 전체</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-2">
+	               <input type="hidden" name="part[]" value="정면 전체">
+	               <input type="hidden" name="sort[]" value="2">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">좌측</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-3">
+	               <input type="hidden" name="part[]" value="좌측">
+	               <input type="hidden" name="sort[]" value="3">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">우측</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-4">
+	               <input type="hidden" name="part[]" value="우측">
+	               <input type="hidden" name="sort[]" value="4">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">후면</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-5">
+	               <input type="hidden" name="part[]" value="후면">
+	               <input type="hidden" name="sort[]" value="5">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">내부</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-6">
+	               <input type="hidden" name="part[]" value="내부">
+	               <input type="hidden" name="sort[]" value="6">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">컨트롤러</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-7">
+	               <input type="hidden" name="part[]" value="컨트롤러">
+	               <input type="hidden" name="sort[]" value="7">
+	           </label>
+	       </div>
+	       <div class="preview-div">
+	           <label class="btn-picture-add">
+	               <div class="preview-back">
+	                   <i class="preview-delete-btn"></i>
+	               </div>
+	               <p class="preview-txt">옵션</p>
+	               <input type="file" name="machine_picture_1[]" class="input-file" id="picture-1-8">
+	               <input type="hidden" name="part[]" value="옵션">
+	               <input type="hidden" name="sort[]" value="8">
+	           </label>
+	       </div>
+	   </div>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="kind_no" />
+		<input type="hidden" name="kind_seq" />
+		<select name="sel_kind" class="simple" style="width:100%;">
+			<option>선택</option>
+			<!-- {@ kind_map} -->
+      <optgroup label="{.kind_type}" data-no="{.kind_no}">
+          <!-- {@ .kind_list} -->
+          <option data-seq="{..kind_seq}">{..kind_name}</option>
+          <!-- {/} -->
+      </optgroup>
+      <!-- {/} -->
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="mnf_seq" />
+		<select name="sel_mnf" class="simple" style="width:100%;" data-id="input-mnf">
+		<option>선택</option>
+		<option data-mode="input">직접입력</option>
+			<!-- {@ mnf_list} -->
+      <option data-seq="{.mnf_seq}">{.mnf_name}</option>
+      <!-- {/} -->
+		</select>
+		<input type="hidden" name="input_mnf" />
+    <input type="text" name="txt_mnf" class="d-none mt5" placeholder="직접입력" id="input-mnf" style="position: absolute; left: 5px; top: 30px; width: 84%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="model_seq" />
+		<select name="sel_model" class="simple" style="width:100%;" data-id="input-model">
+			 <option>선택</option>		
+			 <option data-mode="input">직접입력</option>
+       <!-- {@ model_list} -->
+       <option data-seq="{.model_seq}">{.model_name}</option>
+       <!-- {/} -->
+		</select>
+		<input type="hidden" name="input_model" />
+    <input type="text" name="txt_model" class="d-none mt5" placeholder="직접입력" id="input-model" style="position: absolute; left: 5px; top: 30px; width: 84%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="area_seq" />
+		<select name="sel_area" class="simple" style="width:100%;">
+			<!-- {@ area_list} -->
+            <option data-seq="{.area_seq}">{.area_name}</option>
+            <!-- {/} -->
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="model_year" />
+		<select name="sel_year" class="simple" style="width:100%;" data-id="input-year"></select>
+		<input type="hidden" name="input_year" />
+    <input type="text" name="txt_year" class="d-none mt5" placeholder="직접입력" id="input-year" style="position: absolute; left: 5px; top: 30px; width: 78%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="11" name="serial_num" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="size" />
+		<input type="text" size="2" name="size_01" />
+		<span>x</span>
+		<input type="text" size="2" name="size_02"  />
+		<span>x</span>
+		<input type="text" size="2" name="size_03" />
+		<span>m</span>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="7" name="weight" /> kg
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" size="9" name="controller" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<div id="option_list">
+			<input type="text" size="9" name="option_arr[]" style="margin-bottom: 3px;"/>
+		</div>
+		<span class="btn small valign-middle" style="margin-top: 2px;"><input type="button" value="추가" class="btn_option_add"/></span>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="deliver_condition" />
+		<select name="sel_deliver_condition" class="simple" style="width:100%;">
+			<option data-val="없음" selected>없음</option>
+			<option data-val="상차">상차</option>
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<p style="margin-bottom: 4px;">희망금액</p>
+		<input type="text" size="11" name="hope_price" {? mode == 'modify' }readonly{/} /> 만원
+		<p style="marign-top: 10px; margin-bottom: 4px;">판매금액</p>
+		<input type="text" size="11" name="real_price" /> 만원
+	</td>
+</tr>
+</tbody>
+</table>
+<!-- {: type == 'turnkey'} -->
+<table class="info-table-style quick-goods-regist-table" width="100%" style="margin-bottom: 40px;">
+<thead>
+<tr>
+	<th class="its-th-align center" width="80">공장명</th>
+	<th class="its-th-align center" width="80">생산내용</th>
+	<th class="its-th-align center" width="70">지역</th>
+	<th class="its-th-align center" width="80">총기계 수량</th>
+	<th class="its-th-align center" width="80">마지막 기계가동일</th>
+	<th class="its-th-align center" width="80">채권자 내역</th>
+	<th class="its-th-align center" width="80">매각 예정일</th>
+</tr>
+</thead>
+<tbody class="quick-goods-regist-tbody">
+<tr class="option-rows" style="height: 70px;">
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="factory" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="production" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="area_seq" />
+		<select name="sel_area" class="simple" style="width:100%;">
+			<!-- {@ area_list} -->
+            <option data-seq="{.area_seq}">{.area_name}</option>
+            <!-- {/} -->
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="quantity" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="last_date" class="datepicker" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="creditor" />
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="expect_date" class="datepicker" />
+	</td>
+</tr>
+</tbody>
+</table>
+
+<table class="info-table-style quick-goods-regist-table" width="100%" style="margin-bottom: 40px;">
+<thead>
+<tr>
+	<th class="its-th-align center" width="105">기계종류</th>
+	<th class="its-th-align center" width="105">제조사</th>
+	<th class="its-th-align center" width="105">모델명</th>
+	<th class="its-th-align center" width="80">연식</th>
+	<th class="its-th-align center" width="80">매입가</th>
+	<th class="its-th-align center" width="80">옵션</th>
+	<th class="its-th-align center" width="140">특이사항</th>
+</tr>
+</thead>
+<tbody class="quick-goods-regist-tbody">
+<tr class="option-rows" style="height: 50px;">
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="hidden" name="kind_no" />
+		<input type="hidden" name="kind_seq" />
+		<select name="sel_kind" class="simple" style="width:100%;">
+			<option>선택</option>
+			<!-- {@ kind_map} -->
+      <optgroup label="{.kind_type}" data-no="{.kind_no}">
+          <!-- {@ .kind_list} -->
+          <option data-seq="{..kind_seq}">{..kind_name}</option>
+          <!-- {/} -->
+      </optgroup>
+      <!-- {/} -->
+		</select>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="mnf_seq" />
+		<select name="sel_mnf" class="simple" style="width:100%;" data-id="input-mnf">
+		<option>선택</option>
+		<option data-mode="input">직접입력</option>
+			<!-- {@ mnf_list} -->
+      <option data-seq="{.mnf_seq}">{.mnf_name}</option>
+      <!-- {/} -->
+		</select>
+		<input type="hidden" name="input_mnf" />
+    <input type="text" name="txt_mnf" class="d-none mt5" placeholder="직접입력" id="input-mnf" style="position: absolute; left: 5px; top: 30px; width: 84%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="model_seq" />
+		<select name="sel_model" class="simple" style="width:100%;" data-id="input-model">
+			 <option>선택</option>		
+			 <option data-mode="input">직접입력</option>
+       <!-- {@ model_list} -->
+       <option data-seq="{.model_seq}">{.model_name}</option>
+       <!-- {/} -->
+		</select>
+		<input type="hidden" name="input_model" />
+    <input type="text" name="txt_model" class="d-none mt5" placeholder="직접입력" id="input-model" style="position: absolute; left: 5px; top: 30px; width: 84%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top; position: relative;">
+		<input type="hidden" name="model_year" />
+		<select name="sel_year" class="simple" style="width:100%;" data-id="input-year"></select>
+		<input type="hidden" name="input_year" />
+    <input type="text" name="txt_year" class="d-none mt5" placeholder="직접입력" id="input-year" style="position: absolute; left: 5px; top: 30px; width: 78%;"/>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<input type="text" name="pur_price" /> 만원
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<div id="option_list">
+			<input type="text" size="9" name="option_arr[]" style="margin-bottom: 3px;"/>
+		</div>
+		<span class="btn small valign-middle" style="margin-top: 2px;"><input type="button" value="추가" class="btn_option_add"/></span>
+	</td>
+	<td class="its-td-align center seller-box" style="vertical-align:top;">
+		<textarea name="remark" class="simple" style="width: 90%;" rows="3"></textarea>
+	</td>
+</tr>
+</tbody>
+</table>
+<!-- {/} -->
+</form>
+
+<div id="change_type_layer" class="hide">
+	<form action="/admin/sale/change_type_process" method="post" id="frm_change_type" target="actionFrame">
+		<input type="hidden" name="type" />
+		<input type="hidden" name="info_seq" value="{seq}" />
+		
+		<div style="line-height:20px;font-size:12px;">
+			해당 기계의 판매방식을 
+			<select id="sel_type">
+				<option data-type="self">셀프판매</option>
+				<option data-type="emergency">긴급판매</option>
+				<option data-type="direct">머박다이렉트</option>
+				<option data-type="turnkey">턴키매각</option>
+			</select>
+		  (으)로 변경하겠습니다.
+		</div>	
+		<div class="center" style="padding:10px 0 0;">
+			<span class="btn large black"><button type="button" onclick="go_change_type('{type}')">변경</button></span>
+		</div>	
+	</form>
+</div>
+<script>
+var html = '';
+html += '<option data-val="-">미상</option>';
+html += '<option data-mode="input">직접입력</option>';
+for(var i=2020; i>=1950; i--) {
+    html += '<option data-val="' + i + '">' + i + '년</option>';
+}
+$('select[name=sel_year]').append(html);
+
+$('select[name=sel_kind]').change(function(){
+	 $('select[name=sel_mnf] option').eq(0).prop('selected', true);
+	 $('select[name=sel_model] option').eq(0).prop('selected', true);
+	 $('input[name=txt_mnf]').addClass('d-none');
+	 $('input[name=txt_model]').addClass('d-none');
+	 change_mnf_list();
+	 change_model_list();
+});
+$('select[name=sel_mnf]').change(function(){
+	 $('select[name=sel_model] option').eq(0).prop('selected', true);
+	 $('input[name=txt_model]').addClass('d-none');
+	 change_model_list();
+});
+function change_mnf_list() {
+    var kind_name = $('select[name=sel_kind] option:selected').val();
+
+    $.ajax({
+        type: 'post',
+        url: '/sale/get_mnf_list',
+        dataType: 'json',
+        data: {'kind_name': kind_name},
+        success: function(data) {
+            var html = '';
+            html += '<option>선택</option>';
+            if($('select[name=sel_mnf]').data('id'))
+                html += '<option data-mode="input">직접입력</option>';
+            $.each(data.mnf_list, function(index, value) {
+                html += '<option data-seq="' + value.mnf_seq + '">' + value.mnf_name + '</option>';
+            });
+            $('select[name=sel_mnf]').html(html);
+        },
+        error: function() {
+            console.log('error');
+        }
+    });
+}
+function change_model_list() {
+    var kind_name = $('select[name=sel_kind] option:selected').val();
+    var mnf_name = $('select[name=sel_mnf] option:selected').val();
+
+    $.ajax({
+        type: 'post',
+        url: '/sale/get_model_list',
+        dataType: 'json',
+        data: {'kind_name': kind_name, 'mnf_name': mnf_name},
+        success: function(data) {
+            var html = '';
+            html += '<option>선택</option>';
+            if($('select[name=sel_model]').data('id'))
+                html += '<option data-mode="input">직접입력</option>';
+            $.each(data.model_list, function(index, value) {
+                html += '<option data-seq="' + value.model_seq + '">' + value.model_name + '</option>';
+            });
+            $('select[name=sel_model]').html(html);
+        },
+        error: function() {
+            console.log('error');
+        }
+    });
+}
+$('input[name=txt_mnf]').on('focusout', function() {
+	var mnf_name = $(this).val();
+	$.ajax({
+      type: 'post',
+      url: '/sale/get_mnf_one',
+      dataType: 'json',
+      data: {'mnf_name': mnf_name},
+      success: function(data) {
+          if(data.result == true) {
+        	   alert('제조사 [' + mnf_name + ']은(는) 이미 등록되어 있습니다.\n등록된 데이터로 변경시키겠습니다.');
+        	   $.each($('select[name=sel_kind] option'), function(index, value) {
+        		   	 if($(this).text() == data.item.mnf_kind) {
+        		   		 $(this).prop('selected', true);
+        		   		 return;
+        		   	 }
+        	   });
+        	   setTimeout(function(){
+	        	   change_mnf_list();
+	        	   setTimeout(function(){
+		        	   $.each($('select[name=sel_mnf] option'), function(index, value) {
+		      		   	 if($(this).text() == data.item.mnf_name) {
+		      		   		 $(this).prop('selected', true);
+		      		   		 return;
+		      		   	 }
+		      	     });
+		        	   $('input[name=txt_mnf]').addClass('d-none');
+	        	   }, 100);
+        	   }, 100);
+          }
+      },
+      error: function() {
+          console.log('error');
+      }
+  });
+});
+$('input[name=txt_model]').on('focusout', function() {
+	var model_name = $(this).val();
+	$.ajax({
+      type: 'post',
+      url: '/sale/get_model_one',
+      dataType: 'json',
+      data: {'model_name': model_name},
+      success: function(data) {
+          if(data.result == true) {
+        	   alert('모델명 [' + model_name + ']은(는) 이미 등록되어 있습니다.\n등록된 데이터로 변경시키겠습니다.');
+        	   $.each($('select[name=sel_kind] option'), function(index, value) {
+        		   	 if($(this).text() == data.item.model_kind) {
+        		   		 $(this).prop('selected', true);
+        		   		 return;
+        		   	 }
+        	   });
+        	   setTimeout(function(){
+	        	   change_mnf_list();
+	        	   setTimeout(function(){
+	        		   $.each($('select[name=sel_mnf] option'), function(index, value) {
+           		   	 if($(this).text() == data.item.model_mnf) {
+           		   		 $(this).prop('selected', true);
+           		   		 return;
+           		   	 }
+           	     });
+	        		   $('input[name=txt_mnf]').addClass('d-none');
+	        		   setTimeout(function(){
+		        		   change_model_list();
+		        		   setTimeout(function(){
+		            	   $.each($('select[name=sel_model] option'), function(index, value) {
+		           		   	 if($(this).text() == data.item.model_name) {
+		           		   		 $(this).prop('selected', true);
+		           		   		 return;
+		           		   	 }
+		           	     });
+		            	   $('input[name=txt_model]').addClass('d-none');
+		        		   }, 100);
+	        		   }, 100);
+	        	   }, 100);
+        	   }, 100);
+          }
+      },
+      error: function() {
+          console.log('error');
+      }
+  });
+});
+$('select[name=sel_method]').change(function(){
+	var val = $(this).find('option:selected').data('val');
+	if(val == '고정가격판매') {
+		$('#tbl_fix').removeClass('d-none');
+		$('#tbl_bid').addClass('d-none');
+	} else if(val == '입찰') {
+		$('#tbl_fix').addClass('d-none');
+		$('#tbl_bid').removeClass('d-none');
+	}
+});
+var info_seq = '{seq}';
+var type = '{type}';
+if(info_seq) {
+	$.ajax({
+		type: 'post',
+		url: 'ajax_get_item',
+		dataType: 'json',
+		data: {'info_seq': info_seq, 'type': type},
+		success: function(data) {
+			data = data.result;
+			$.each($('select[name=sel_kind] option'), function(index, value) {
+				if($(this).data('seq') == data.kind_seq)
+					$(this).prop('selected', true);
+			});
+			setTimeout(function(){
+					$.each($('select[name=sel_mnf] option'), function(index, value) {
+							if($(this).data('seq') == data.mnf_seq) {
+								$(this).prop('selected', true);
+								return;
+							}
+					});
+	        setTimeout(function(){
+		        	$.each($('select[name=sel_model] option'), function(index, value) {
+								if($(this).data('seq') == data.model_seq) {
+									$(this).prop('selected', true);
+									return;									
+								}
+							});
+	        }, 500);
+		    }, 500);
+			
+			$.each($('select[name=sel_area] option'), function(index, value) {
+				if($(this).data('seq') == data.area_seq)
+					$(this).prop('selected', true);
+			});
+			$.each($('select[name=sel_year] option'), function(index, value) {
+				if($(this).data('val') == data.model_year)
+					$(this).prop('selected', true);
+			});
+			$.each($('select[name=sel_deliver_condition] option'), function(index, value) {
+				if($(this).data('val') == data.deliver_condition)
+					$(this).prop('selected', true);
+			});
+			$.each($('select[name=sel_method] option'), function(index, value) {
+				if($(this).data('val') == data.method)
+					$(this).prop('selected', true);
+			});
+			$.each($('select[name=sel_price_proposal] option'), function(index, value) {
+				if($(this).data('val') == data.price_proposal)
+					$(this).prop('selected', true);
+			});
+			if(data.method == '입찰') {
+				$.each($('select[name=sel_bid_duration] option'), function(index, value) {
+					if($(this).data('val') == data.bid_duration)
+						$(this).prop('selected', true);
+				});
+				var input = true;
+				$.each($('select[name=sel_reduction_rate] option'), function(index, value) {
+					if($(this).data('val') == data.reduction_rate) {
+						$(this).prop('selected', true);
+						input = false;
+					}
+				});
+				if(input == true) {
+					$('select[name=sel_reduction_rate] option').eq(2).prop('selected', true);
+					$('#txt_reduction_rate').removeClass('d-none');
+					$('#txt_reduction_rate input').val(data.reduction_rate);
+				}
+				input = true;
+				$.each($('select[name=sel_repeat_no] option'), function(index, value) {
+					if($(this).data('val') == data.repeat_no) {
+						$(this).prop('selected', true);
+						input = false;
+					}
+				});
+				if(input == true) {
+					$('select[name=sel_repeat_no] option').eq(0).prop('selected', true);
+					$('#txt_repeat_no').removeClass('d-none');
+					$('#txt_repeat_no input').val(data.repeat_no);
+				}
+			}
+			if(data.size) {
+				var size = data.size.replaceAll(' ', '').replaceAll('x', '/').replaceAll('m', '/').split('/');
+				$('input[name=size_01]').val(size[0]);
+				$('input[name=size_02]').val(size[1]);
+				$('input[name=size_03]').val(size[2]);
+			}
+			if(data.weight) {
+				var weight = data.weight.replaceAll(' ', '').replace('kg', '');
+				$('input[name=weight]').val(weight);
+			}
+			$('input[name=serial_num]').val(data.serial_num);
+			$('input[name=controller]').val(data.controller);
+			if(data.hope_price) {
+				$('input[name=hope_price]').val(data.hope_price.substring(0, data.hope_price.length-4));
+			}
+			if(data.sort_price == null || data.sort_price == 0)
+				$('input[name=real_price]').val('');
+			else 
+				$('input[name=real_price]').val(data.sort_price.substring(0, data.sort_price.length-4));
+			
+			if(data.method == '고정가격판매') {
+				$('#tbl_fix').removeClass('d-none');
+				$('#tbl_bid').addClass('d-none');
+			} else if(data.method == '입찰') {
+				$('#tbl_fix').addClass('d-none');
+				$('#tbl_bid').removeClass('d-none');
+			}
+			if(data.fixed_price)
+				$('input[name=fixed_price]').val(data.fixed_price.substring(0, data.fixed_price.length-4));
+			if(data.bid_start_price)
+				$('input[name=bid_start_price]').val(data.bid_start_price.substring(0, data.bid_start_price.length-4));
+			if(data.bid_price)
+				$('input[name=bid_price]').val(data.bid_price.substring(0, data.bid_price.length-4));
+			$('input[name=sales_seq]').val(data.sales_seq);
+			$('input[name=userid]').val(data.userid);
+			$('.txt_userid').text(data.userid);
+			
+			$('input[name=turnkey_seq]').val(data.turnkey_seq);
+			$('input[name=factory]').val(data.factory);
+			$('input[name=production]').val(data.production);
+			$('input[name=quantity]').val(data.quantity);
+			$('input[name=last_date]').val(data.last_date);
+			$('input[name=creditor]').val(data.creditor);
+			$('input[name=expect_date]').val(data.expect_date);
+			if(data.pur_price)
+				$('input[name=pur_price]').val(data.pur_price.substring(0, data.pur_price.length-4));
+			$('textarea[name=remark]').val(data.remark);
+			
+			if(data.picture_list) {
+				$.each(data.picture_list, function(index, value) {
+					var preview = $('.preview-div').eq(value.sort-1).find('.preview-back');
+					preview.css('background-image', 'url(\"' + value.path + '\")');
+				});
+			}
+			$('#option_list input').remove();
+			if(data.option_list.length == 0) {
+				var html = '<input type="text" size="9" name="option_arr[]" style="margin-bottom: 3px;"/>';
+				$('#option_list').append(html);
+			} else {
+				$.each(data.option_list, function(index, value) {
+					var html = '<input type="text" size="9" name="option_arr[]" value="' + value.option_name + '" style="display: block; margin: 0 auto 3px;"/>';
+					$('#option_list').append(html);
+				});
+			}
+			
+			setTimeout(function(){
+			    change_mnf_list();
+			    setTimeout(function(){
+			        change_model_list();
+			    }, 500);
+			}, 100);
+		},
+		error: function(request,status,error) {
+			console.log('error');
+		}
+	});
+} else {
+	$('.txt_userid').text('선택안함');
+}
+
+$('.btn_option_add').on('click', function(index, value) {
+	var html = '<input type="text" size="9" name="option_arr[]" style="display: block; margin: 0 auto 3px;"/>';
+	$('#option_list').append(html);
+});
+
+function go_sale_regist_process(mode, type) {
+	if((type == 'emergency' || type == 'direct') && $('input[name=real_price]').val() == '') {
+		alert('판매금액은 필수 사항입니다.');
+		$('input[name=real_price]').focus();
+		return;
+	}
+	if($('input[name=userid]').val() == '') {
+		alert('판매자를 선택해주세요.');
+		return;
+	}
+	var mode_nm = mode == 'insert' ? '등록' : '수정';
+	if(confirm('입력하신 내용으로 ' + mode_nm + '하시겠습니까 ?')) {
+		$.each($('#option_list input'), function(index, value) {
+			if($(this).val() == '') {
+				$(this).remove();
+			}
+		});
+		var txt_mnf = $('#input-mnf');
+    var txt_model = $('#input-model');
+    var input_mnf = 'false';
+    var input_model = 'false';
+    if(!txt_mnf.hasClass('d-none'))
+        input_mnf = 'true';
+    if(!txt_model.hasClass('d-none'))
+        input_model = 'true';
+    
+    if($('select[name=sel_year] option:selected').data('mode') != 'input') {
+        $('input[name=txt_year]').val($('select[name=sel_year] option:selected').data('val')); 
+    }
+    
+    if(!$('select[name=sel_kind] option:selected').data('seq')) {
+    	alert('기계종류를 다시 선택해주세요.');
+    	return;
+    }
+    
+    if(!$('select[name=sel_mnf] option:selected').data('seq')) {
+    	alert('제조사를 다시 선택해주세요.');
+    	return;
+    }
+    
+    if(!$('select[name=sel_model] option:selected').data('seq')) {
+    	alert('모델을 다시 선택해주세요.');
+    	return;
+    }
+    $('input[name=input_mnf]').val(input_mnf);
+    $('input[name=input_model]').val(input_model);
+		$('input[name=kind_no]').val($('select[name=sel_kind] option:selected').parent('optgroup').data('no')); 
+    $('input[name=kind_seq]').val($('select[name=sel_kind] option:selected').data('seq')); 
+    $('input[name=mnf_seq]').val($('select[name=sel_mnf] option:selected').data('seq')); 
+    $('input[name=model_seq]').val($('select[name=sel_model] option:selected').data('seq')); 
+    $('input[name=area_seq]').val($('select[name=sel_area] option:selected').data('seq'));
+    $('input[name=model_year]').val($('input[name=txt_year]').val().replace('년', '')); 
+    $('input[name=deliver_condition]').val($('select[name=sel_deliver_condition] option:selected').data('val')); 
+    $('input[name=size]').val($('input[name=size_01]').val() + ' x ' + $('input[name=size_02]').val() + ' x ' + $('input[name=size_03]').val() + ' m');
+    $('input[name=hope_price]').val($('input[name=hope_price]').val() + '0000');
+    $('input[name=real_price]').val($('input[name=real_price]').val() + '0000');
+    $('input[name=fixed_price]').val($('input[name=fixed_price]').val() + '0000');
+    $('input[name=bid_start_price]').val($('input[name=bid_start_price]').val() + '0000');
+    $('input[name=bid_price]').val($('input[name=bid_price]').val() + '0000');
+    $('input[name=pur_price]').val($('input[name=pur_price]').val() + '0000');
+    
+    $('input[name=method]').val($('select[name=sel_method] option:selected').data('val'));
+    $('input[name=price_proposal]').val($('select[name=sel_price_proposal] option:selected').data('val'));
+    $('input[name=bid_duration]').val($('select[name=sel_bid_duration] option:selected').data('val'));
+    if($('select[name=sel_reduction_rate] option:selected').data('mode') == 'input')
+    	$('input[name=reduction_rate]').val($('input[name=txt_reduction_rate]').val());
+    else
+    	$('input[name=reduction_rate]').val($('select[name=sel_reduction_rate] option:selected').data('val'));
+    if($('select[name=sel_repeat_no] option:selected').data('mode') == 'input')
+    	$('input[name=repeat_no]').val($('input[name=txt_repeat_no]').val());
+    else
+    	$('input[name=repeat_no]').val($('select[name=sel_repeat_no] option:selected').data('val'));
+        
+		$('#frm_regist').submit();
+	}
+}
+
+function show_change_type_layer(type) {
+	$.each($('#sel_type option'), function(index, value) {
+		 if($(this).data('type') == type) {
+			 $(this).prop('selected', true);
+			 return;
+		 }
+	});
+	openDialog('판매방식 변경', "change_type_layer", {"width":"430","height":"165"});
+}
+function go_change_type(type) {
+	 var change = $('#sel_type option:selected').data('type');
+	 if(change == type) {
+		 alert('현재 판매방식과 동일합니다.');
+		 return;
+	 }
+	 if(confirm('선택한 판매방식으로 변경하시겠습니까 ?')) {
+		 $('input[name=type]').val(change);
+		 $('#frm_change_type').submit();
+	 }
+}
+</script>
+
+{ #layout_footer }

@@ -1,0 +1,76 @@
+<div class="container-fluid top-pt">
+        <div class="container pt-5" style="width: 950px;">
+            <div class="row">
+                <div class="col-md-2 col-sm-12">
+                    <div class="filter-wrap-02">
+                            <div class="filter-text-wrap d-block">
+                            <ul class="d-block">
+                                <li {? cate == '1'}class="accent-txt"{/} onclick="location.href='/mch/osc_sch/1'">전체</li>
+                                <!-- {@ cate_list} -->
+                                <li {? cate == .cate_seq+1}class="accent-txt"{/} onclick="location.href='/mch/osc_sch/{.cate_seq+1}'">{.cate_name}</li>
+                                <!-- {/} -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-10 col-sm-12">
+                    <div class="ad-sale-filter mb-3 normal-machine-filter partner-filter">
+                        <h1 class="wrap-title wrap-title-02 txt-bold">수주 업무 찾기</h1>
+                        <div class="box-filter">
+                            <span {? order == '1'}class="accent-txt"{/} onclick="location.href='/mch/osc_sch/{cate}/1'">최근등록 순</span>
+                            <span {? order == '2'}class="accent-txt"{/} onclick="location.href='/mch/osc_sch/{cate}/2'">지원자 적은 순</span>
+                            <span {? order == '3'}class="accent-txt"{/} onclick="location.href='/mch/osc_sch/{cate}/3'">높은 금액 순</span>
+                       </div>
+                    </div>
+                    <!-- {@ osc_list} -->
+                    <div class="scroll-wrap mb-3">
+                        <div class="scroll-div work-div">
+                            <a href="/mch/osc_info/{.osc_seq}">
+                                <i class="work-badge"><!-- {? .state == 1} -->모집중<!-- {: .state == 2} -->모집완료<!-- {/} --></i>
+                                <div class="product-row-01 partner-row">
+                                    <div class="product-row-01 partner-desc work-intro">
+                                        <div class="scroll-desc">
+                                            <h4 class="mr-3 txt-bold">{.osc_name}{? .is_new == true}<i>NEW</i>{/}</h4>
+                                            <span>등록일 : {= date('Y.m.d', strtotime(.reg_date))}</span>
+                                            <span>예상일 : {= date('Y.m.d', strtotime(.start_expect_date))}</span>
+                                            <p>{= nl2br(.osc_content)}</p>
+                                            <div class="product-row-01">
+                                                <p>지역 : {.area_name}</p>
+                                                <p>관련기술 : 
+                                                <!-- {@ tech_list} -->
+                                                <span class="btn-type-01 d-inline-block mb-0">{..value_}</span>
+                                                <!-- {:} -->없음
+                                                <!-- {/} -->
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="work-info">
+                                        <p class="work-info-price"><b>{= number_format(.budget)}</b>원</p>
+                                        <div class="work-info-row">
+                                            <p>마감일 <i>{= date('Y.m.d', strtotime(.osc_end_date))}</i></p>
+                                            <p>지원자 <i>{.apply_cnt}명</i></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div> 
+                    </div>
+                    <!-- {:} -->
+                    <div class="default-box">
+                        <p class="default-message">해당 조건의 수주 업무가 없습니다.</p>
+                    </div>
+                    <!-- {/} -->
+                    
+                    <div class="mb-5 page-numbers">
+                        <!-- {@ range(1, page_num)} -->
+                        <span {? .value_ == page}class="page-number-active"{/} onclick="location.href='/mch/osc_sch/{cate}/{order}/{.value_}'">{.value_}</span>
+                        <!-- {:} -->
+                        <span class="page-number-active">1</span>
+                        <!-- {/} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>

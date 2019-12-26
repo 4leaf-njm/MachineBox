@@ -1,0 +1,127 @@
+<div class="container-fluid top-pt">
+	<div class="container pt-5">
+		<div class="row">
+            <div class="col-md-2 col-sm-12">
+                {# mypage_menu}
+            </div>
+
+			<div class="col-md-10 col-sm-12">
+				<h1 class="wrap-title wrap-title-02 txt-bold mb-3">결제 내역</h1>
+                <p class="wrap-title-sub txt-demi-light mb-4 txt-left">고객님이 머신박스의 다양한 서비스 이용 시 결제 또는 결제 대기하신 내역을 확인하실 수 있습니다.</p>
+                
+                <div class="search-wrap">
+                    <form action="/user/my_pay_list" method="post" id="frm_search">
+                        <div class="search-row">
+                            <h2 class="search-title">서비스 이용</h2>
+                            
+                            <div class="search-content">
+                                <input type="hidden" name="pay_type_list" />
+                                <ul class="pay-type-list">
+                                    <li><label><input type="checkbox" name="pay_type" value="현장미팅">현장미팅</label></li>
+                                    <li><label><input type="checkbox" name="pay_type" value="머박다이렉트">머박다이렉트</label></li>
+                                    <li><label><input type="checkbox" name="pay_type" value="프리미엄광고">프리미엄광고</label></li>
+                                    <li><label><input type="checkbox" name="pay_type" value="기계평가">기계평가</label></li>
+                                    <li><label><input type="checkbox" name="pay_type" value="성능검사">성능검사</label></li>
+                                    <li><label><input type="checkbox" name="pay_type" value="비교견적">비교견적</label></li>
+                                    <li><label><input type="checkbox" name="pay_type" value="외주">외주</label></li>
+                                    <li><label><input type="checkbox" name="pay_type" value="배송대행">배송대행</label></li>
+                                    <li><label><input type="checkbox" name="pay_type" value="기타">기타</label></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="search-row">
+                            <h2 class="search-title">결제 날짜별</h2>
+                            <div class="search-content">
+                                <div class="select-date">
+                                    <input type="text" name="date_s" id="date_s" class="pickadate_default" value="{date_s}"/> 부터
+                                    <input type="text" name="date_f" id="date_f" class="pickadate_default" value="{date_f}"/> 까지
+                                </div>
+                                <div class="select-date-btn">
+                                    <button type="button" id="today" class="select_date">오늘</button>
+                                    <button type="button" id="1week" class="select_date">1주일</button>
+                                    <button type="button" id="15day" class="select_date">15일</button>
+                                    <button type="button" id="1month" class="select_date">1개월</button>
+                                    <button type="button" id="3month" class="select_date">3개월</button>
+                                </div>
+                                <div class="search-button">
+                                    <button type="button">조회</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <h2 class="wrap-title-sub-02 mt-5"><i class="ico_arrow_right"></i>결제건 수 : 총 <span>{= count(pay_list)}</span>건</h2>
+                <table class="my-table-style mb-5">
+                    <tr>
+                        <th width="120">결제일</th>
+                        <th width="110">결제번호</th>
+                        <th width="220">결제내용</th>
+                        <th width="90">결제금액</th>
+                        <th width="90">결제수단</th>
+                    </tr>
+                    <!-- {@ pay_list} -->
+                     <tr>
+                        <td>{.reg_date}</td>
+                        <td>{.pay_no}</td>
+                        <td>{.pay_content}</td>
+                        <td>{= number_format(.pay_price)}</td>
+                        <td>{.pay_method}</td>
+                    </tr>
+                    <!-- {:} -->
+                    <tr>
+                        <td colspan="5">결제내역이 없습니다.</td>
+                    </tr>
+                    <!-- {/} -->
+                </table>
+                
+                <h2 class="wrap-title-sub-02 mt-5"><i class="ico_arrow_right"></i>결제대기 건 수 : 총 <span>{= count(pay_wait_list)}</span>건</h2>
+                <table class="my-table-style mb-3">
+                    <tr>
+                        <th width="120">신청일</th>
+                        <th width="110">결제번호</th>
+                        <th width="220">결제 대기 내용</th>
+                        <th width="90">결제예상금액</th>
+                        <th width="90">상태</th>
+                    </tr>
+                    <!-- {@ pay_wait_list} -->
+                    <tr>
+                        <td>{.reg_date}</td>
+                        <td>{.pay_no}</td>
+                        <td>{.pay_content}</td>
+                        <td>{? .pay_state == '승인대기'}-{:}{= number_format(.pay_price)}{/}</td>
+                        <td>{.pay_state}</td>
+                    </tr>
+                    <!-- {:} -->
+                    <tr>
+                        <td colspan="5">결제대기 내역이 없습니다.</td>
+                    </tr>
+                    <!-- {/} -->
+                </table>
+                <p class="wrap-title-sub txt-demi-light mb-1 txt-left" style="font-size: 12.5px;">결제대기는 무통장 결제 시 입금확인이 되지 않은 내역입니다.</p>
+                <p class="wrap-title-sub txt-demi-light txt-left" style="font-size: 12.5px;">입금은 3일 이내에 확인되어야 하고, 이후에는 자동 취소됩니다.</p>
+            </div>
+		</div>
+	</div>
+</div>
+
+<script>
+    //$('#date_s').val(getDate(90));
+    //$('#date_f').val(getDate(0));
+    
+    $('.search-button button').on('click', function(){
+        var pay_type_list = '';
+        $.each($('input[name=pay_type]:checked'), function (index, value) {
+            pay_type_list += pay_type_list == '' ? '\'' + $(this).val() + '\'': ', \'' + $(this).val() + '\'';
+        });
+        $('input[name=pay_type_list]').val(pay_type_list);
+        $('#frm_search').submit();
+    });
+    
+    $.each($('input[name=pay_type]'), function (index, value) {
+        var pay_type_list = "{pay_type_list}";
+        if(pay_type_list.indexOf($(this).val()) !== -1) {
+            $(this).prop('checked', true);
+        }
+    });
+</script>
