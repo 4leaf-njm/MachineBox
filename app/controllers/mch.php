@@ -703,40 +703,50 @@ class mch extends front_base {
         $query = "select * from fm_member order by regist_date desc";
         $query = $this->db->query($query);
         $new_list = $query->result_array();
-        
         foreach($new_list as &$row) {
             $query = "select * from fm_member_business where member_seq = ".$row['member_seq'];
             $query = $this->db->query($query);
             $result = $query->row_array();
             
+            $addr_arr = array();
             if(empty($result)) {
                 $address = explode(' ', $row['address'])[0];
-                $address = str_split($address); 
-                $isEqual = true;
+                for($i=0; $i<mb_strlen($address,"UTF-8"); $i++)
+                    $addr_arr[] = mb_substr($address, $i, 1, "UTF-8"); 
+                if(empty($addr_arr))
+                    continue;
                 
                 $query = "select * from fm_cm_machine_area";
                 $query = $this->db->query($query);
                 $result2 = $query->result_array();
+
                 foreach($result2 as $row2) {
-                    $row2 = str_split($row2);
-                    if(count(array_intersect($address, $row2)) == 2) {
-                        $row['area_name'] = $row2;
+                    $row2_arr = array();
+                    for($i=0; $i<mb_strlen($row2['area_name'],"UTF-8"); $i++)
+                        $row2_arr[] = mb_substr($row2['area_name'], $i, 1, "UTF-8"); 
+                    
+                    if(count(array_intersect($addr_arr, $row2_arr)) == 2) {
+                        $row['area_name'] = $row2['area_name'];
                     }
                 }
             } else {
                 $address = explode(' ', $result['baddress'])[0];
-                $address = str_split($address);
-                $isEqual = true;
+                for($i=0; $i<mb_strlen($address,"UTF-8"); $i++)
+                    $addr_arr[] = mb_substr($address, $i, 1, "UTF-8"); 
+                if(empty($addr_arr))
+                    continue;
                
                 $query = "select * from fm_cm_machine_area";
                 $query = $this->db->query($query);
                 $result2 = $query->result_array();
                 
                 foreach($result2 as $row2) {
-                    $row2 = str_split($row2);
-                    echo $row2[0]. " ";
-                    if(count(array_intersect($address, $row2)) == 2) {
-                        $row['area_name'] = $row2;
+                    $row2_arr = array();
+                    for($i=0; $i<mb_strlen($row2['area_name'],"UTF-8"); $i++)
+                        $row2_arr[] = mb_substr($row2['area_name'], $i, 1, "UTF-8"); 
+                    
+                    if(count(array_intersect($addr_arr, $row2_arr)) == 2) {
+                        $row['area_name'] = $row2['area_name'];
                     }
                 }
             }

@@ -1643,7 +1643,7 @@ class sch extends front_base
         $query = $this->db->query($query);
         $info = $query->row_array();
 
-        $query = "select * from fm_cm_machine_find_recommend a, fm_cm_machine_sales b, fm_cm_machine_sales_info c, fm_cm_machine_kind d, fm_cm_machine_area e, fm_cm_machine_sales_picture f " . "where a.info_seq = c.info_seq and b.sales_seq = c.sales_seq and c.kind_seq = d.kind_seq and c.area_seq = e.area_seq and c.info_seq = f.info_seq " . "and c.state = '승인' and c.sort_price is not null and c.sort_price != 0 and f.sort = 2 and a.find_seq = " . $find_seq . " " . "order by a.reg_date desc";
+        $query = "select * from fm_cm_machine_find_recommend a, fm_cm_machine_sales b, fm_cm_machine_sales_info c, fm_cm_machine_kind d, fm_cm_machine_area e, fm_cm_machine_sales_picture f, fm_cm_machine_model g, fm_cm_machine_manufacturer h " . "where a.info_seq = c.info_seq and b.sales_seq = c.sales_seq and c.kind_seq = d.kind_seq and c.area_seq = e.area_seq and c.info_seq = f.info_seq and c.model_seq = g.model_seq and c.mnf_seq = h.mnf_seq " . "and c.state = '승인' and c.sort_price is not null and c.sort_price != 0 and f.sort = 2 and a.find_seq = " . $find_seq . " " . "order by a.reg_date desc";
         $query = $this->db->query($query);
         $rec_list = $query->result_array();
 
@@ -1723,7 +1723,7 @@ class sch extends front_base
             "template_path" => $this->template_path
         ));
 
-        $query = "select * from fm_cm_machine_sales b, fm_cm_machine_sales_info c, fm_cm_machine_kind d, fm_cm_machine_area e, fm_cm_machine_sales_picture f " . "where b.sales_seq = c.sales_seq and c.kind_seq = d.kind_seq and c.area_seq = e.area_seq and c.info_seq = f.info_seq " . "and c.state = '승인' and c.sort_price is not null and c.sort_price != 0 and f.sort = 2 and userid ='" . $userData['userid'] . "' " . "order by sales_date desc";
+        $query = "select * from fm_cm_machine_sales b, fm_cm_machine_sales_info c, fm_cm_machine_kind d, fm_cm_machine_area e, fm_cm_machine_sales_picture f, fm_cm_machine_model g, fm_cm_machine_manufacturer h " . "where b.sales_seq = c.sales_seq and c.kind_seq = d.kind_seq and c.area_seq = e.area_seq and c.info_seq = f.info_seq and c.model_seq = g.model_seq and c.mnf_seq = h.mnf_seq " . "and c.state = '승인' and c.sort_price is not null and c.sort_price != 0 and f.sort = 2 and userid ='" . $userData['userid'] . "' " . "order by sales_date desc";
         $query = $this->db->query($query);
         $my_list = $query->result_array();
 
