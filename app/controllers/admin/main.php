@@ -1676,7 +1676,7 @@ class main extends admin_base {
 	   $resultMap = array();
 	   
        $query = "select count(*) as cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c, fm_cm_machine_manufacturer d, fm_cm_machine_model e ".
-   	       "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.mnf_seq = d.mnf_seq and b.model_seq = e.model_seq and state = '승인' and sales_yn = 'n'";
+   	       "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.mnf_seq = d.mnf_seq and b.model_seq = e.model_seq and state in('승인', '입금대기', '계약대기') and wait_yn = 'n' and sales_yn = 'n'";
        $query = $this->db->query($query);
        $resultMap['state_count_01'] = $query->row_array()['cnt'];
 	       
@@ -1785,7 +1785,7 @@ class main extends admin_base {
         $query = "select count(*) as cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c,".
   		        "fm_cm_machine_manufacturer d, fm_cm_machine_model e, fm_cm_machine_area f ".
   		        "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.mnf_seq = d.mnf_seq ".
-  		        "and b.model_seq = e.model_seq and b.area_seq = f.area_seq and (state in('미승인', '보류') or wait_yn = 'y') ";
+  		        "and b.model_seq = e.model_seq and b.area_seq = f.area_seq and (state in('미승인', '보류') or wait_yn = 'y') and b.sales_yn = 'n'";
         $query = $this->db->query($query);
         $resultMap['permit_count_01'] = $query->row_array()['cnt'];
 		        
@@ -1840,7 +1840,7 @@ class main extends admin_base {
         $query = "select count(*) as cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c,".
   		        "fm_cm_machine_manufacturer d, fm_cm_machine_model e, fm_cm_machine_area f ".
   		        "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.mnf_seq = d.mnf_seq ".
-  		        "and b.model_seq = e.model_seq and b.area_seq = f.area_seq and sales_yn = 'n' and state in('승인', '입금대기', '계약대기') and wait_yn = 'n' ";
+  		        "and b.model_seq = e.model_seq and b.area_seq = f.area_seq and sales_yn = 'n' and state in('승인', '입금대기', '계약대기') and wait_yn = 'n'  and b.sales_yn = 'n'";
         $query = $this->db->query($query);
         $resultMap['progress_count_01'] = $query->row_array()['cnt'];
 		        

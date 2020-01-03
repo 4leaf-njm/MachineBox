@@ -65,7 +65,11 @@
                                             <img class="product-machine-img" src="{.path}" height="115"/>
                                             <div class="scroll-desc">
                                                 <div class="product-row-01">
-                                                    <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                                    <h4 class="desc-kind mr-2 txt-medium">
+                                                        <span>{.kind_name}</span>
+                                                        <span>{.model_name}</span>
+                                                        <span>{.mnf_name}</span>
+                                                    </h4>
                                                     <a href="/sale/{.type}_reg/{.info_seq}/emergency/{.type}" class="btn small mr-2">등록정보 수정</a>
                                                     <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
                                                     <span class="btn-type-01">입찰진행</span>
@@ -136,7 +140,11 @@
                                             <img class="product-machine-img" src="{.path}" height="115"/>
                                             <div class="scroll-desc">
                                                 <div class="product-row-01">
-                                                    <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                                    <h4 class="desc-kind mr-2 txt-medium">
+                                                        <span>{.kind_name}</span>
+                                                        <span>{.model_name}</span>
+                                                        <span>{.mnf_name}</span>
+                                                    </h4>
                                                     <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
                                                     <span class="btn-type-01">입찰진행</span>
                                                     <!-- {/} -->

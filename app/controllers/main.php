@@ -196,13 +196,13 @@ class main extends front_base {
         
         $query = "select count(*) as new_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c, fm_cm_machine_model d, fm_cm_machine_manufacturer e ".
                  "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.model_seq = d.model_seq and b.mnf_seq = e.mnf_seq ".
-                 "and state = '승인' and sales_date > date_add(now(),interval - 1 day)";
+                 "and state in('승인', '미승인', '보류', '입금대기', '계약대기') and sales_date > date_add(now(),interval - 1 day)";
         $query = $this->db->query($query);
         $result = $query->row();
         $resultMap['sales_new_cnt'] = $result->new_cnt;
 
         $query = "select count(*) as total_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c, fm_cm_machine_model d, fm_cm_machine_manufacturer e ".
-                 "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.model_seq = d.model_seq and b.mnf_seq = e.mnf_seq and state = '승인'";
+                 "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.model_seq = d.model_seq and b.mnf_seq = e.mnf_seq and state in('승인', '미승인', '보류', '입금대기', '계약대기')";
         $query = $this->db->query($query);
         $result = $query->row();
         $resultMap['sales_total_cnt'] = $result->total_cnt;

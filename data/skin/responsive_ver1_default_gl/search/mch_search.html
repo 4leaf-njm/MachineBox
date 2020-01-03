@@ -156,7 +156,11 @@
                             <a href="/sch/mch_detail/{.type}/{.info_seq}">
                                 <img src="{.path}" alt="">
                                 <div class="scroll-desc">
-                                    <h4 class="desc-kind">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                    <h4 class="desc-kind">
+                                        <span>{.kind_name}</span>
+                                        <span>{.model_name}</span>
+                                        <span>{.mnf_name}</span>
+                                    </h4>
                                     <span>{= str_replace('년', '', .model_year)}년형</span>
                                     <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
                                     <span>{.area_name}</span>
@@ -213,7 +217,11 @@
                                 <a href="/sch/mch_detail/{.type}/{.info_seq}">
                                     <img src="{.path}" alt="">
                                     <div class="scroll-desc">
-                                        <h4 class="desc-kind">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                        <h4 class="desc-kind">
+                                            <span>{.kind_name}</span>
+                                            <span>{.model_name}</span>
+                                            <span>{.mnf_name}</span>
+                                        </h4>
                                         <span>{= str_replace('년', '', .model_year)}년형</span>
                                         <span>{= date('Y.m.d', strtotime(.sales_date))}</span>
                                         <span>{.area_name}</span>
@@ -257,7 +265,11 @@
                                             <img class="product-machine-img" src="{.path}" height="115"/>
                                             <div class="scroll-desc">
                                                 <div class="product-row-01" style="flex-wrap: wrap;">
-                                                    <h4 class="desc-kind mr-2 txt-medium">{.kind_name}<span>{.model_name}</span>{.mnf_name}</h4>
+                                                    <h4 class="desc-kind mr-2 txt-medium">
+                                                        <span>{.kind_name}</span>
+                                                        <span>{.model_name}</span>
+                                                        <span>{.mnf_name}</span>
+                                                    </h4>
                                                     <!-- {? .method == '입찰' && .bid_yn == 'n'} -->
                                                     <span class="btn-type-01 mr-2">입찰진행</span>
                                                     <!-- {/} -->
