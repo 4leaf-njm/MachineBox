@@ -144,7 +144,7 @@
                                 <div class="form-row-02">
                                     <div class="my-div-3 border">
                                         <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">대기</h4>
-                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">임시저장 &nbsp;<i class="accent-txt" id="sale-temp-data-count"></i> 대</p>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">대기 &nbsp;<i class="accent-txt" id="sale-temp-data-count"></i> 대</p>
                                     </div>
                                     <div class="my-div-3 border">
                                         <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">삭제</h4>
@@ -221,7 +221,7 @@
                                 <div class="form-row-02">
                                     <div class="my-div-3 border">
                                         <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">대기</h4>
-                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">임시저장 <i class="accent-txt" id="osc-temp-data-count"></i> 건</p>
+                                        <p class="sm-txt-14 pt-3 pb-3 txt-center spacing-072">대기 <i class="accent-txt" id="osc-temp-data-count"></i> 건</p>
                                     </div>
                                     <div class="my-div-3 border">
                                         <h4 class="sm-txt-14 txt-center pt-2 pb-2 my-title-bg txt-bold spacing-072">삭제</h4>
@@ -303,7 +303,8 @@
     if(sale_temp_list != null) {
         sale_temp_data_count = sale_temp_list.length;
     }
-    $('#sale-temp-data-count').text(sale_temp_data_count);
+    var count = sale_temp_data_count + parseInt('{sales_count.wait_cnt}');
+    $('#sale-temp-data-count').text(count);
     
     var osc_temp_list = JSON.parse(localStorage.getItem('osc_temp_list'));
     var osc_temp_data_count = 0;

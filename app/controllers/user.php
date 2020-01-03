@@ -1946,21 +1946,28 @@ class user extends front_base {
 	
 	private function get_sales_count($userid) {
 	    $result_array = array();
-	    $query = "select count(*) as fixed_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_sales_detail c where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and b.state = '승인' and sales_yn = 'n' and b.sort_price is not null and b.sort_price != 0 and method = '고정가격판매' and userid = '".$userid."'";
+	    $query = "select count(*) as fixed_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_sales_detail c where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and b.state = '승인' and wait_yn = 'n' and sales_yn = 'n' and b.sort_price is not null and b.sort_price != 0 and method = '고정가격판매' and userid = '".$userid."'";
 	    $query = $this->db->query($query);
 	    $result = $query->row_array();
 	    $result_array['fixed_cnt'] = $result['fixed_cnt'];
 	    
-	    $query = "select count(*) as bid_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_sales_detail c where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and b.state = '승인' and sales_yn = 'n' and b.sort_price is not null and b.sort_price != 0 and method = '입찰' and bid_yn = 'n' and userid = '".$userid."'";
+	    $query = "select count(*) as bid_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_sales_detail c where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and b.state = '승인' and wait_yn = 'n' and sales_yn = 'n' and b.sort_price is not null and b.sort_price != 0 and method = '입찰' and bid_yn = 'n' and userid = '".$userid."'";
 	    $query = $this->db->query($query);
 	    $result = $query->row_array();
 	    $result_array['bid_cnt'] = $result['bid_cnt'];
 	    
-	    $query = "select count(*) as direct_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b where a.sales_seq = b.sales_seq and b.state = '승인' and sales_yn = 'n' and b.sort_price is not null and b.sort_price != 0 and type = 'direct' and userid = '".$userid."'";
+	    $query = "select count(*) as direct_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b where a.sales_seq = b.sales_seq and b.state = '승인' and wait_yn = 'n' and sales_yn = 'n' and b.sort_price is not null and b.sort_price != 0 and type = 'direct' and userid = '".$userid."'";
 	    $query = $this->db->query($query);
 	    $result = $query->row_array();
 	    $result_array['direct_cnt'] = $result['direct_cnt'];
-	    
+		
+		$direct_list = $this->get_sale_list($userData['userid'], '다이렉트', 'wait');
+        $self_wait_list = $this->get_sale_list($userData['userid'], '셀프판매대기', 'wait');
+	    $self_list = $this->get_sale_list($userData['userid'], '셀프판매', 'wait');
+		$bid_list = $this->get_sale_list($userData['userid'], '입찰', 'wait', '', 'sale');
+		
+		$result_array['wait_cnt'] = count($direct_list) + count($self_wait_list) + count($self_list) + count($bid_list);
+		
         $query = "select count(*) as cancel_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b where a.sales_seq = b.sales_seq and b.state = '등록취소'  and b.sort_price is not null and b.sort_price != 0 and userid = '".$userid."'";
 	    $query = $this->db->query($query);
 	    $result = $query->row_array();
@@ -2102,14 +2109,14 @@ class user extends front_base {
 	    if($type == '셀프판매') {
 			$where_query .= "and b.state = '입금대기' and sales_yn = 'n' and wait_yn = 'n' ";	
 	    } else if($type == '셀프판매대기') {
-	        $where_query .= "and wait_yn = 'y' ";
+	        $where_query .= "and b.state not in('입금대기', '등록취소') and sales_yn = 'n' and wait_yn = 'y' ";
 	    } else if($state == 'wait') {
 	        if($type == '입찰') {
 	            if($page_type == 'sale')
 	                $where_query .= "and b.state not in('입금대기', '등록취소') and sales_yn = 'n' and wait_yn = 'n' ";
-	            $detail_query .= "and bid_yn = 'y' "; 
+	            $detail_query .= "and bid_yn = 'y' ";
 	        }
-	        else 
+	        else
     	        $where_query .= "and b.state != '승인' and (b.sort_price is null or b.sort_price = 0) and sales_yn = 'n' and wait_yn = 'n' ";
 	    } else if ($state == 'ing') {
 	        if($type == '입찰') {

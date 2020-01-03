@@ -619,7 +619,76 @@ class main extends admin_base {
 	            );
                 $this->db->where('pay_state', '승인대기');
 	            $this->db->update('fm_cm_machine_delivery', $data);
-	        } 
+	        } else if ($type == '회원') {
+				$key = get_shop_key();
+	    
+				$sqlSelectClause = "
+						select
+							A.member_seq,A.userid,A.user_name,A.nickname,A.mailing,A.sms,A.emoney,A.point,A.cash,A.regist_date,A.lastlogin_date,A.review_cnt,A.login_cnt,A.birthday,A.zipcode,A.address_street,A.address_type,A.address,A.address_detail,A.sns_f,A.anniversary,A.recommend,A.sex,A.mtype,
+							AES_DECRYPT(UNHEX(A.email), '{$key}') as email,
+							AES_DECRYPT(UNHEX(A.phone), '{$key}') as phone,
+							AES_DECRYPT(UNHEX(A.cellphone), '{$key}') as cellphone,
+							CASE WHEN A.status = 'done' THEN '승인'
+								WHEN A.status = 'hold' THEN '미승인'
+								WHEN A.status = 'withdrawal' THEN '탈퇴'
+								WHEN A.status = 'dormancy' THEN '휴면'
+							ELSE '' END AS status_nm, A.mall_t_check,
+							B.bname, B.bphone, B.bcellphone, B.business_seq, B.baddress_type, B.baddress, B.baddress_detail,
+							B.bzipcode, B.bceo, B.bno, B.bitem,
+							B.bstatus, B.bperson, B.bpart,
+							B.bpermit_yn, B.main_dealer_yn, B.bcard_path,
+							A.member_order_cnt,A.member_order_price,A.member_recommend_cnt ,A.member_invite_cnt,
+							A.referer, A.referer_domain,
+							IF(C.referer_group_no>0, C.referer_group_name, IF(LENGTH(A.referer)>0,'기타','직접입력')) as referer_name,
+							A.group_seq,D.group_name,
+							A.rute,
+							A.sns_change,
+							A.blacklist,
+							CASE WHEN length(A.sns_n) >= '10'
+								THEN concat(left(A.sns_n, 10 - 1),'*n')
+								ELSE concat(left(A.sns_n, length(A.sns_n) - 1),'*n')
+							END AS conv_sns_n
+					";
+				$sqlFromClause = "
+						from
+							fm_member A
+							LEFT JOIN fm_member_business B ON A.member_seq = B.member_seq
+							LEFT JOIN fm_referer_group C ON A.referer_domain = C.referer_group_url
+							LEFT JOIN fm_member_group D ON A.group_seq = D.group_seq
+					";
+				$sqlWhereClause = "
+						where A.status in ('done','hold','dormancy') and (B.bpermit_yn = 'n' or B.main_dealer_yn = 'h') ";
+				$sqlOrderClause = "order by A.regist_date desc";
+				
+				$query = "
+					{$sqlSelectClause}
+					{$sqlFromClause}
+					{$sqlWhereClause}
+					{$sqlOrderClause}
+				";
+				$query = $this->db->query($query);
+				$list = $query->result_array();
+				
+				foreach($list as &$row) {
+					if($row['mtype'] == 'business'){
+						$row['type'] = '기업';
+						
+						$query = "select label_value as gubun from fm_member_subinfo where label_title = '회원구분' and member_seq = ".$row['member_seq'];
+						$query = $this->db->query($query);
+						$row['gubun'] = $query->row()->gubun == '기업회원' ? '기업' : '딜러';
+					} else {
+						$row['type'] = '개인';
+						$row['gubun'] = '개인';
+					}
+				}
+
+				$data = array(
+	                'admin_view_yn' => 'y'
+	            );
+				$this->db->where('bpermit_yn', 'n')
+				         ->or_where('main_dealer_yn', 'h');
+	            $this->db->update('fm_member_business', $data);
+			}
 	    } else if ($title == '진행현황') {
 	        if($type == '판매등록') {
 	            $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c,".
@@ -869,7 +938,6 @@ class main extends admin_base {
 	   	            "order by c.reg_date desc";
 	            $query = $this->db->query($query);
 	            $list = $query->result_array();
-	            
 	        } else if($type == '머박다이렉트') {
 	            $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_pay c ".
 	                  "where a.sales_seq = b.sales_seq and b.info_seq = c.target_seq and b.state != '등록취소' and c.pay_type = '머박다이렉트' ".
@@ -1671,6 +1739,22 @@ class main extends admin_base {
 	    
 	    echo json_encode(array('result' => $result));
 	}
+
+	public function permit_member() {
+        header("Content-Type: application/json");
+        
+        $member_seq = $this->input->post('member_seq');
+        $result = false;
+        $data = array(
+            'bpermit_yn' => 'y'
+        );
+        $this->db->where('member_seq', $member_seq);
+        $this->db->update('fm_member_business', $data);
+        
+        $result = true;
+	    
+	    echo json_encode(array('result' => $result));
+    }
                             
 	private function get_main_count() {
 	   $resultMap = array();
@@ -1836,7 +1920,11 @@ class main extends admin_base {
         $query = "select count(*) as cnt from fm_cm_machine_delivery where pay_state = '승인대기'";
         $query = $this->db->query($query);
         $resultMap['permit_count_11'] = $query->row_array()['cnt'];
-        
+		
+		$query = "select count(*) as cnt from fm_member a, fm_member_business b where a.member_seq = b.member_seq and a.status in ('done', 'hold', 'dormancy') and (bpermit_yn = 'n' or main_dealer_yn = 'h')"; 
+	    $query = $this->db->query($query);
+		$resultMap['permit_count_12'] = $query->row_array()['cnt'];
+
         $query = "select count(*) as cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c,".
   		        "fm_cm_machine_manufacturer d, fm_cm_machine_model e, fm_cm_machine_area f ".
   		        "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.mnf_seq = d.mnf_seq ".
@@ -2073,7 +2161,11 @@ class main extends admin_base {
 	    $query = "select count(*) as cnt from fm_cm_machine_delivery where pay_state = '승인대기' and admin_view_yn = 'n'";
 	    $query = $this->db->query($query);
 	    $resultMap['permit_new_11'] = $query->row_array()['cnt'] > 0 ? 'y' : 'n';
-	    
+		
+		$query = "select count(*) as cnt from fm_member a, fm_member_business b where a.member_seq = b.member_seq and a.status in ('done', 'hold', 'dormancy') and (bpermit_yn = 'n' or main_dealer_yn = 'h')  and admin_view_yn = 'n'";
+	    $query = $this->db->query($query);
+		$resultMap['permit_new_12'] = $query->row_array()['cnt'] > 0 ? 'y' : 'n';
+		
         $query = "select count(*) as cnt from fm_cm_machine_sales_info where admin_view_yn = 'n' and sales_yn = 'n' and state in('승인', '입금대기', '계약대기') and wait_yn = 'n'";
 	    $query = $this->db->query($query);
 	    $resultMap['progress_new_01'] = $query->row_array()['cnt'] > 0 ? 'y' : 'n';

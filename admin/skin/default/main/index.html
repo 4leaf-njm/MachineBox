@@ -513,6 +513,10 @@ function manualEndClose(){
 								<dt>배송대행{? permit_new_11 == 'y'}<span class="text-new">new</span>{/}</dt>
 								<dd>{permit_count_11}건</dd>
 							</dl>
+							<dl class="hand" onclick="show_list_layer()">
+								<dt>회원{? permit_new_12 == 'y'}<span class="text-new">new</span>{/}</dt>
+								<dd>{permit_count_12}건</dd>
+							</dl>
 						</div>
 					</div>
 				</li>
@@ -1436,6 +1440,36 @@ function manualEndClose(){
 				  console.log('error');
 			  }
 		 });
+	}
+	
+	function permit_member(member_seq, bpermit_yn, bcard_path) {
+		if(bpermit_yn == 'y') {
+			alert('이미 승인된 회원입니다.');
+			return;
+		} else if(bcard_path == 'null' || bcard_path == '') {
+			alert('사업자 확인이 안된 회원입니다.');
+			return;
+		}
+
+        if(confirm('승인처리 하시겠습니까 ?')) {
+            $.ajax({
+                type: 'post',
+                url: '/admin/main/permit_member',
+                dataType: 'json',
+                data: {'member_seq': member_seq},
+                success: function(data) {
+                    if(data.result == true) {
+                        alert('처리 되었습니다.');
+                        location.reload();
+                    } else {
+                        alert('일시적인 에러가 발생하였습니다.');
+                    }
+                },
+                error: function() {
+                    console.log('error');
+                }
+            });
+        }
 	}
 	
 	function go_main_search() {
@@ -2796,6 +2830,90 @@ function manualEndClose(){
 									td_data += '<td align="center">' + value.deliv_content.replace(/(\n|\r\n)/g, '<br>') + '</td>';
 									td_data += '<td align="center">' + (value.pay_state == '승인대기' ? '미승인' : '승인') + '</td>';
 									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="show_common_permit_layer(\'' + data.type + '\', \'deliv_seq\', \'' + value.deliv_seq + '\')"/></span></div></td>';
+									td_data += '</tr>';
+								});
+							} else {
+								th_data += '<th>' + data.type + '</th>';
+								td_data += '<tr class="list-row">';
+								td_data += '<td align="center">조회된 결과가 없습니다.</td>';
+								td_data += '</tr>';
+							}
+						} else if (data.type == '회원') {
+							if(data.list.length > 0) {
+								th_data += '<th width="80">유형</th>';
+								th_data += '<th width="120">승인여부</th>';
+								th_data += '<th width="80">승인</th>';
+								th_data += '<th width="140">공식딜러 승인</th>';
+								th_data += '<th width="150">아이디</th>';
+								th_data += '<th width="180">이름(닉네임)</th>';
+								th_data += '<th width="180">이메일</th>';
+								th_data += '<th width="160">핸드폰</th>';
+								th_data += '<th width="190">가입일</th>';
+								
+								$.each(data.list, function(index, value) {
+									var bpermit = '';
+									if(value.bpermit_yn == 'y')
+										bpermit = '승인';
+									else
+										bpermit = '미승인';
+									
+									var gubun = '';
+									var username = '';
+									if(value.type == '개인') {
+										gubun = '<img src="../images/common/icon/icon_personal.gif" />';
+										username += value.user_name;
+									} else if(value.type == '기업') {
+										gubun = '<img src="../images/common/icon/icon_besiness.gif" />';
+										username += value.bname;
+									}
+									gubun += value.gubun;
+									
+									if(username == 'null')
+										username = '없음';
+									else {
+										if(!value.nickname == false)
+											username += '(' + value.nickname + ')';
+									}
+									
+									var email = '';
+									if(value.email && value.email != '--') {
+										email += value.email;
+									} else {
+										email += '없음';
+									}
+									
+									var cellphone = '';
+									if((value.bcellphone && value.bcellphone != '--') || (value.cellphone  && value.cellphone != '--')) {
+										cellphone += value.bcellphone ? value.bcellphone : value.cellphone;
+									} else {
+										cellphone += '없음';
+									}
+									td_data += '<tr class="list-row">';
+									td_data += '<td align="center">' + gubun + '</td>';
+									td_data += '<td align="center">' + bpermit;
+										if(value.bcard_path && value.bcard_path != '')
+										td_data += '<span class="btn small valign-middle" style="position: absolute; top: 7px; right: 4px;"><input type="button" value="확인" onclick="download_bcard(\'' + value.bcard_path + '\')" /></span>';
+									td_data += '</td>';
+									td_data += '<td align="center"><div><span class="btn small valign-middle"><input type="button" value="승인" onclick="permit_member(' + value.member_seq + ', \'' + value.bpermit_yn + '\', \'' + value.bcard_path + '\')"/></span></div></td>';
+									td_data += '<td align="center">';
+									if(value.gubun == '개인')
+										td_data += '-';
+									else if(value.gubun == '기업')
+										td_data += '-';		
+									else if(value.gubun == '딜러') {
+										if(value.main_dealer_yn == 'y') 
+										td_data += '공식딜러';		
+										else if(value.main_dealer_yn == 'h') 
+										td_data += '승인대기<span class="btn small valign-middle" style="position: absolute; top: 7px; right: 10px;"><input type="button" value="승인" onclick="go_dealer_permit(' + value.member_seq + ')" /></span>';
+										else
+										td_data += '신청안함';
+									}
+									td_data += '</td>';
+									td_data += '<td align="center"><a href="javascript:show_user_layer(\'' + value.userid + '\')">' + value.userid + '</a></td>';
+									td_data += '<td align="center">' + username + '</td>';
+									td_data += '<td align="center">' + email + '</td>';
+									td_data += '<td align="center">' + cellphone + '</td>';
+									td_data += '<td align="center">' + value.regist_date + '<br/>' + value.lastlogin_date + '</td>';
 									td_data += '</tr>';
 								});
 							} else {
