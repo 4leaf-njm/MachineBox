@@ -451,12 +451,14 @@ class main extends admin_base {
 	            $list = $query->result_array();
 	            
 	            foreach($list as &$row) {
-	                $query = "select * from fm_cm_machine_visit_detail where select_yn = 'y' and visit_seq = ".$row['visit_seq'];
+	                $query = "select * from fm_cm_machine_visit_detail where visit_seq = ".$row['visit_seq'];
 	                $query = $this->db->query($query);
-	                $result = $query->row_array();
-	                if(!empty($result)) {
-	                    $row['hope_date'] = $result['hope_date']." ".$result['hope_time'];
-	                }
+					$result = $query->result_array();
+					$hope_date = '';
+					foreach($result as $row2) {
+						$hope_date .= $row2['hope_date']." ".$row2['hope_time']."<br/>";
+					}
+					$row['hope_date'] = $hope_date;
 	            }
 	            
                 $data = array(
@@ -728,13 +730,22 @@ class main extends admin_base {
 	            $list = $query->result_array();
 	            
 	            foreach($list as &$row) {
-	                $query = "select * from fm_cm_machine_visit_detail where select_yn = 'y' and visit_seq = ".$row['visit_seq'];
+	                $query = "select * from fm_cm_machine_visit_detail where visit_seq = ".$row['visit_seq'];
 	                $query = $this->db->query($query);
-	                $result = $query->row_array();
-	                if(!empty($result)) {
-	                    $row['hope_date'] = $result['hope_date']." ".$result['hope_time'];
-	                }
-	            }
+	                $result = $query->result_array();
+	               
+					$hope_date = '';
+					foreach($result as $row2) {
+						if($row2['select_yn'] == 'y') {
+							$hope_date = $row2['hope_date']." ".$row2['hope_time'];
+							break;
+						} else {
+							$hope_date .= $row2['hope_date']." ".$row2['hope_time']."<br/>";
+						}
+					}
+					$row['hope_date'] = $hope_date;
+				}
+
 	            $data = array(
 	                'admin_view_yn' => 'y'
 	            );
@@ -2333,6 +2344,13 @@ class main extends admin_base {
 	            $date = date('ymd');
 	            $pay_no = sprintf('%04d', $pay_no);
 	            return $date.$pay_no;
+	}
+	
+	private function getUserDataById($userid) {
+	    $query = "select * from fm_member where userid='".$userid."'";
+	    $query = $this->db->query($query);
+	    $result = $query->row_array();
+	    return $this->membermodel->get_member_data($result['member_seq']);
 	}
 	
 	// 메인화면

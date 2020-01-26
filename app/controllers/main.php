@@ -220,7 +220,7 @@ class main extends front_base {
         $query = "select min(x.sort_price) as min_price, x.* from fm_cm_machine_sales_info A, (select a.sort_price, b.kind_name, f.model_name, g.mnf_name, a.model_year, e.sales_date, c.area_name, d.path, e.type, a.info_seq ".
                  "from fm_cm_machine_sales_info a, fm_cm_machine_kind b, fm_cm_machine_area c, fm_cm_machine_sales_picture d, fm_cm_machine_sales e, fm_cm_machine_model f, fm_cm_machine_manufacturer g where a.kind_seq = b.kind_seq ".
                  "and a.area_seq = c.area_seq and a.info_seq = d.info_seq and a.sales_seq = e.sales_seq and a.model_seq = f.model_seq and a.mnf_seq = g.mnf_seq and d.sort = 2 and a.sort_price != 0 and a.sort_price is not null and ".
-                 "e.type != 'direct' and a.state = '승인' and a.test_yn = 'n' order by a.sort_price asc LIMIT 18446744073709551615) as x group by kind_name order by min(x.sort_price) asc limit 25";
+                 "e.type != 'direct' and a.state = '승인' and a.wait_yn = 'n' and a.test_yn = 'n' order by a.sort_price asc LIMIT 18446744073709551615) as x group by kind_name order by min(x.sort_price) asc limit 25";
         $query = $this->db->query($query);
         $result = $query->result_array();
         $idx = 0;
@@ -250,7 +250,7 @@ class main extends front_base {
         
         $query = "select * from fm_cm_machine_sales_info a, fm_cm_machine_kind b, fm_cm_machine_area c, fm_cm_machine_sales_picture d, fm_cm_machine_sales e, fm_cm_machine_model f, fm_cm_machine_manufacturer g ".
             "where a.kind_seq = b.kind_seq and a.area_seq = c.area_seq and a.info_seq = d.info_seq and a.sales_seq = e.sales_seq and a.model_seq = f.model_seq and a.mnf_seq = g.mnf_seq ".
-            "and d.sort = 2 and a.sort_price != 0 and a.sort_price is not null and e.type != 'direct' and a.state = '승인' and a.test_yn = 'n' order by sales_date desc limit 20";
+            "and d.sort = 2 and a.sort_price != 0 and a.sort_price is not null and e.type != 'direct' and a.state = '승인' and a.wait_yn = 'n' and a.test_yn = 'n' order by sales_date desc limit 20";
         $query = $this->db->query($query);
         $result = $query->result_array();
         $idx = 0;
@@ -333,7 +333,4 @@ class main extends front_base {
         
         return $resultMap;
     }
-    
-    
-    
 }

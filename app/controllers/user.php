@@ -9,37 +9,6 @@ class user extends front_base {
         $this->load->helper(array('form', 'url', 'mail', 'sms'));
     }
     
-    public function write_process() {
-        
-        $token = $this->input->get('access_token'); // 네이버 로그인 API호출로 받은 접근 토큰값
-        $header = "Bearer ".$token; // Bearer 다음에 공백 추가
-        $url = "https://openapi.naver.com/blog/writePost.json";
-        $title = urlencode("네이버 블로그 api Test php");
-        $contents = urlencode("네이버 블로그 api로 글을 블로그에 올려봅니다.");
-        $postvars = "title=".$title."&contents=".$contents;
-        $is_post = true;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POST, $is_post);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch,CURLOPT_POSTFIELDS, $postvars);
-        $headers[] = "Authorization: ".$header;
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        $response = curl_exec ($ch);
-        $status_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        echo "access_token: ".$token;
-        echo "status_code:".$status_code;
-        curl_close ($ch);
-        if($status_code == 200) {
-            echo $response;
-        } else {
-            echo "Error 내용:".$response;
-        }
-        
-        //$this->session->set_flashdata('message', '글이 등록되었습니다.');
-        //pageRedirect("/");
-    }
-    
 	public function login()
 	{
 		$tpl = 'user/login.html';
@@ -1557,7 +1526,11 @@ class user extends front_base {
 	public function is_main_dealer() {
 	    header("Content-Type: application/json");
 	    $userData = $this->getUserData();
-	    
+		
+		if(!$userData) {
+			echo json_encode(null);
+			return;
+		}
 	    $query = "select * from fm_member_business where member_seq = ".$userData['member_seq'];
 	    $query = $this->db->query($query);
 	    $result = $query->row_array();
@@ -1767,7 +1740,7 @@ class user extends front_base {
 	}
 	
 	private function get_service_list($userid, $service) {
-	    $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_sales_advertise c where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and b.state = '승인' and b.sales_yn = 'n' and userid = '".$userid."' and ad_name = '".$service."' order by sales_date desc";
+	    $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_sales_advertise c where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and b.state = '승인' and b.sales_yn = 'n' and userid = '".$userid."' and ad_name = '".$service."' and end_date >= curdate() order by sales_date desc";
 	    $query = $this->db->query($query);
 	    $result = $query->result_array();
 	    return $result;
@@ -1891,7 +1864,7 @@ class user extends front_base {
 	
 	private function get_visit_list_for_sale($userid) {
 	    $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_visit c ".
-	             "where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and c.state not in('4', '5') and a.userid = '".$userid."' order by c.reg_date desc";
+	             "where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and c.state not in('4', '5') and c.admin_yn = 'y' and a.userid = '".$userid."' order by c.reg_date desc";
 	    $query = $this->db->query($query);
 	    $result = $query->result_array();
 	    foreach($result as &$row) {
@@ -1955,16 +1928,16 @@ class user extends front_base {
 	    $query = $this->db->query($query);
 	    $result = $query->row_array();
 	    $result_array['bid_cnt'] = $result['bid_cnt'];
-	    
+		
 	    $query = "select count(*) as direct_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b where a.sales_seq = b.sales_seq and b.state = '승인' and wait_yn = 'n' and sales_yn = 'n' and b.sort_price is not null and b.sort_price != 0 and type = 'direct' and userid = '".$userid."'";
 	    $query = $this->db->query($query);
 	    $result = $query->row_array();
 	    $result_array['direct_cnt'] = $result['direct_cnt'];
 		
-		$direct_list = $this->get_sale_list($userData['userid'], '다이렉트', 'wait');
-        $self_wait_list = $this->get_sale_list($userData['userid'], '셀프판매대기', 'wait');
-	    $self_list = $this->get_sale_list($userData['userid'], '셀프판매', 'wait');
-		$bid_list = $this->get_sale_list($userData['userid'], '입찰', 'wait', '', 'sale');
+		$direct_list = $this->get_sale_list($userid, '다이렉트', 'wait');
+        $self_wait_list = $this->get_sale_list($userid, '셀프판매대기', 'wait');
+	    $self_list = $this->get_sale_list($userid, '셀프판매', 'wait');
+		$bid_list = $this->get_sale_list($userid, '입찰', 'wait', '', 'sale');
 		
 		$result_array['wait_cnt'] = count($direct_list) + count($self_wait_list) + count($self_list) + count($bid_list);
 		
@@ -1972,12 +1945,12 @@ class user extends front_base {
 	    $query = $this->db->query($query);
 	    $result = $query->row_array();
 	    $result_array['cancel_cnt'] = $result['cancel_cnt'];
-        
-	    $query = "select count(*) as complete_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b where a.sales_seq = b.sales_seq and b.state = '승인' and sales_yn = 'y' and b.sort_price is not null and b.sort_price != 0 and userid = '".$userid."'";
+
+		$query = "select count(*) as complete_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b where a.sales_seq = b.sales_seq and b.state = '승인' and sales_yn = 'y' and b.sort_price is not null and b.sort_price != 0 and userid = '".$userid."'";
 	    $query = $this->db->query($query);
 	    $result = $query->row_array();
-	    $result_array['complete_cnt'] = $result['complete_cnt'];
-	    
+		$result_array['complete_cnt'] = $result['complete_cnt'];
+		
 	    $query = "select count(*) as bid_buy_ing_cnt from (select count(*) from fm_cm_machine_bid a, fm_cm_machine_sales_info b, fm_cm_machine_sales c, fm_cm_machine_sales_detail d ".
 	             "where a.info_seq = b.info_seq and b.sales_seq = c.sales_seq and b.info_seq = d.info_seq and d.bid_yn = 'n' and a.userid = '".$userid."' group by a.info_seq) as cnt";
 	    $query = $this->db->query($query);
@@ -2117,7 +2090,7 @@ class user extends front_base {
 	            $detail_query .= "and bid_yn = 'y' ";
 	        }
 	        else
-    	        $where_query .= "and b.state != '승인' and (b.sort_price is null or b.sort_price = 0) and sales_yn = 'n' and wait_yn = 'n' ";
+    	        $where_query .= "and b.state != '승인' and sales_yn = 'n' and wait_yn = 'n' ";
 	    } else if ($state == 'ing') {
 	        if($type == '입찰') {
 	            if($page_type == 'sale')
@@ -2685,7 +2658,9 @@ class user extends front_base {
 	}
 	
 	private function getUserData() {
-	    $this->userInfo = $this->session->userdata('user');
+		$this->userInfo = $this->session->userdata('user');
+		if(!$this->userInfo)
+			return null;
 	    $userData = $this->membermodel->get_member_data($this->userInfo['member_seq']);
 	    $query = "select label_value as gubun from fm_member_subinfo where label_title = '회원구분' and member_seq = ".$this->userInfo['member_seq'];
 	    $query = $this->db->query($query);

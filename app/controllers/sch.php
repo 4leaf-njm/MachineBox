@@ -1862,7 +1862,7 @@ class sch extends front_base
 
         $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c, fm_cm_machine_sales_picture d, fm_cm_machine_area e, fm_cm_machine_model g, fm_cm_machine_manufacturer h" . $ad_from_query . " " .
                  "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.info_seq = d.info_seq and b.area_seq = e.area_seq and b.model_seq = g.model_seq and b.mnf_seq = h.mnf_seq " .
-                 "and b.state = '승인' and d.sort = 2 and b.sort_price is not null and wait_yn = 'n' " . $ad_where_query . $where_query . $order_query;
+                 "and b.state = '승인' and d.sort = 2 and b.sort_price is not null and wait_yn = 'n' and sales_yn = 'n' " . $ad_where_query . $where_query . $order_query;
         $query = $this->db->query($query);
         $result = $query->result_array();
 

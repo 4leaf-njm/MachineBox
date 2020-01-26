@@ -1012,11 +1012,6 @@ $('.btn_option_add').on('click', function(index, value) {
 });
 
 function go_sale_regist_process(mode, type) {
-	if((type == 'emergency' || type == 'direct') && $('input[name=real_price]').val() == '') {
-		alert('판매금액은 필수 사항입니다.');
-		$('input[name=real_price]').focus();
-		return;
-	}
 	if($('input[name=userid]').val() == '') {
 		alert('판매자를 선택해주세요.');
 		return;
@@ -1029,60 +1024,60 @@ function go_sale_regist_process(mode, type) {
 			}
 		});
 		var txt_mnf = $('#input-mnf');
-    var txt_model = $('#input-model');
-    var input_mnf = 'false';
-    var input_model = 'false';
-    if(!txt_mnf.hasClass('d-none'))
-        input_mnf = 'true';
-    if(!txt_model.hasClass('d-none'))
-        input_model = 'true';
-    
-    if($('select[name=sel_year] option:selected').data('mode') != 'input') {
-        $('input[name=txt_year]').val($('select[name=sel_year] option:selected').data('val')); 
-    }
-    
-    if(!$('select[name=sel_kind] option:selected').data('seq')) {
-    	alert('기계종류를 다시 선택해주세요.');
-    	return;
-    }
-    
-    if(!$('select[name=sel_mnf] option:selected').data('seq')) {
-    	alert('제조사를 다시 선택해주세요.');
-    	return;
-    }
-    
-    if(!$('select[name=sel_model] option:selected').data('seq')) {
-    	alert('모델을 다시 선택해주세요.');
-    	return;
-    }
-    $('input[name=input_mnf]').val(input_mnf);
-    $('input[name=input_model]').val(input_model);
+		var txt_model = $('#input-model');
+		var input_mnf = 'false';
+		var input_model = 'false';
+		if(!txt_mnf.hasClass('d-none'))
+			input_mnf = 'true';
+		if(!txt_model.hasClass('d-none'))
+			input_model = 'true';
+		
+		if($('select[name=sel_year] option:selected').data('mode') != 'input') {
+			$('input[name=txt_year]').val($('select[name=sel_year] option:selected').data('val')); 
+		}
+		
+		if(!$('select[name=sel_kind] option:selected').data('seq')) {
+			alert('기계종류를 다시 선택해주세요.');
+			return;
+		}
+		
+		if(!$('select[name=sel_mnf] option:selected').data('seq') && $('select[name=sel_mnf] option:selected').data('mode') != 'input') {
+			alert('제조사를 다시 선택해주세요.');
+			return;
+		}
+		
+		if(!$('select[name=sel_model] option:selected').data('seq') && $('select[name=sel_model] option:selected').data('mode') != 'input') {
+			alert('모델을 다시 선택해주세요.');
+			return;
+		}
+		$('input[name=input_mnf]').val(input_mnf);
+		$('input[name=input_model]').val(input_model);
 		$('input[name=kind_no]').val($('select[name=sel_kind] option:selected').parent('optgroup').data('no')); 
-    $('input[name=kind_seq]').val($('select[name=sel_kind] option:selected').data('seq')); 
-    $('input[name=mnf_seq]').val($('select[name=sel_mnf] option:selected').data('seq')); 
-    $('input[name=model_seq]').val($('select[name=sel_model] option:selected').data('seq')); 
-    $('input[name=area_seq]').val($('select[name=sel_area] option:selected').data('seq'));
-    $('input[name=model_year]').val($('input[name=txt_year]').val().replace('년', '')); 
-    $('input[name=deliver_condition]').val($('select[name=sel_deliver_condition] option:selected').data('val')); 
-    $('input[name=size]').val($('input[name=size_01]').val() + ' x ' + $('input[name=size_02]').val() + ' x ' + $('input[name=size_03]').val() + ' m');
-    $('input[name=hope_price]').val($('input[name=hope_price]').val() + '0000');
-    $('input[name=real_price]').val($('input[name=real_price]').val() + '0000');
-    $('input[name=fixed_price]').val($('input[name=fixed_price]').val() + '0000');
-    $('input[name=bid_start_price]').val($('input[name=bid_start_price]').val() + '0000');
-    $('input[name=bid_price]').val($('input[name=bid_price]').val() + '0000');
-    $('input[name=pur_price]').val($('input[name=pur_price]').val() + '0000');
-    
-    $('input[name=method]').val($('select[name=sel_method] option:selected').data('val'));
-    $('input[name=price_proposal]').val($('select[name=sel_price_proposal] option:selected').data('val'));
-    $('input[name=bid_duration]').val($('select[name=sel_bid_duration] option:selected').data('val'));
-    if($('select[name=sel_reduction_rate] option:selected').data('mode') == 'input')
-    	$('input[name=reduction_rate]').val($('input[name=txt_reduction_rate]').val());
-    else
-    	$('input[name=reduction_rate]').val($('select[name=sel_reduction_rate] option:selected').data('val'));
-    if($('select[name=sel_repeat_no] option:selected').data('mode') == 'input')
-    	$('input[name=repeat_no]').val($('input[name=txt_repeat_no]').val());
-    else
-    	$('input[name=repeat_no]').val($('select[name=sel_repeat_no] option:selected').data('val'));
+		$('input[name=kind_seq]').val($('select[name=sel_kind] option:selected').data('seq')); 
+		$('input[name=mnf_seq]').val($('select[name=sel_mnf] option:selected').data('seq')); 
+		$('input[name=model_seq]').val($('select[name=sel_model] option:selected').data('seq')); 
+		$('input[name=area_seq]').val($('select[name=sel_area] option:selected').data('seq'));
+		$('input[name=model_year]').val($('input[name=txt_year]').val().replace('년', '')); 
+		$('input[name=deliver_condition]').val($('select[name=sel_deliver_condition] option:selected').data('val')); 
+		$('input[name=size]').val($('input[name=size_01]').val() + ' x ' + $('input[name=size_02]').val() + ' x ' + $('input[name=size_03]').val() + ' m');
+		$('input[name=hope_price]').val($('input[name=hope_price]').val() + '0000');
+		$('input[name=real_price]').val($('input[name=real_price]').val() + '0000');
+		$('input[name=fixed_price]').val($('input[name=fixed_price]').val() + '0000');
+		$('input[name=bid_start_price]').val($('input[name=bid_start_price]').val() + '0000');
+		$('input[name=bid_price]').val($('input[name=bid_price]').val() + '0000');
+		$('input[name=pur_price]').val($('input[name=pur_price]').val() + '0000');
+		
+		$('input[name=method]').val($('select[name=sel_method] option:selected').data('val'));
+		$('input[name=price_proposal]').val($('select[name=sel_price_proposal] option:selected').data('val'));
+		$('input[name=bid_duration]').val($('select[name=sel_bid_duration] option:selected').data('val'));
+		if($('select[name=sel_reduction_rate] option:selected').data('mode') == 'input')
+			$('input[name=reduction_rate]').val($('input[name=txt_reduction_rate]').val());
+		else
+			$('input[name=reduction_rate]').val($('select[name=sel_reduction_rate] option:selected').data('val'));
+		if($('select[name=sel_repeat_no] option:selected').data('mode') == 'input')
+			$('input[name=repeat_no]').val($('input[name=txt_repeat_no]').val());
+		else
+			$('input[name=repeat_no]').val($('select[name=sel_repeat_no] option:selected').data('val'));
         
 		$('#frm_regist').submit();
 	}
