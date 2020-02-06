@@ -14,6 +14,7 @@ class sale extends admin_base {
 		redirect("/admin/sale/self_status");
 	}
 
+	## 셀프판매 현황
 	public function self_status() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -288,6 +289,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 긴급판매 현황
 	public function emergency_status() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -399,6 +401,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 머박다이렉트 현황
 	public function direct_status() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -510,6 +513,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 턴키매각 현황
 	public function turnkey_status() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -609,6 +613,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 판매 승인
 	public function sale_permit()
 	{
 		$this->admin_menu();
@@ -649,6 +654,7 @@ class sale extends admin_base {
 		$this->template->print_("tpl");
 	}
 	
+	## 판매 승인 처리
 	public function sale_permit_process() {
 	    $info_seq = $this->input->post('info_seq');
 	    $state = $this->input->post('state');
@@ -700,6 +706,7 @@ class sale extends admin_base {
 	    openDialogAlert('[' . $state . '] 상태로 변경이 완료되었습니다.',400,140,'parent',$callback);
 	}
 
+	## 판매 등록
 	public function sale_regist() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -765,6 +772,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 기계정보 조회
 	public function ajax_get_item() {
 	    header("Content-Type: application/json");
 	    
@@ -813,6 +821,7 @@ class sale extends admin_base {
 	    echo json_encode(array('result' => $sale_item));
 	}
 	
+	## 판매 등록 처리
 	public function sale_regist_process() {
 	    $sales_seq = $this->input->post('sales_seq');
 	    $info_seq = $this->input->post('info_seq');
@@ -1102,6 +1111,7 @@ class sale extends admin_base {
 	    }
 	}
 	
+	## 판매방식 변경
 	public function change_type_process() {
 	    $type = $this->input->post('type');
 	    $info_seq = $this->input->post('info_seq');
@@ -1122,6 +1132,7 @@ class sale extends admin_base {
 	    openDialogAlert('판매방식 변경이 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 현장방문
 	public function visit() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -1155,6 +1166,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 현장방문 결제 확인
 	public function visit_pay_check() {
 	    $info_seq = $this->input->post('info_seq');
 	    
@@ -1208,6 +1220,7 @@ class sale extends admin_base {
 	    openDialogAlert('입금 확인이 되었습니다.',400,200,'parent',$callback);
 	}
 	
+	## 가격제안
 	public function proposal() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -1235,6 +1248,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 즉시구매
 	public function imd_buy() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -1262,6 +1276,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 즉시구매 승인 처리
 	public function imdbuy_permit_process() {
 	    $buy_seq = $this->input->post('buy_seq');
 	    
@@ -1299,6 +1314,7 @@ class sale extends admin_base {
 	    openDialogAlert('승인 되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 기계매매
 	public function selling() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -1325,6 +1341,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 문의
 	public function qna() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -1351,6 +1368,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 문의 보내기
 	public function ajax_send_qna() {
 	    header("Content-Type: application/json");
 	    
@@ -1382,7 +1400,8 @@ class sale extends admin_base {
 	    $this->send_common_sms($userData['cellphone'], $message);
 	    echo json_encode(array('result' => 'true'));
 	}
-	
+
+	## 입찰
 	public function bid() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -1442,6 +1461,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 입찰 취소
 	public function bid_cancel_process() {
 	    $bid_seq = $this->input->post('bid_seq');
 	    
@@ -1452,6 +1472,7 @@ class sale extends admin_base {
 	    openDialogAlert('취소가 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 입찰 남은기간
 	public function get_bid_time() {
 	    header("Content-Type: application/json");
 	    
@@ -1478,6 +1499,7 @@ class sale extends admin_base {
         echo json_encode($data);
 	}
 	
+	## 턴키매각 승인
 	public function turnkey_permit()
 	{
 	    $this->admin_menu();
@@ -1520,6 +1542,7 @@ class sale extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 턴키매각 승인 처리
 	public function turnkey_permit_process() {
 	    $turnkey_seq = $this->input->post('turnkey_seq');
 	    $state = $this->input->post('state');
@@ -1549,6 +1572,7 @@ class sale extends admin_base {
 	    openDialogAlert('[' . $state . '] 상태로 변경이 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 판매기계 삭제 처리
 	public function sale_delete_process() {
 	   $info_seq = $this->input->post('info_seq');
 	   

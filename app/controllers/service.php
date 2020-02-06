@@ -7,11 +7,6 @@ class service extends front_base {
 		redirect("/service/index");
 	}
 
-	public function index()
-	{
-
-	}
-
 	/* 고객센터 */
 	public function cs()
 	{

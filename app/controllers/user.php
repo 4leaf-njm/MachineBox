@@ -156,6 +156,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 구매중 기계
 	public function my_buy_ing() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -200,6 +201,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 구매중 기계 더보기
 	public function my_buy_ing_more() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -249,6 +251,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 구매완료 기계
 	public function my_buy_finish() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -283,6 +286,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 기계평가 작성
 	public function my_sale_eval($info_seq) {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -307,6 +311,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 기계평가 작성 처리
 	public function my_sale_eval_process() {
 	    $info_seq = $this->input->post('info_seq');
 	    $grade_01 = $this->input->post('grade_01');
@@ -344,6 +349,7 @@ class user extends front_base {
 	    pageRedirect('/user/my_buy_finish');
 	}
 	
+	## 최근에 본 기계
 	public function my_buy_recent() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -386,6 +392,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 판매대기 기계
 	public function my_sale_wait() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -426,6 +433,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 가격제안
 	public function my_sale_reply() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -450,6 +458,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 판매중 기계
 	public function my_sale_ing() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -484,6 +493,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 판매완료 기계
 	public function my_sale_finish() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -511,6 +521,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 긴급판매 신청
 	public function my_sale_emergency() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -546,6 +557,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 외주대기
 	public function my_osc_wait() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -576,6 +588,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 외주 의뢰중
 	public function my_osc_ing() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -608,6 +621,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 외주 의뢰중 더보기
 	public function my_osc_ing_more() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -647,6 +661,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 외주 진행중
 	public function my_osc_end() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -679,6 +694,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 외주 완료
 	public function my_osc_finish() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -710,6 +726,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 외주 미팅 신청처리
 	public function osc_meeting_process() {
 	    $po_seq = $this->input->post('po_seq');
 	    $userid = $this->input->post('userid');
@@ -770,6 +787,7 @@ class user extends front_base {
 	    openDialogAlert($callback_message,400,140,'parent',$callback);
 	}
 	
+	## 최근에 본 수주
 	public function my_ptn_recent() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -791,6 +809,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 수주 지원중
 	public function my_ptn_wait() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -817,6 +836,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 수주 진행중
 	public function my_ptn_ing() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -843,6 +863,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 수주 진행중 더보기
 	public function my_ptn_ing_more() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -874,6 +895,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 수주 완료
 	public function my_ptn_finish() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -900,6 +922,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 회원정보 수정
 	public function my_info_modify($change) {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -980,6 +1003,7 @@ class user extends front_base {
         $this->print_layout($skin.'/'.$tpl);
 	}
 	
+
 	public function my_pwd_modify($step="step_01") {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1007,6 +1031,7 @@ class user extends front_base {
 	    $new_password = $this->input->post('new_password');
 	}
 	
+	## 관리자문의
 	public function my_qna_write() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1025,6 +1050,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 관리자문의 처리
 	public function my_qna_write_process() {
 	    $title = $this->input->post('title');
 	    $content = $this->input->post('content');
@@ -1050,6 +1076,7 @@ class user extends front_base {
 	    openDialogAlert("작성하신 내용이 관리자에게 전달 되었습니다.",400,140,'parent',$callback);
 	}
 	
+	## 문의사항
 	public function my_qna_list() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1136,6 +1163,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 결제내역
 	public function my_pay_list() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1204,6 +1232,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 이용중인 서비스
 	public function my_using_service() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1227,6 +1256,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 
+	## 자동업데이트 사용 처리
 	public function update_service_process() {
 	    $ad_seq = $this->input->post('ad_seq');
 	    $remaining = $this->input->post('remaining');
@@ -1242,6 +1272,7 @@ class user extends front_base {
 	    pageRedirect("/user/my_using_service");
 	}
 	
+	## 핫마크 사용 처리
 	public function hotmark_service_process() {
 	   $ad_seq = $this->input->post('ad_seq');    
 	   $hotmark_list = $this->input->post('hotmark_list');
@@ -1256,6 +1287,7 @@ class user extends front_base {
 	   pageRedirect("/user/my_using_service");
 	}
 
+	## 서비스 변경
 	public function service($info_seq, $sale_type) {
 		if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1279,6 +1311,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 
+	## 서비스 변경 처리
 	public function service_process() {
 		$info_seq = $this->input->post('info_seq');
 		$total_price = $this->input->post('total_price');
@@ -1424,6 +1457,7 @@ class user extends front_base {
         $this->session->set_flashdata('message', $text);
 	}
 	
+	## 배송대행 수리 서비스 신청/이용내역
 	public function my_mch_service() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1455,6 +1489,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 배송대행 수리 서비스 신청/이용내역 처리
 	public function my_mch_service_process() {
 	    $info_seq = $this->input->post('info_seq');
 	    $sales_no = $this->input->post('sales_no');
@@ -1494,7 +1529,8 @@ class user extends front_base {
 	    $callback = "parent.location.reload()";
 	    openDialogAlert('신청이 완료되었습니다. 관리자 승인을 기다려주세요.',400,140,'parent',$callback);
 	}
-	
+
+	## 기계종류 조회
 	public function get_kind_type() {
 	    header("Content-Type: application/json");
 	    
@@ -1509,6 +1545,7 @@ class user extends front_base {
 	    echo json_encode(array('kind_type' => $kind_type));
 	}
 	
+	## 내 기계목록 조회
 	public function get_my_sale() {
 		header("Content-Type: application/json");
 
@@ -1523,6 +1560,7 @@ class user extends front_base {
         echo json_encode(array('list' => $list));
 	}
 
+	## 메인딜러 여부 조회
 	public function is_main_dealer() {
 	    header("Content-Type: application/json");
 	    $userData = $this->getUserData();
@@ -1537,6 +1575,7 @@ class user extends front_base {
 	    echo json_encode($result['main_dealer_yn']);
 	}
 	
+	## 견적제품
 	public function my_sale_estimate() {
 	    if(!$this->sessionCheck()) {
 	        $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1574,6 +1613,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 견적서 작성
 	public function estimate_form($estimate_seq, $mode, $is_admin) {
 	    $tpl = 'user/estimate_form.html';
 	    $skin = $this->skin;
@@ -1645,6 +1685,7 @@ class user extends front_base {
 	    $this->print_layout($skin.'/'.$tpl);
 	}
 	
+	## 견적서 작성 처리
 	public function estimate_form_regist() {
 	    $sale_userid = $this->input->post('sale_userid');
 	    $sale_baddress = $this->input->post('sale_baddress');
@@ -1698,6 +1739,7 @@ class user extends front_base {
 	    openDialogAlert('제출이 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 견적 취소
 	public function estimate_cancel() {
 	   $estimate_seq = $this->input->post('estimate_seq');
 	   
@@ -1711,6 +1753,7 @@ class user extends front_base {
 	   openDialogAlert('처리 되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 판매완료/등록취소 처리
 	public function sale_finish_process() {
 	    $type = $this->input->post('type');    
 	    $info_seq = $this->input->post('info_seq');    
@@ -1739,6 +1782,7 @@ class user extends front_base {
 	    openDialogAlert('정상적으로 처리 되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 이용중인 서비스 조회
 	private function get_service_list($userid, $service) {
 	    $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_sales_advertise c where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and b.state = '승인' and b.sales_yn = 'n' and userid = '".$userid."' and ad_name = '".$service."' and end_date >= curdate() order by sales_date desc";
 	    $query = $this->db->query($query);
@@ -1746,6 +1790,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 가격제안 조회
 	private function get_proposal_list($userid) {
 	    $query = "select *, c.userid as sale_userid from fm_cm_machine_proposal a, fm_cm_machine_sales_info b, fm_cm_machine_sales c where a.info_seq = b.info_seq and b.sales_seq = c.sales_seq and a.userid = '".$userid."' order by reg_date desc";
 	    $query = $this->db->query($query);
@@ -1753,6 +1798,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 가격제안(판매자) 조회
 	private function get_proposal_list_for_sale($userid) {
 	    $resultMap = array();
 	    $query = "select count(*) as cnt from fm_cm_machine_proposal a, fm_cm_machine_sales_info b, fm_cm_machine_sales c where a.info_seq = b.info_seq and b.sales_seq = c.sales_seq and a.admin_yn = 'y' and c.userid = '".$userid."' order by reg_date desc";
@@ -1775,6 +1821,7 @@ class user extends front_base {
 	    return $resultMap;
 	}
 	
+	## 내 입찰 목록 조회
 	private function get_bid_list($userid) {
 	    $query = "select * from fm_cm_machine_bid where userid = '".$userid."' order by reg_date desc";
 	    $query = $this->db->query($query);
@@ -1782,6 +1829,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 내 입찰 목록 조회
 	private function get_bid_list_02($userid) {
 	    $query = "select *, d.bid_yn as bid_result_yn from fm_cm_machine_bid a, fm_cm_machine_sales_info b, fm_cm_machine_sales c, fm_cm_machine_sales_detail d where a.info_seq = b.info_seq and b.sales_seq = c.sales_seq and b.info_seq = d.info_seq and d.bid_yn = 'n' and a.userid = '".$userid."' group by a.info_seq order by reg_date desc";
 	    $query = $this->db->query($query);
@@ -1818,6 +1866,7 @@ class user extends front_base {
 	    return $bid_list;
 	}
 	
+	## 문의사항 조회
 	private function get_qna_list_for_sale($userid) {
 	    $resultMap = array();
 	    $query = "select count(*) as cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_question c ".
@@ -1841,6 +1890,7 @@ class user extends front_base {
 	    return $resultMap;
 	}
 	
+	## 현장방문 조회
 	private function get_visit_list($userid) {
 	    $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_visit c ".
 	             "where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and c.state not in('4', '5') and c.userid = '".$userid."' order by c.reg_date desc";
@@ -1862,6 +1912,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 현장방문(판매자) 조회
 	private function get_visit_list_for_sale($userid) {
 	    $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_visit c ".
 	             "where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and c.state not in('4', '5') and c.admin_yn = 'y' and a.userid = '".$userid."' order by c.reg_date desc";
@@ -1883,6 +1934,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 즉시구매 조회
 	private function get_imdbuy_list($userid) {
 	    $query = "select *, a.userid as sale_userid, d.userid as buy_userid from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_model c, fm_cm_machine_imdbuy d ".
 	   	    "where a.sales_seq = b.sales_seq and b.model_seq = c.model_seq and b.info_seq = d.info_seq and d.userid = '".$userid."'";
@@ -1892,6 +1944,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 즉시구매(판매자) 조회
 	private function get_imdbuy_list_for_sale($userid) {
 	    $query = "select *, a.userid as sale_userid, d.userid as buy_userid from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_model c, fm_cm_machine_imdbuy d ".
 	   	    "where a.sales_seq = b.sales_seq and b.model_seq = c.model_seq and b.info_seq = d.info_seq and d.permit_yn = 'y' and a.userid = '".$userid."'";
@@ -1901,6 +1954,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 긴급판매 조회
 	private function get_emergency_list($userid) {
 	    $query = "select * from fm_cm_machine_sales a, fm_cm_machine_sales_info b where a.sales_seq = b.sales_seq and type = 'emergency' and userid = '".$userid."' order by sales_date desc limit 1";
 	    $query = $this->db->query($query);
@@ -1917,6 +1971,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 판매 카운팅
 	private function get_sales_count($userid) {
 	    $result_array = array();
 	    $query = "select count(*) as fixed_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_sales_detail c where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and b.state = '승인' and wait_yn = 'n' and sales_yn = 'n' and b.sort_price is not null and b.sort_price != 0 and method = '고정가격판매' and userid = '".$userid."'";
@@ -2006,6 +2061,7 @@ class user extends front_base {
 	    return $result_array;
 	}
 	
+	## 외주 카운팅
 	private function get_osc_count($userid) {
 	    $result_array = array();
 	    $query = "select count(*) as osc_wait_cnt from fm_cm_machine_outsourcing where permit_yn = 'n' and userid = '".$userid."'";
@@ -2046,6 +2102,7 @@ class user extends front_base {
 	    return $result_array;
 	}
 	
+	## 최근 본기계 조회
 	private function get_recent_sale_list() {
 	    $recent_cookies = explode(",", $_COOKIE['recent_sale_cookie']);
 	    $recent_list = array();
@@ -2065,6 +2122,7 @@ class user extends front_base {
 	    return $recent_list;
 	}
 	
+	## 판매기계 조회
 	private function get_sale_list($userid, $type, $state, $sub, $page_type) {
 	    if($type == '다이렉트') {
 	        $where_query = "and type = 'direct' ";
@@ -2231,6 +2289,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 최근본 수주 조회
 	private function get_recent_osc_list() {
 	    $recent_cookies = explode(",", $_COOKIE['recent_osc_cookie']);
 	    $recent_list = array();
@@ -2256,6 +2315,7 @@ class user extends front_base {
 	    return $recent_list;
 	}
 	
+	## 외주 조회
 	private function get_osc_list($userid, $state) {
 	    if($state == 'wait') {
 	        $where_query = "and permit_yn = 'n'";
@@ -2314,6 +2374,7 @@ class user extends front_base {
    	    return $resultMap;
 	}
 	
+	## 수주 조회
 	private function get_ptn_list($userid, $state) {
 	    if($state == 'wait') {
 	        $where_query = "and d.state in (0, 1)";
@@ -2362,6 +2423,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## 이용중인 서비스 조회
 	private function get_using_service($userid) {
 	    $highlight_list = $this->get_service_list($userid, '하이라이트');
 	    $dealer_list = $this->get_service_list($userid, '딜러존');
@@ -2384,6 +2446,7 @@ class user extends front_base {
 	    return $service_list;
 	}
 	
+	## 이용중인 서비스 조회
 	private function get_using_service2($userid) {
 	    $service_seq = array();
 	    $query = "select * from fm_cm_machine_sales_advertise";
@@ -2408,6 +2471,7 @@ class user extends front_base {
 	    return $result;
 	}
 	
+	## new 알림
 	private function get_my_new($userid) {
 	    $resultMap = array();
 	    

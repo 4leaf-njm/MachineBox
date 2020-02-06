@@ -13,6 +13,7 @@ class sale extends front_base {
         redirect("/sale/sale_index");
     }
     
+    ## 내기계팔기 메인
     public function sale_index()
     {
         $tpl = 'sale/sale_index.html';
@@ -25,6 +26,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 셀프등록 이용방법
     public function self_intro()
     {
         $tpl = 'sale/self_intro.html';
@@ -37,6 +39,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 셀프등록
     public function self_reg($info_seq, $page_type, $sale_type, $wait_yn)
     {
         if(!$this->sessionCheck()) {
@@ -106,6 +109,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 셀프등록 처리
     public function self_process() {
         $kind_no = $this->input->post('kind_no');
         $kind_seq = $this->input->post('kind_seq');
@@ -646,6 +650,7 @@ class sale extends front_base {
         } 
     }
     
+    ## 긴급판매 이용방법
     public function emergency_intro()
     {
         $tpl = 'sale/emergency_intro.html';
@@ -658,6 +663,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 긴급판매 등록
     public function emergency_reg($info_seq, $page_type, $sale_type)
     {
         if(!$this->sessionCheck()) {
@@ -726,6 +732,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 긴급판매 등록 처리
     public function emergency_process() {
         $kind_no_arr = $this->input->post('kind_no_arr');
         $kind_seq_arr = $this->input->post('kind_seq_arr');
@@ -954,6 +961,7 @@ class sale extends front_base {
         
     }
     
+    ## 머박다이렉트 이용방법
     public function direct_intro()
     {
         $tpl = 'sale/direct_intro.html';
@@ -966,6 +974,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 긴급판매 등록
     public function direct_reg($info_seq, $page_type, $sale_type)
     {
         if(!$this->sessionCheck()) {
@@ -1034,6 +1043,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 긴급판매 등록 처리
     public function direct_process() {
         $kind_no_arr = $this->input->post('kind_no_arr');
         $kind_seq_arr = $this->input->post('kind_seq_arr');
@@ -1260,6 +1270,7 @@ class sale extends front_base {
         }
     }
     
+    ## 최저가 모델 조회
     public function getLowestModel() {
         header("Content-Type: application/json");
 
@@ -1277,6 +1288,7 @@ class sale extends front_base {
                                "result3" => $response['result3'], "result4" => $response['result4']));
     }
     
+    ## 턴키매각 이용방법
     public function turnkey_intro()
     {
         $tpl = 'sale/turnkey_intro.html';
@@ -1289,6 +1301,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 턴키매각 등록
     public function turnkey_reg($info_seq, $page_type, $sale_type) {
         if(!$this->sessionCheck()) {
             $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1351,6 +1364,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 턴키매각 등록 처리
     public function turnkey_process() {
         $kind_no_arr = $this->input->post('kind_no_arr');
         $kind_seq_arr = $this->input->post('kind_seq_arr');
@@ -1453,6 +1467,7 @@ class sale extends front_base {
         pageRedirect("/sale/sale_complete/turnkey");
     }
     
+    ## 등록완료
     public function sale_complete($type, $sales_seq) {
         if(!$this->sessionCheck()) {
             $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -1477,6 +1492,7 @@ class sale extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }   
     
+    ## 제조사 조회
     public function get_mnf_list() {
         header("Content-Type: application/json");
         
@@ -1489,6 +1505,7 @@ class sale extends front_base {
         echo json_encode(array('mnf_list' => $mnf_list));
     }
     
+    ## 모델명 조회
     public function get_model_list() {
         header("Content-Type: application/json");
         
@@ -1502,6 +1519,7 @@ class sale extends front_base {
         echo json_encode(array('model_list' => $model_list));
     }
     
+    ## 제조사 조회
     public function get_mnf_one() {
         header("Content-Type: application/json");
         
@@ -1519,6 +1537,7 @@ class sale extends front_base {
         echo json_encode(array('result' => $result, 'item' => $item));
     }
     
+    ## 모델명 조회
     public function get_model_one() {
         header("Content-Type: application/json");
         

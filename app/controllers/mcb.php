@@ -5,7 +5,8 @@ class mcb extends front_base {
     public function __construct() {
         parent::__construct();
     }
-    
+	
+	## 분쟁조정서비스
 	public function dispute_intro()
 	{
 		$tpl = 'mcb/dispute_intro.html';

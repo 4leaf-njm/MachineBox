@@ -21,7 +21,8 @@ class main extends admin_base {
 	{
 		redirect("/admin/main/index");
 	}
-    
+	
+	## 주요지표
 	public function get_state_list() {
 	    header("Content-Type: application/json");
 	    
@@ -409,6 +410,7 @@ class main extends admin_base {
 	    echo json_encode(array('type' => $type, 'date_s' => $date_s, 'date_f' => $date_f, 'count_obj' => $count_obj, 'count_list' => $count_list, 'list' => $list));
 	}
 	
+	## 신청승인/진행현황/결제승인
 	public function get_main_list() {
 	    header("Content-Type: application/json");
 	    
@@ -1053,7 +1055,8 @@ class main extends admin_base {
 	    }
 	    echo json_encode(array('title' => $title, 'type' => $type, 'list' => $list, 'res' => $res));
 	}
-	    
+
+	## 승인 처리
 	public function sale_permit_process() {
 	    $info_seq = $this->input->post('info_seq');
 	    $real_price = $this->input->post('real_price');
@@ -1088,6 +1091,7 @@ class main extends admin_base {
 	    openDialogAlert('승인 되었습니다.',400,200,'parent',$callback);
 	}
 	
+	## 승인 처리
 	public function common_permit_process() {
 	    $type = $this->input->post('type');
 	    
@@ -1373,6 +1377,7 @@ class main extends admin_base {
 	    openDialogAlert('승인 되었습니다.',400,200,'parent',$callback);
 	}
 	
+	## 배송상태 변경
 	public function change_deliv_process() {
 	   $deliv_seq = $this->input->post("deliv_seq");    
 	   $deliv_state = $this->input->post("deliv_state");  
@@ -1387,6 +1392,7 @@ class main extends admin_base {
 	   openDialogAlert('변경 되었습니다.',400,200,'parent',$callback);
 	}
 	
+	## 프로세스 보기
 	public function get_process_data() {
 	    header("Content-Type: application/json");
 	    
@@ -1481,6 +1487,7 @@ class main extends admin_base {
 	    echo json_encode(array('type' => $type, 'seq' => $seq, 'info' => $info, 'step' => $step, 'timeline' => $timeline));
 	}
 	
+	## 등록기계 검색
 	public function get_sales_list_search() {
 	    header("Content-Type: application/json");
 	    
@@ -1512,6 +1519,7 @@ class main extends admin_base {
 	    echo json_encode(array('list' => $list));
 	}
 	
+	## 외주-계약 변경
 	public function osc_contract_move() {
 	    header("Content-Type: application/json");
 	    
@@ -1544,6 +1552,7 @@ class main extends admin_base {
 	    echo json_encode(array('result' => $result));
 	}
 	
+	## 가격제안-즉시구매 변경
     public function prop_imdbuy_move() {
 	    header("Content-Type: application/json");
 	    
@@ -1585,7 +1594,8 @@ class main extends admin_base {
         }
 	    echo json_encode(array('result' => $result));
 	}
-    
+	
+	## 즉시구매-계약 변경
     public function imdbuy_contract_move() {
         $buy_seq = $this->input->post('buy_seq');
         $buy_price = $this->input->post('buy_price');
@@ -1615,7 +1625,8 @@ class main extends admin_base {
         $callback = "parent.location.reload()";
 	   openDialogAlert('처리 되었습니다.',400,200,'parent',$callback);
     }
-    
+	
+	## 입찰-계약 변경
     public function bid_contract_move() {
 	    header("Content-Type: application/json");
 	    
@@ -1665,7 +1676,8 @@ class main extends admin_base {
 	    
 	    echo json_encode(array('result' => $result));
     }
-                                           
+	
+	## 프로세스 종료
     public function process_finish() {
         header("Content-Type: application/json");
         
@@ -1715,6 +1727,7 @@ class main extends admin_base {
 	    echo json_encode(array('result' => $result));
     }
 	
+	## 계약 취소
 	public function contract_cancel() {
 	    header("Content-Type: application/json");
         
@@ -1751,6 +1764,7 @@ class main extends admin_base {
 	    echo json_encode(array('result' => $result));
 	}
 
+	## 회원 승인
 	public function permit_member() {
         header("Content-Type: application/json");
         
@@ -1766,7 +1780,8 @@ class main extends admin_base {
 	    
 	    echo json_encode(array('result' => $result));
     }
-                            
+							
+	## 건수 카운팅
 	private function get_main_count() {
 	   $resultMap = array();
 	   

@@ -14,6 +14,7 @@ class osc extends admin_base {
 		redirect("/admin/osc/osc_status");
 	}
 
+	## 외주 현황
 	public function osc_status() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -42,6 +43,7 @@ class osc extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 외주 승인처리
 	public function osc_permit_process() {
 	    $osc_seq = $this->input->post('osc_seq');
 	    $state = $this->input->post('state');
@@ -76,6 +78,7 @@ class osc extends admin_base {
 	    openDialogAlert('[' . $str_state . '] 상태로 변경이 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 외주 등록
 	public function osc_regist() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -113,6 +116,7 @@ class osc extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 외주 조회
 	public function ajax_get_osc() {
 	    header("Content-Type: application/json");
 	    
@@ -182,6 +186,7 @@ class osc extends admin_base {
 	    }
 	}
 	
+	## 외주 삭제
 	public function osc_delete_process() {
 	    $osc_seq = $this->input->post('osc_seq');
 	    
@@ -198,6 +203,7 @@ class osc extends admin_base {
 	    openDialogAlert('삭제가 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 외주 지원요청
 	public function osc_apply() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -220,6 +226,7 @@ class osc extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 외주 지원 조회
 	public function get_osc_apply_list() {
 	    header("Content-Type: application/json");
 	    
@@ -232,6 +239,7 @@ class osc extends admin_base {
 	    echo json_encode(array('apply_list' => $apply_list, 'apply_cnt' => count($apply_list)));
 	}
 	
+	## 파트너 현황
 	public function ptn_status() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -257,6 +265,7 @@ class osc extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 파트너 정보 변경
 	public function ptn_modify() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -279,6 +288,7 @@ class osc extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 파트너 정보 조회
 	public function ajax_get_ptn() {
 	    header("Content-Type: application/json");
 	    
@@ -310,6 +320,7 @@ class osc extends admin_base {
 	    echo json_encode($ptn_item);
 	}
 	
+	## 파트너 정보 변경 처리
 	public function ptn_modify_process() {
 	    $cert_name_arr = $this->input->post('cert_name_arr');
 	    $cert_org_arr = $this->input->post('cert_org_arr');
@@ -427,6 +438,7 @@ class osc extends admin_base {
         $this->session->set_flashdata('message', '변경이 완료되었습니다.');
 	}
 	
+	## 파트너 지원 현황
 	public function ptn_apply() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -463,6 +475,7 @@ class osc extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 파트너 지원 승인
 	public function ptn_apply_permit() {
 	    $oreq_seq = $this->input->post('oreq_seq');
 	    
@@ -477,6 +490,7 @@ class osc extends admin_base {
 	    openDialogAlert('승인이 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 파트너 완료 목록조회
 	public function get_ptn_finish_list() {
 	    header("Content-Type: application/json");
 	    
@@ -489,6 +503,7 @@ class osc extends admin_base {
 	    echo json_encode(array('finish_list' => $finish_list));
 	}
 	
+	## 파트너 평가 조회
 	public function get_ptn_grade_list() {
 	    header("Content-Type: application/json");
 	    
@@ -501,6 +516,7 @@ class osc extends admin_base {
 	    echo json_encode(array('grade_list' => $grade_list));
 	}
 	
+	## 외주 엑셀 다운로드
 	public function osc_excel_download() {
 	    $osc_seq = $this->input->get('seq');
 	    
@@ -647,6 +663,7 @@ class osc extends admin_base {
 	    $objWriter->save('php://output');
 	}
 	
+	## 파트너 외주 다운로드
 	public function ptn_excel_download() {
 	    $ptn_seq = $this->input->get('seq');
 	    

@@ -8,6 +8,7 @@ class mch extends front_base {
         $this->load->helper(array('form', 'url', 'mail', 'sms'));
     }
     
+    ## 파트너 등록
     public function partner_reg()
     {
         if(!$this->sessionCheck()) {
@@ -51,6 +52,7 @@ class mch extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 파트너등록 처리
     public function partner_process() {
         $cert_name_arr = $this->input->post('cert_name_arr');
         $cert_org_arr = $this->input->post('cert_org_arr');
@@ -191,6 +193,7 @@ class mch extends front_base {
         pageRedirect("/user/mypage");
     }
     
+    ## 외주의뢰
     public function osc_reg($osc_seq, $page_type)
     {
         if(!$this->sessionCheck()) {
@@ -236,6 +239,7 @@ class mch extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 외주등록 처리
     public function osc_process() {
         $osc_seq = $this->input->post('osc_seq');
         $page_type = $this->input->post('page_type');
@@ -324,6 +328,7 @@ class mch extends front_base {
         }
     }
     
+    ## 파트너기업 찾기
     public function partner_sch($type='c', $value=1, $order=1, $page=1) {
         $tpl = 'mch/partner_sch.html';
         $skin = $this->skin;
@@ -352,6 +357,7 @@ class mch extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 수주업무 찾기
     public function osc_sch($cate=1, $order=1, $page=1) {
         $tpl = 'mch/osc_sch.html';
         $skin = $this->skin;
@@ -374,6 +380,7 @@ class mch extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 파트너정보 조회
     public function partner_info($partner_seq) {
         $tpl = 'mch/partner_info.html';
         $skin = $this->skin;
@@ -391,6 +398,7 @@ class mch extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 외주정보 조회
     public function osc_info($osc_seq) {
         $tpl = 'mch/osc_info.html';
         $skin = $this->skin;
@@ -419,7 +427,7 @@ class mch extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
-    
+    ## 외주 지원요청
     public function osc_req($partner_seq) {
         if(!$this->sessionCheck()) {
             $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -463,6 +471,8 @@ class mch extends front_base {
         
         $this->print_layout($skin.'/'.$tpl);
     }
+
+    ## 외주지원 처리
     public function osc_apply_process() {
         $osc_seq = $this->input->post('osc_seq');
         $state = $this->input->post('state');
@@ -503,6 +513,7 @@ class mch extends front_base {
         pageRedirect('/mch/osc_info/'.$osc_seq);
     }
     
+    ## 외주 지원요청 처리
     public function osc_req_process() {
         $partner_seq = $this->input->post('partner_seq');
         $osc_seq = $this->input->post('osc_seq');
@@ -529,6 +540,7 @@ class mch extends front_base {
         }
     }
     
+    ## 파트너 평가
     public function partner_eval($osc_seq, $partner_seq) {
         if(!$this->sessionCheck()) {
             $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -550,6 +562,7 @@ class mch extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 파트너 평가 처리
     public function partner_eval_process() {
         $partner_seq = $this->input->post('partner_seq');
         $grade_01 = $this->input->post('grade_01');
@@ -586,6 +599,7 @@ class mch extends front_base {
         pageRedirect('/user/my_osc_finish');
     }
     
+    ## 포트폴리오 다운로드
     public function download_pofol() {
         $pofol_path = '.'.$this->input->post('pofol_path');
         $path_split = explode('/', $pofol_path);
@@ -597,6 +611,7 @@ class mch extends front_base {
         force_download($name, $data);
     }
     
+    ## 파트너 검색
     private function get_search_partner($type, $value, $order, $page) {
         if($type == 'c') {
             if($value == '1')
@@ -650,6 +665,7 @@ class mch extends front_base {
         return $data;
     }
     
+    ## 외주 검색
     private function get_search_osc($cate, $order, $page) {
         if($cate == '1')
             $where_query = "";
@@ -699,6 +715,7 @@ class mch extends front_base {
         return $data;
     }
     
+    ## 신규회원 목록
     private function new_partner_list() {
         $query = "select * from fm_member order by regist_date desc";
         $query = $this->db->query($query);
@@ -770,6 +787,7 @@ class mch extends front_base {
         return $new_list;
     }
     
+    ## 파트너정보 조회
     private function get_partner_info($partner_seq) {
         $query = "select * from fm_cm_machine_partner a, fm_cm_machine_area b, fm_cm_machine_category c where a.area_seq = b.area_seq ".
                  "and a.cate_seq = c.cate_seq and a.partner_seq = ".$partner_seq;
@@ -808,6 +826,7 @@ class mch extends front_base {
         return $resultMap;
     }
     
+    ## 외주정보 조회
     private function get_osc_info($osc_seq) {
         $query = "select * from fm_cm_machine_outsourcing a, fm_cm_machine_area b where a.area_seq = b.area_seq ".
             "and a.osc_seq = ".$osc_seq;

@@ -7,6 +7,7 @@ class rev extends front_base {
         $this->load->model('membermodel');
     }
     
+    ## 이용후기 조회
     public function rev_info($rev_seq) {
         $tpl = 'review/rev_info.html';
         $skin = $this->skin;
@@ -33,6 +34,7 @@ class rev extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 이용후기 쓰기
     public function rev_write($type, $seq) {
         if(!$this->sessionCheck()) {
             $this->session->set_flashdata('message', '로그인이 필요한 페이지입니다');
@@ -66,6 +68,7 @@ class rev extends front_base {
         $this->print_layout($skin.'/'.$tpl);
     }
     
+    ## 이용후기 작성 처리
     public function rev_write_process() {
         $type = $this->input->post('type');
         $target_userid = $this->input->post('target_userid');

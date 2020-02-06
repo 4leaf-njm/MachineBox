@@ -194,6 +194,7 @@ class main extends front_base {
     private function get_main_query() {
         $resultMap = array();
         
+        ## 판매기계 신규등록
         $query = "select count(*) as new_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c, fm_cm_machine_model d, fm_cm_machine_manufacturer e ".
                  "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.model_seq = d.model_seq and b.mnf_seq = e.mnf_seq ".
                  "and state in('승인', '미승인', '보류', '입금대기', '계약대기') and sales_date > date_add(now(),interval - 1 day)";
@@ -201,22 +202,26 @@ class main extends front_base {
         $result = $query->row();
         $resultMap['sales_new_cnt'] = $result->new_cnt;
 
+        # 판매기계 전체등록 
         $query = "select count(*) as total_cnt from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_kind c, fm_cm_machine_model d, fm_cm_machine_manufacturer e ".
                  "where a.sales_seq = b.sales_seq and b.kind_seq = c.kind_seq and b.model_seq = d.model_seq and b.mnf_seq = e.mnf_seq and state in('승인', '미승인', '보류', '입금대기', '계약대기')";
         $query = $this->db->query($query);
         $result = $query->row();
         $resultMap['sales_total_cnt'] = $result->total_cnt;
         
+        ## 외주의뢰 신규등록
         $query = "select count(*) as new_cnt from fm_cm_machine_outsourcing where state = 1 and reg_date > date_add(now(),interval - 1 day)";
         $query = $this->db->query($query);
         $result = $query->row();
         $resultMap['osc_new_cnt'] = $result->new_cnt;
         
+        ## 외주의뢰 전체등록
         $query = "select count(*) as total_cnt from fm_cm_machine_outsourcing";
         $query = $this->db->query($query);
         $result = $query->row();
         $resultMap['osc_total_cnt'] = $result->total_cnt;
         
+        ## 머신박스 존 최저가격
         $query = "select min(x.sort_price) as min_price, x.* from fm_cm_machine_sales_info A, (select a.sort_price, b.kind_name, f.model_name, g.mnf_name, a.model_year, e.sales_date, c.area_name, d.path, e.type, a.info_seq ".
                  "from fm_cm_machine_sales_info a, fm_cm_machine_kind b, fm_cm_machine_area c, fm_cm_machine_sales_picture d, fm_cm_machine_sales e, fm_cm_machine_model f, fm_cm_machine_manufacturer g where a.kind_seq = b.kind_seq ".
                  "and a.area_seq = c.area_seq and a.info_seq = d.info_seq and a.sales_seq = e.sales_seq and a.model_seq = f.model_seq and a.mnf_seq = g.mnf_seq and d.sort = 2 and a.sort_price != 0 and a.sort_price is not null and ".
@@ -248,6 +253,7 @@ class main extends front_base {
         }
         $resultMap['zone_list_01'] = $result;
         
+        ## 머신박스존 NEW 기계
         $query = "select * from fm_cm_machine_sales_info a, fm_cm_machine_kind b, fm_cm_machine_area c, fm_cm_machine_sales_picture d, fm_cm_machine_sales e, fm_cm_machine_model f, fm_cm_machine_manufacturer g ".
             "where a.kind_seq = b.kind_seq and a.area_seq = c.area_seq and a.info_seq = d.info_seq and a.sales_seq = e.sales_seq and a.model_seq = f.model_seq and a.mnf_seq = g.mnf_seq ".
             "and d.sort = 2 and a.sort_price != 0 and a.sort_price is not null and e.type != 'direct' and a.state = '승인' and a.wait_yn = 'n' and a.test_yn = 'n' order by sales_date desc limit 20";
@@ -278,6 +284,7 @@ class main extends front_base {
         }
         $resultMap['zone_list_02'] = $result;
         
+        ## 머신박스존 외주의뢰
         $query = "select * from fm_cm_machine_outsourcing a, fm_cm_machine_area b where a.area_seq = b.area_seq order by reg_date desc limit 20";
         $query = $this->db->query($query);
         $result = $query->result_array();
@@ -295,6 +302,7 @@ class main extends front_base {
         }
         $resultMap['zone_list_03'] = $result;
         
+        ## 머신박스존 우수회원
         $query = "select * from fm_cm_machine_partner a, fm_cm_machine_area b where a.area_seq = b.area_seq ".
                  "order by (select COALESCE(convert(avg(grade), signed integer), 0) as grade from fm_cm_machine_partner_eval where partner_seq = a.partner_seq) desc limit 20";
         $query = $this->db->query($query);
@@ -319,6 +327,7 @@ class main extends front_base {
         }
         $resultMap['zone_list_04'] = $result;
         
+        ## 머박다이렉트존
         $query = "select * from fm_cm_machine_sales_info a, fm_cm_machine_kind b, fm_cm_machine_area c, fm_cm_machine_sales_picture d, fm_cm_machine_sales e, fm_cm_machine_model f, fm_cm_machine_manufacturer g ".
             "where a.kind_seq = b.kind_seq and a.area_seq = c.area_seq and a.info_seq = d.info_seq and a.sales_seq = e.sales_seq and a.model_seq = f.model_seq and a.mnf_seq = g.mnf_seq ".
             "and d.sort = 2 and a.sort_price != 0 and a.sort_price is not null and e.type = 'direct' and a.test_yn = 'n' order by sort_price asc limit 20";
@@ -326,6 +335,7 @@ class main extends front_base {
         $result = $query->result_array();
         $resultMap['direct_list'] = $result;
         
+        ## 이용후기
         $query = "select * from fm_cm_machine_sales_review order by reg_date desc limit 30";
         $query = $this->db->query($query);
         $result = $query->result_array();

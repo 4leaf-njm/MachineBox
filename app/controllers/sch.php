@@ -19,6 +19,7 @@ class sch extends front_base
         ));
     }
 
+    ## 셀프찾기
     public function mch_search()
     {
         $tpl = 'search/mch_search.html';
@@ -170,6 +171,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 기계정보 보기
     public function mch_detail($type, $info_seq, $est)
     {
         $tpl = 'search/mch_detail.html';
@@ -236,6 +238,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 가격제안
     public function proposal($type, $info_seq, $mode, $prop_seq)
     {
         if (! $this->sessionCheck()) {
@@ -291,6 +294,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 가격제안 처리
     public function proposal_process()
     {
         $type = $this->input->post('type');
@@ -321,6 +325,7 @@ class sch extends front_base
         pageRedirect('/sch/mch_detail/' . $type . '/' . $info_seq);
     }
 
+    ## 가격제안 답변 처리
     public function proposal_res_process()
     {
         $res_type = $this->input->post('res_type');
@@ -423,6 +428,7 @@ class sch extends front_base
         }
     }
 
+    ## 즉시구매
     public function imd_buy($type, $info_seq)
     {
         if (! $this->sessionCheck()) {
@@ -471,6 +477,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 즉시구매 처리
     public function imd_buy_process()
     {
         $type = $this->input->post('type');
@@ -530,6 +537,7 @@ class sch extends front_base
         pageRedirect('/sch/mch_detail/' . $type . '/' . $info_seq);
     }
 
+    ## 현장방문
     public function visit($type, $info_seq, $estimate_seq)
     {
         if (! $this->sessionCheck()) {
@@ -569,6 +577,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 현장방문 처리
     public function visit_process()
     {
         $type = $this->input->post('type');
@@ -664,6 +673,7 @@ class sch extends front_base
         }
     }
 
+    ## 현장방문 판매자 답변
     public function visit_rcv($visit_seq, $estimate_seq, $estimate_type)
     {
         $tpl = 'search/visit_rcv.html';
@@ -784,6 +794,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 현장방문 판매자 답변 처리
     public function visit_rcv_process()
     {
         $page = $this->input->post('page');
@@ -904,6 +915,7 @@ class sch extends front_base
         pageRedirect('/sch/visit_rcv_complete/' . $page . '/' . $visit_seq . '/' . $vdet_seq);
     }
 
+    ## 현장방문 판매자 답변 완료
     public function visit_rcv_complete($page, $visit_seq, $vdet_seq)
     {
         $tpl = 'search/visit_rcv_complete.html';
@@ -944,6 +956,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
     
+    ## 현장방문 구매자 승인처리
     public function visit_permit_process() {
         $visit_seq = $this->input->post('visit_seq');
         
@@ -1001,6 +1014,7 @@ class sch extends front_base
         openDialogAlert('승인이 완료되었습니다.', 400, 140, 'parent', $callback);
     }
 
+    ## 현장방문 취소 처리
     public function visit_cancel_process() {
         $visit_seq = $this->input->post('visit_seq');
         
@@ -1044,6 +1058,7 @@ class sch extends front_base
         openDialogAlert('취소가 완료되었습니다.', 400, 140, 'parent', $callback);
     }
     
+    ## 이용수수료 결제
     public function pay($pay_type, $seq) {
         $tpl = 'search/pay.html';
         $skin = $this->skin;
@@ -1076,6 +1091,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
     
+    ## 이용수수료 결제 처리
     public function pay_process() {
         $page = $this->input->post('page');
         $pay_type = $this->input->post('pay_type');
@@ -1117,6 +1133,7 @@ class sch extends front_base
         }
     }
     
+    ## 기계평가
     public function mch_eval($type, $info_seq)
     {
         if (! $this->sessionCheck()) {
@@ -1166,6 +1183,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 기계평가 작성
     public function mch_eval_form($type, $info_seq)
     {
         if ($this->loginUserEqualCheck($this->getSaleUser($info_seq))) {
@@ -1204,6 +1222,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 기계평가 작성 처리
     public function mch_eval_process()
     {
         $type = $this->input->post('type');
@@ -1232,6 +1251,7 @@ class sch extends front_base
         pageRedirect('/sch/mch_eval/' . $type . '/' . $info_seq);
     }
 
+    ## 기계평가 수정
     public function ajax_eval_modify()
     {
         header("Content-Type: application/json");
@@ -1251,6 +1271,7 @@ class sch extends front_base
         ));
     }
 
+    ## 좋아요 처리
     public function ajax_update_like($info_seq, $like_yn)
     {
         header("Content-Type: application/json");
@@ -1270,6 +1291,7 @@ class sch extends front_base
         echo json_encode($result);
     }
 
+    ## 문의 처리
     public function ajax_question()
     {
         header("Content-Type: application/json");
@@ -1292,6 +1314,7 @@ class sch extends front_base
         echo json_encode($result);
     }
 
+    ## 문의답변 처리
     public function qna_res_process() {
         $qna_seq = $this->input->post('qna_seq');
         $res_content = $this->input->post('res_content');
@@ -1307,6 +1330,7 @@ class sch extends front_base
         openDialogAlert('문의 답변이 완료되었습니다.', 400, 140, 'parent', $callback);
     }
     
+    ## 입찰 정보 조회
     public function ajax_bid()
     {
         header("Content-Type: application/json");
@@ -1356,6 +1380,7 @@ class sch extends front_base
         ));
     }
 
+    ## 입찰자 조회
     public function ajax_bid_user()
     {
         header("Content-Type: application/json");
@@ -1369,6 +1394,7 @@ class sch extends front_base
         echo json_encode($result);
     }
 
+    ## 기계정보 조회
     public function ajax_get_item() {
         header("Content-Type: application/json");
         
@@ -1417,6 +1443,7 @@ class sch extends front_base
         echo json_encode(array('result' => $sale_item));
     }
     
+    ## 기계찾아줘 이용방법
     public function find_intro()
     {
         $tpl = 'search/find_intro.html';
@@ -1447,6 +1474,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 기계찾아줘 등록
     public function find_reg()
     {
         if (! $this->sessionCheck()) {
@@ -1509,6 +1537,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 기계찾아줘 등록 처리
     public function find_reg_process()
     {
         $kind_seq_arr = $this->input->post('kind_seq_arr');
@@ -1562,6 +1591,7 @@ class sch extends front_base
         pageRedirect("/sch/find_sch");
     }
 
+    ## 기계찾아줘 검색
     public function find_sch()
     {
         header("Content-Type:text/html; charset=utf-8");
@@ -1628,6 +1658,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 기계찾아줘 
     public function find_info($find_seq)
     {
         $tpl = 'search/find_info.html';
@@ -1678,6 +1709,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 내 기계 추천
     public function find_my_mch($find_seq, $state)
     {
         if (! $this->sessionCheck()) {
@@ -1756,6 +1788,7 @@ class sch extends front_base
         $this->print_layout($skin . '/' . $tpl);
     }
 
+    ## 내 기계 추천 처리
     public function find_rec_process()
     {
         $info_seq = $this->input->post('info_seq');
@@ -1783,6 +1816,7 @@ class sch extends front_base
         pageRedirect("/sch/find_info/" . $find_seq);
     }
 
+    ## 셀프찾기 조회
     private function get_search_result($type, $cate_k, $cate_t, $cate_f, $cate_m, $cate_y, $cate_p, $cate_a, $h, $d, $o, $more)
     {
         if ($type == 'h') {
@@ -1951,6 +1985,7 @@ class sch extends front_base
         return $result;
     }
 
+    ## 기계정보 조회
     private function get_detail_query($type, $info_seq)
     {
         $resultMap = array();
@@ -2043,6 +2078,7 @@ class sch extends front_base
         return $resultMap;
     }
 
+    ## 뷰 카운팅
     private function update_view($info_seq)
     {
         $query = "select * from fm_cm_machine_view a where a.info_seq = " . $info_seq;
@@ -2064,6 +2100,7 @@ class sch extends front_base
         setcookie('view_cookie_' . $info_seq, true, time() + 3600 * 24, '/');
     }
 
+    ## 좋아요 카운팅
     private function update_like($info_seq, $cnt)
     {
         $like_cnt = $this->get_like_cnt($info_seq);
@@ -2077,6 +2114,7 @@ class sch extends front_base
         return $like_cnt;
     }
 
+    ## 좋아요 개수 조회
     private function get_like_cnt($info_seq)
     {
         $query = "select * from fm_cm_machine_like a where a.info_seq = " . $info_seq;
@@ -2095,6 +2133,7 @@ class sch extends front_base
         return $like_cnt;
     }
 
+    ## 동일 모델 가격비교
     private function get_other_model_price($model_seq, $sort_price)
     {
         $query = "select sort_price from fm_cm_machine_sales_info a where a.sort_price != 0 and a.sort_price is not null and a.model_seq = " . $model_seq;
@@ -2133,6 +2172,7 @@ class sch extends front_base
         return $result;
     }
 
+    ## 입찰 남은시간
     private function getBidRestTime($info_seq)
     {
         $query = "select *, UNIX_TIMESTAMP(now()) as now_date, UNIX_TIMESTAMP(date_add(sales_date, interval +bid_duration day)) as bid_date " . "from fm_cm_machine_sales a, fm_cm_machine_sales_info b, fm_cm_machine_sales_detail c " . "where a.sales_seq = b.sales_seq and b.info_seq = c.info_seq and b.info_seq = " . $info_seq;
@@ -2154,6 +2194,7 @@ class sch extends front_base
         return $data;
     }
 
+    ## 기계찾아줘 조회
     private function get_find_search($state, $kind, $mnf, $model)
     {
         if ($state == '0') {

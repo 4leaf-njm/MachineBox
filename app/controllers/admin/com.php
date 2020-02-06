@@ -14,6 +14,7 @@ class com extends admin_base {
 		redirect("/admin/com/category");
 	}
 
+	## 카테고리 관리
 	public function category() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -50,6 +51,7 @@ class com extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 카테고리 조회
 	public function ajax_get_category() {
 	    header("Content-Type: application/json");
 	    
@@ -99,6 +101,7 @@ class com extends admin_base {
 	    echo json_encode($result);
 	}
 	
+	## 카테고리 추가
 	public function ajax_add_category() {
 	    header("Content-Type: application/json");
 	    
@@ -157,6 +160,7 @@ class com extends admin_base {
 	    echo json_encode(array('result' => $res));
 	}
 	
+	## 카테고리 변경
 	public function ajax_modify_category() {
 	    header("Content-Type: application/json");
 	    
@@ -219,6 +223,7 @@ class com extends admin_base {
 	    echo json_encode(array('result' => $result));
 	}
 	
+	## 카테고리 제거
 	public function ajax_remove_category() {
 	    header("Content-Type: application/json");
 	    
@@ -239,6 +244,7 @@ class com extends admin_base {
 	    echo json_encode(array('result' => $result));
 	}
 	
+	## 문의 관리
 	public function qna() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -255,6 +261,7 @@ class com extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 문의 답변 처리
 	public function qna_process() {
 	    $qna_seq = $this->input->post('qna_seq');
 	    $reply = $this->input->post('reply');
@@ -269,6 +276,7 @@ class com extends admin_base {
 	    openDialogAlert('답변이 작성되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 후기 관리
 	public function rev() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -285,6 +293,7 @@ class com extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 후기 등록
 	public function rev_regist() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -306,6 +315,7 @@ class com extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 후기 등록 처리
 	public function rev_regist_process() {
 	    $type = $this->input->post('type');
 	    $userid = $this->input->post('userid');
@@ -361,6 +371,7 @@ class com extends admin_base {
 	    }
 	}
 	
+	## 후기 삭제 처리
 	public function rev_delete_process() {
 	    $rev_seq = $this->input->post('rev_seq');
 	    
@@ -371,6 +382,7 @@ class com extends admin_base {
 	    openDialogAlert('삭제가 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 평가 관리
 	public function eval() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -395,6 +407,7 @@ class com extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 평가 수정 처리
 	public function eval_modify_process() {
 	    $tab_menu = $this->input->post('tab_menu');
 	    $seval_seq = $this->input->post('seval_seq');
@@ -427,6 +440,7 @@ class com extends admin_base {
 	    openDialogAlert('수정이 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 평가 삭제 처리
 	public function eval_delete_process() {
 	    $tab_menu = $this->input->post('tab_menu');
 	    $seval_seq = $this->input->post('seval_seq');
@@ -443,6 +457,7 @@ class com extends admin_base {
 	    openDialogAlert('삭제가 완료되었습니다.',400,140,'parent',$callback);
 	}
 	
+	## 공식딜러 관리
 	public function dealer()
 	{
 	    $auth = $this->authmodel->manager_limit_act('member_view');
@@ -678,6 +693,7 @@ class com extends admin_base {
 	    $this->template->print_("tpl");
 	}
 	
+	## 공식딜러 승인
 	public function dealer_permit() {
 	    header("Content-Type: application/json");
 	    
@@ -690,6 +706,7 @@ class com extends admin_base {
 	    $this->db->update('fm_member_business', $data);
 	}
 	
+	## 성능검사 관리
     public function perform() {
         $this->admin_menu();
 	    $this->tempate_modules();
@@ -711,7 +728,8 @@ class com extends admin_base {
 	    $this->template->define(array('tpl'=>$file_path));
 	    $this->template->print_("tpl");
     }
-    
+	
+	## 성능검사 업로드
     public function upload_perform() {
         $perform_seq = $this->input->post('perform_seq');    
         
@@ -736,7 +754,8 @@ class com extends admin_base {
             openDialogAlert('업로드 중 에러가 발생했습니다.',400,140,'parent',$callback);
         }
     }
-    
+	
+	## 성능검사 업로드 취소
     public function delete_perform() {
         $perform_seq = $this->input->post('perform_seq');    
         
@@ -749,7 +768,8 @@ class com extends admin_base {
         $callback = "parent.location.reload()";
         openDialogAlert('업로드 취소되었습니다.',400,140,'parent',$callback);
     }
-    
+	
+	## 성능검사 보고서
     public function perform_report() {
 	    $this->admin_menu();
 	    $this->tempate_modules();
@@ -773,7 +793,8 @@ class com extends admin_base {
         $this->template->define(array('tpl'=>$file_path));
         $this->template->print_("tpl");
 	}
-    
+	
+	## 이메일 관리
 	public function email()
 	{
 		$auth = $this->authmodel->manager_limit_act('member_view');
@@ -1015,6 +1036,7 @@ class com extends admin_base {
 		$this->template->print_("tpl");
 	}
 	
+	## 머신박스존 메일 발송
 	public function send_machinezone_mail() {
         header("Content-Type: application/json");
 	    
